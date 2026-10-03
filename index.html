@@ -501,8 +501,10 @@ const UPS = {
              max: () => 1 + S.shop * 2, cost: l => 60 * Math.pow(1.8, l) },
   staff:   { name: '알바생',      icon: '👨‍🍳', desc: l => `가끔 메뉴를 대신 만들어줘요 (Lv.${l + 1})`,
              max: () => Math.min(3, S.shop), cost: l => 200 * Math.pow(2.5, l) },
-  robot:   { name: '서빙 로봇',   icon: '🤖', desc: () => '준비된 주문을 자동으로 서빙해요',
-             max: () => (S.shop >= 2 ? 1 : 0), cost: () => 1500 },
+  autoorder: { name: '자동 발주 시스템', icon: '📦',
+             desc: l => l === 0 ? '영업 중 재료가 다 떨어지면 알아서 5개 주문해요 (1.5배 가격)'
+                               : '재료가 2개 남으면 미리, 평소 가격으로 주문해요',
+             max: () => (S.shop >= 3 ? 2 : S.shop >= 2 ? 1 : 0), cost: l => (l === 0 ? 900 : 2000) },
 };
 
 // 윈도우 10에서도 한 글자로 보이는 이모지만 쓴다
@@ -527,7 +529,7 @@ function newGame() {
     sale: null,       // 시장 특가 재료
     stock: { bean: 12, milk: 6, cookie: 6, tea: 0, cake: 0, dough: 0, fruit: 0, cocoa: 0 },
     unlocked: { americano: true, latte: true, cookie: true },
-    up: { equip: 0, tray: 0, counter: 2, decor: 0, sign: 0, staff: 0, robot: 0 },
+    up: { equip: 0, tray: 0, counter: 2, decor: 0, sign: 0, staff: 0, autoorder: 0 },
   };
 }
 
@@ -540,6 +542,7 @@ function load() {
     const base = newGame();
     const up = { ...base.up };
     for (const k in up) if (d.up && typeof d.up[k] === 'number') up[k] = d.up[k];
+    if (d.up && d.up.robot > 0) d.money = (d.money || 0) + 1500; // 없어진 서빙 로봇 환불
     // 튜토리얼이 생기기 전 저장이면 이미 해본 사람으로 본다
     const tut = typeof d.tut === 'number' ? d.tut : (d.day > 1 ? 2 : 0);
     return { ...base, ...d, tut, stock: { ...base.stock, ...d.stock }, up, unlocked: { ...base.unlocked, ...d.unlocked },
@@ -847,7 +850,7 @@ function startDay() {
     tray: [],                       // { id, q }
     bench: { cup: null, parts: [] }, // parts: { id, q }
     gauge: null,
-    spawnT: 2, staffT: 0, robotT: 0,
+    spawnT: 2, staffT: 0,
     delivery: null, delivT: 20 + Math.random() * 15,
     rush: [],        // 긴급 발주: { ing, n, t }
     panel: null,     // 품절 대응 창을 연 손님 자리
@@ -863,6 +866,7 @@ function startDay() {
   last = performance.now();
   renderBench();
   renderDay(true);
+  usedIngs().forEach(autoOrder); // 이미 떨어진 재료는 문 열자마자 주문
   if (tutorial) {
     // 튜토리얼에 쓸 재료는 넉넉히 채워준다
     S.stock.bean = Math.max(S.stock.bean, 6);
@@ -1386,14 +1390,6 @@ function update(dt) {
     R.staffT += dt;
     if (R.staffT >= 13 - S.up.staff * 3) { R.staffT = 0; staffWork(); }
   }
-  if (S.up.robot > 0) {
-    R.robotT += dt;
-    if (R.robotT >= 1.2) {
-      R.robotT = 0;
-      const order = allCusts().filter(([c]) => canServe(c)).sort((a, b) => a[0].pat - b[0].pat);
-      if (order.length) serve(order[0][1]);
-    }
-  }
   updateRush(dt);
   if (R.panel !== null && !getCust(R.panel)) closeSoldPanel();
   if (R.closing && !allCusts().length) endDay();
@@ -1425,7 +1421,20 @@ function renderStockWarn() {
 
 function useStock(i) {
   S.stock[i]--;
-  if (S.stock[i] === 0) toast(`⚠️ ${ic(ING[i].icon)} ${ING[i].name} 재고가 다 떨어졌어요!`);
+  if (S.stock[i] === 0 && !S.up.autoorder) toast(`⚠️ ${ic(ING[i].icon)} ${ING[i].name} 재고가 다 떨어졌어요!`);
+  autoOrder(i);
+}
+
+// 자동 발주 시스템: Lv.1은 다 떨어지면 1.5배 가격, Lv.2는 2개 남으면 평소 가격으로 5개 주문
+function autoOrder(i) {
+  const lv = S.up.autoorder;
+  if (!lv || !R || rushPending(i) || S.stock[i] > (lv >= 2 ? 2 : 0)) return;
+  const cost = Math.ceil(ING[i].cost * RUSH_N * (lv >= 2 ? 1 : 1.5));
+  if (S.money < cost) return;
+  S.money -= cost;
+  R.rush.push({ ing: i, n: RUSH_N, t: RUSH_TIME });
+  toast(`📦 자동 발주: ${ic(ING[i].icon)} ${ING[i].name} ${RUSH_N}개 (${coin(cost)})`);
+  renderStockWarn();
 }
 
 function renderDay(force) {
@@ -1619,7 +1628,7 @@ function renderNight() {
       <span>판매가 ×${cur.priceMult} · 월세 ×${cur.rentMult}</span></div></div>`;
     if (nx) {
       html += `<div class="item"><div class="ico">${nx.icon}</div><div class="info"><b>다음: ${nx.name}</b>
-        <span>판매가 ×${nx.priceMult} · 손님 증가 · 업그레이드 한도 증가 · 새 메뉴/알바${S.shop + 1 >= 2 ? '/로봇' : ''} · 월세 ×${nx.rentMult}</span></div>
+        <span>판매가 ×${nx.priceMult} · 손님 증가 · 업그레이드 한도 증가 · 새 메뉴/알바${S.shop + 1 >= 2 ? '/자동 발주' : ''} · 월세 ×${nx.rentMult}</span></div>
         <button class="buy" data-act="expand" ${S.money < nx.cost ? 'disabled' : ''}>${coin(nx.cost)}</button></div>`;
     } else {
       html += `<div style="text-align:center;padding:10px">🎉 최고 단계에 도달했어요!</div>`;
