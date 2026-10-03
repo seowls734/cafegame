@@ -70,6 +70,7 @@
   .cust.deliv { background: #e3f1ff; border-color: #4d7f9e; }
   .cust .tag { font-size: .65rem; font-weight: 800; color: #fff; background: #4d7f9e; border-radius: 6px; padding: 1px 6px; }
   .cust .tag.hot { background: var(--accent); }
+  .cust .tag.staff { background: var(--good); }
   .daybar { display: flex; gap: 8px; align-items: stretch; margin-bottom: 8px; }
   #quests { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: .75rem; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 5px 8px; }
   #quests .q { display: flex; justify-content: space-between; gap: 6px; align-items: center; }
@@ -959,22 +960,46 @@ function updateGauge() {
   $('gaugeMark').style.left = `calc(${g.v * 100}% - 1px)`;
 }
 
-// 알바생: 손님 주문 중 아직 준비되지 않은 메뉴를 하나 만든다 (품질은 보통)
+// 사장이 작업대에서 만들고 있는 메뉴 (후보가 하나로 좁혀졌을 때만)
+function benchTarget() {
+  const b = R.bench;
+  if (!b.cup) return null;
+  const ids = b.parts.map(p => p.id);
+  if (R.gauge) ids.push(R.gauge.part);
+  const cands = unlockedMenu().filter(k => MENU[k].cup === b.cup && isSubset(ids, MENU[k].parts));
+  return cands.length === 1 ? cands[0] : null;
+}
+
+// 알바생: 가장 먼저 떠날 손님(남은 시간이 가장 짧은 손님)의 주문부터 만든다. 품질은 보통.
+// 쟁반에 있는 음식과 사장이 만들고 있는 음식은 급한 손님 몫부터 배정하고,
+// 재료가 모자라 어차피 다 못 받는 손님은 건너뛴다.
 function staffWork() {
   if (R.tray.length >= trayCap()) return;
-  const need = {};
-  allCusts().forEach(([c]) => c.order.forEach(k => need[k] = (need[k] || 0) + 1));
-  R.tray.forEach(t => need[t.id] && need[t.id]--);
-  const urgent = allCusts().map(([c]) => c).sort((a, b) => a.pat / a.max - b.pat / b.max);
-  for (const c of urgent) for (const k of c.order) {
-    if (need[k] > 0 && menuIngs(k).every(i => S.stock[i] >= 1)) {
-      menuIngs(k).forEach(useStock);
-      R.tray.push({ id: k, q: 0.7 });
-      floatAt($('tray'), `👨‍🍳 ${ic(MENU[k].icon)}`, '#5e3a1f');
-      renderStock();
-      renderBench();
-      return;
+  const pool = countOf(R.tray.map(t => t.id));
+  const making = benchTarget();
+  if (making) pool[making] = (pool[making] || 0) + 1;
+  const queue = allCusts().sort((a, b) => a[0].pat - b[0].pat);
+  for (const [c] of queue) {
+    const reserved = [], missing = [];
+    for (const k of c.order) {
+      if (pool[k] > 0) { pool[k]--; reserved.push(k); } else missing.push(k);
     }
+    if (!missing.length) continue;
+    const use = {};
+    missing.forEach(k => menuIngs(k).forEach(i => use[i] = (use[i] || 0) + 1));
+    if (Object.entries(use).some(([i, n]) => S.stock[i] < n)) {
+      reserved.forEach(k => pool[k]++); // 이 손님은 못 받으니 쟁반 음식을 다른 손님에게 돌린다
+      continue;
+    }
+    const k = missing[0];
+    menuIngs(k).forEach(useStock);
+    R.tray.push({ id: k, q: 0.7 });
+    R.staffFor = c;
+    floatAt($('tray'), `👨‍🍳 ${ic(MENU[k].icon)} ${MENU[k].name}`, '#5e3a1f');
+    renderStock();
+    renderBench();
+    renderDay(false);
+    return;
   }
 }
 
@@ -1024,8 +1049,7 @@ function update(dt) {
     R.robotT += dt;
     if (R.robotT >= 1.2) {
       R.robotT = 0;
-      const order = allCusts().filter(([c]) => canServe(c))
-        .sort((a, b) => a[0].pat / a[0].max - b[0].pat / b[0].max);
+      const order = allCusts().filter(([c]) => canServe(c)).sort((a, b) => a[0].pat - b[0].pat);
       if (order.length) serve(order[0][1]);
     }
   }
@@ -1075,7 +1099,8 @@ function renderDay(force) {
       return `<span class="${cls}">${ic(MENU[k].icon)}</span>`;
     }).join('');
     const names = c.order.length === 1 ? `<small>${MENU[c.order[0]].name}</small>` : '';
-    const tag = c.deliv ? '<span class="tag">배달 ×1.3</span>' : c.order.includes(S.special) ? '<span class="tag hot">추천 메뉴</span>' : '';
+    let tag = c.deliv ? '<span class="tag">배달 ×1.3</span>' : c.order.includes(S.special) ? '<span class="tag hot">추천 메뉴</span>' : '';
+    if (R.staffFor === c && !ready) tag += '<span class="tag staff">👨‍🍳 알바 준비 중</span>';
     return `<div class="slot cust ${ready ? 'ready' : ''} ${c.vip ? 'vip' : ''} ${c.deliv ? 'deliv' : ''}" data-act="serve" data-slot="${i}">
       ${tag}<div class="face">${c.face}</div>
       <div class="bubble">${items}${names}</div>
