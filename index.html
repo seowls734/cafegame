@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>나의 작은 카페</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f6ead8;
@@ -21,7 +24,11 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; height: 100%; }
   body {
-    background: var(--bg);
+    background-color: #efe1c9;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 14px, transparent 14px 28px),
+      linear-gradient(#f3e6d0, #e6d2b4);
+    background-attachment: fixed;
     color: var(--ink);
     font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
     touch-action: manipulation;
@@ -52,11 +59,15 @@
   h3 { margin: 14px 0 8px; font-size: .95rem; color: var(--wood); }
 
   /* Counter / customers */
-  .shopname { text-align: center; font-weight: 800; color: var(--wood); margin-bottom: 8px; }
+  .shopname { display: none; }
   #counter {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px;
-    background: linear-gradient(#fff4e3, #f3dfc2);
-    border: 3px solid var(--wood); border-radius: 14px; padding: 10px;
+    background-color: #c79a6b;
+    background-image:
+      linear-gradient(rgba(60,30,10,.25), transparent 30px),
+      repeating-linear-gradient(90deg, transparent 0 58px, rgba(70,40,15,.28) 58px 60px),
+      repeating-linear-gradient(90deg, #c99d6e 0 60px, #bf9061 60px 120px);
+    padding: 12px 10px 14px;
     min-height: 150px;
   }
   .slot {
@@ -64,7 +75,8 @@
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
     color: var(--muted); font-size: .8rem; padding: 6px 4px;
   }
-  .cust { border-style: solid; border-color: var(--wood); background: var(--panel); color: var(--ink); cursor: pointer; }
+  .slot { border-color: rgba(255,255,255,.45); color: rgba(255,255,255,.85); }
+  .cust { border-style: solid; border-color: var(--wood); background: rgba(255,250,242,.94); color: var(--ink); cursor: pointer; box-shadow: 0 4px 0 rgba(60,30,10,.25); }
   .cust.ready { border-color: var(--good); box-shadow: 0 0 0 3px rgba(79,157,74,.3); }
   .cust.vip { background: #fff3c4; }
   .cust.deliv { background: #e3f1ff; border-color: #4d7f9e; }
@@ -128,6 +140,69 @@
   .shake { animation: shake .3s; }
   @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 
+  /* Cafe scene */
+  .scene { border: 4px solid var(--wood-dark); border-radius: 16px; overflow: hidden; margin-bottom: 10px; box-shadow: 0 6px 16px rgba(60,30,10,.25); }
+  .wall { position: relative; height: 178px; overflow: hidden; --sky: linear-gradient(#8fd0ff, #d8f0ff); }
+  .wall.s1 { background:
+      linear-gradient(transparent 128px, #6b4226 128px, #6b4226 132px, transparent 132px),
+      repeating-linear-gradient(90deg, #9a6a42 0 30px, #8c5e38 30px 32px) 0 132px / 100% 46px no-repeat,
+      #f4e7cf; }
+  .wall.s2 { background:
+      linear-gradient(transparent 132px, #4a2c17 132px, #4a2c17 136px, transparent 136px),
+      repeating-linear-gradient(90deg, #6b4226 0 30px, #5e391f 30px 32px) 0 136px / 100% 42px no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='36'%3E%3Crect width='40' height='36' fill='%23b4603f'/%3E%3Cpath d='M0 17h40M0 35h40M20 0v17M1 18v17M39 18v17' stroke='%23e2cdb6' stroke-width='2'/%3E%3C/svg%3E"); }
+  .wall.s3 { background:
+      linear-gradient(transparent 128px, #c9a24a 128px, #c9a24a 131px, transparent 131px),
+      repeating-linear-gradient(90deg, #3d2a1c 0 44px, #33231a 44px 46px) 0 131px / 100% 47px no-repeat,
+      repeating-linear-gradient(90deg, #2f5c4a 0 36px, #2a5343 36px 38px); }
+  .wall.s0 { background: var(--sky); }
+  .wall.s0::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 58px;
+      background: linear-gradient(#9c9c9c, #888); border-top: 4px solid #b9b9b9; }
+  .wall.s0::after { content: '🏪 🏠 🌳 🏬 🌳 🏠'; position: absolute; left: 0; right: 0; bottom: 54px; text-align: left; padding-left: 10px; font-size: 2rem; letter-spacing: 4px; opacity: .55; white-space: nowrap; z-index: 0; }
+  .awning { position: absolute; top: 0; left: 0; right: 0; height: 34px; z-index: 2;
+      background: repeating-linear-gradient(90deg, #d24b3e 0 28px, #fff6ea 28px 56px);
+      box-shadow: 0 3px 4px rgba(0,0,0,.2); }
+  .awning::after { content: ''; position: absolute; left: 0; right: 0; bottom: -12px; height: 12px;
+      background: radial-gradient(circle at 14px 0, #d24b3e 13px, transparent 14px) 0 0 / 56px 12px,
+                  radial-gradient(circle at 42px 0, #fff6ea 13px, transparent 14px) 0 0 / 56px 12px; }
+  .lamps { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-around; z-index: 2; pointer-events: none; }
+  .lamp { width: 2px; height: 26px; background: #3b2614; position: relative; }
+  .lamp::after { content: ''; position: absolute; left: -9px; top: 24px; width: 20px; height: 12px; border-radius: 10px 10px 2px 2px; background: #3b2614; box-shadow: 0 10px 22px 10px rgba(255,214,120,.55); }
+  .wall.s3 .lamp::after { background: #c9a24a; }
+  .signboard { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); z-index: 3;
+      background: linear-gradient(#8b5a34, #6b4226); color: #ffe7b8; font-weight: 800; font-size: .82rem;
+      padding: 4px 14px; border-radius: 8px; border: 2px solid #4a2c17; white-space: nowrap; box-shadow: 0 3px 6px rgba(0,0,0,.3); }
+  .wall.s0 .signboard { top: 40px; background: linear-gradient(#fff6ea, #f1e0c8); color: var(--wood-dark); border-color: var(--wood); }
+  .weekend-badge { position: absolute; top: 9px; right: 8px; z-index: 3; background: #e07b39; color: #fff; font-size: .68rem; font-weight: 800; padding: 3px 8px; border-radius: 10px; transform: rotate(4deg); }
+  .wall.s0 .weekend-badge { top: 44px; right: auto; left: 8px; transform: rotate(-4deg); }
+  .wall-row { position: absolute; z-index: 2; left: 10px; right: 10px; top: 44px; display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; }
+  .wall.s0 .wall-row { top: 74px; justify-content: flex-end; }
+  .window { width: 30%; height: 76px; border: 5px solid #f8f1e4; outline: 3px solid #6b4226; border-radius: 4px; position: relative; overflow: hidden; background: var(--sky); flex-shrink: 0; }
+  .window::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; margin-left: -2px; background: #f8f1e4; z-index: 2; }
+  .window::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 4px; margin-top: -2px; background: #f8f1e4; z-index: 2; }
+  .window .view { position: absolute; bottom: -2px; left: 0; right: 0; text-align: center; font-size: 1.4rem; letter-spacing: 2px; white-space: nowrap; }
+  .window .cloud { position: absolute; top: 6px; left: 8px; font-size: .9rem; opacity: .9; animation: drift 18s linear infinite; }
+  @keyframes drift { from { transform: translateX(-20px); } to { transform: translateX(120px); } }
+  .wall.s0 .window { display: none; }
+  .chalk { flex: 1; max-width: 46%; min-height: 76px; background: #2f3a33; border: 5px solid #8b5a34; border-radius: 4px; color: #f4f1e6;
+      font-family: "Gaegu", "Malgun Gothic", sans-serif; font-size: .78rem; line-height: 1.15; padding: 3px 7px; box-shadow: inset 0 0 12px rgba(0,0,0,.5); }
+  .wall.s0 .chalk { max-width: 52%; transform: rotate(-2deg); }
+  .chalk-title { text-align: center; font-size: .9rem; color: #ffe08a; letter-spacing: 2px; }
+  .chalk .row { display: flex; justify-content: space-between; gap: 6px; white-space: nowrap; overflow: hidden; }
+  .chalk .row b { color: #ffd0d0; }
+  .shelf { width: 20%; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; padding-top: 2px; }
+  .shelf div { border-bottom: 5px solid #6b4226; text-align: center; font-size: 1.05rem; line-height: 1; padding-bottom: 1px; white-space: nowrap; overflow: hidden; }
+  .wall.s3 .shelf div { border-bottom-color: #c9a24a; }
+  .counter-bar { position: relative; height: 34px; background: linear-gradient(#a8703f, #7e4f2b 60%, #5e391f);
+      border-top: 5px solid #d9b48a; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 12px 4px; font-size: 1.3rem; }
+  .counter-bar .glass { background: rgba(220,240,255,.55); border: 2px solid rgba(255,255,255,.8); border-radius: 6px 6px 0 0; padding: 0 6px; position: relative; top: -14px; font-size: 1.1rem; }
+  .wall.night { --sky: linear-gradient(#141a33, #2e3560); }
+  .wall.night::before { filter: brightness(.5); }
+  .wall.night .chalk, .wall.night .shelf, .wall.night .window .view { filter: brightness(.65); }
+  .closed-sign { position: absolute; right: 10px; bottom: 10px; z-index: 3; background: #fff6ea; color: #d24b3e; font-weight: 900; font-size: .8rem; padding: 3px 10px; border: 2px solid #d24b3e; border-radius: 6px; transform: rotate(-4deg); }
+  .stars { position: absolute; inset: 0; font-size: .5rem; color: #fff; letter-spacing: 9px; line-height: 2.2; opacity: .8; }
+  .night-scene { margin: -12px -16px 12px; border-radius: 0; border-left: 0; border-right: 0; border-top: 0; }
+
   /* Tray */
   .row-title { display: flex; justify-content: space-between; align-items: center; }
   .small-btn { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 3px 8px; font-size: .78rem; }
@@ -140,7 +215,8 @@
   .titem i { position: absolute; right: -4px; bottom: -2px; font-size: .6rem; font-style: normal; }
 
   /* Workbench */
-  #bench { background: var(--panel); border: 3px solid var(--wood); border-radius: 14px; padding: 10px; }
+  #bench { background-color: #f6ead6; background-image: repeating-linear-gradient(90deg, rgba(139,90,52,.07) 0 2px, transparent 2px 46px);
+    border: 3px solid var(--wood); border-radius: 14px; padding: 10px; box-shadow: inset 0 -6px 0 rgba(139,90,52,.18); }
   .build {
     min-height: 58px; border-radius: 10px; background: #f1e3cd; display: flex; align-items: center; gap: 6px;
     padding: 6px 10px 12px; font-size: 1.8rem; flex-wrap: wrap;
@@ -270,7 +346,11 @@
   <section id="dayView" class="hidden">
     <div class="shopname" id="shopName"></div>
     <div class="daybar"><div id="quests"></div><div id="combo"></div></div>
-    <div id="counter"></div>
+    <div class="scene">
+      <div id="wall"></div>
+      <div id="counter"></div>
+      <div class="counter-bar"><span>💰</span><span class="glass">🍰🧁🍩</span><span>☕</span></div>
+    </div>
     <h3 class="row-title"><span>🍽️ 쟁반 <small id="trayCount"></small></span><button class="small-btn" data-act="clearTray">🗑 비우기</button></h3>
     <div id="tray"></div>
     <h3>👨‍🍳 작업대</h3>
@@ -380,7 +460,7 @@ const UPS = {
              max: () => 3 + S.shop, cost: l => 60 * Math.pow(2, l - 2) },
   decor:   { name: '인테리어',    icon: '🖼️', desc: l => `손님 인내심·팁 증가 (Lv.${l + 1})`,
              max: () => 1 + S.shop * 2, cost: l => 70 * Math.pow(1.9, l) },
-  sign:    { name: '홍보 간판',   icon: '📣', desc: l => `손님이 더 자주 와요 (Lv.${l + 1})`,
+  sign:    { name: '홍보 간판',   icon: '📣', desc: l => `손님이 조금 더 자주 와요 (약 +${(l + 1) * 4}%)`,
              max: () => 1 + S.shop * 2, cost: l => 60 * Math.pow(1.8, l) },
   staff:   { name: '알바생',      icon: '👨‍🍳', desc: l => `가끔 메뉴를 대신 만들어줘요 (Lv.${l + 1})`,
              max: () => Math.min(3, S.shop), cost: l => 200 * Math.pow(2.5, l) },
@@ -450,6 +530,42 @@ function josa(word, withFinal, noFinal) {
   if (withFinal === '으로') return word + (fin === 0 || fin === 8 ? '로' : '으로');
   return word + (fin ? withFinal : noFinal);
 }
+// ---------- 카페 장면 ----------
+const SHELVES = [null, ['☕🍵🥛', '🌿📚'], ['☕🍵🍯🥛', '🌵📚🕯️'], ['☕🍷🍵🍯', '🌿📚🕯️🎻']];
+const VIEWS = ['', '🌳🏡🌳', '🏢🌳🏢', '🏙️🌉🏙️'];
+
+// 영업 시간에 따라 창밖 하늘이 아침 → 한낮 → 노을로 바뀐다
+function skyAt(p) {
+  if (p < 0.3) return 'linear-gradient(#9fd8ff, #e6f6ff)';
+  if (p < 0.7) return 'linear-gradient(#5fb8f5, #c4e9ff)';
+  if (p < 0.92) return 'linear-gradient(#ff9a62, #ffd8a0)';
+  return 'linear-gradient(#5b4e8a, #f08a6a)';
+}
+
+function wallHtml(night) {
+  const sh = S.shop;
+  const menu = unlockedMenu().slice(0, 5).map(k =>
+    `<div class="row"><span>${ic(MENU[k].icon)} ${MENU[k].name}</span><b>${menuPrice(k)}</b></div>`).join('');
+  const more = unlockedMenu().length > 5 ? `<div class="row" style="justify-content:center">… 외 ${unlockedMenu().length - 5}개</div>` : '';
+  return `<div class="wall s${sh} ${night ? 'night' : ''}">
+    ${sh === 0 ? '<div class="awning"></div>' : `<div class="lamps">${'<span class="lamp"></span>'.repeat(sh + 2)}</div>`}
+    <div class="signboard">${SHOPS[sh].icon} ${SHOPS[sh].name}</div>
+    ${!night && isWeekend() ? '<div class="weekend-badge">🎉 주말 손님 폭주!</div>' : ''}
+    ${night && sh === 0 ? '<div class="stars">✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧</div>' : ''}
+    <div class="wall-row">
+      ${sh > 0 ? `<div class="window">${night ? '<div class="stars">✦ · ✧ · ✦</div>' : '<span class="cloud">☁️</span>'}<div class="view">${VIEWS[sh]}</div></div>` : ''}
+      <div class="chalk"><div class="chalk-title">✿ MENU ✿</div>${menu}${more}</div>
+      ${sh > 0 ? `<div class="shelf">${SHELVES[sh].map(r => `<div>${r}</div>`).join('')}</div>` : ''}
+    </div>
+    ${night ? '<div class="closed-sign">CLOSED</div>' : ''}
+  </div>`;
+}
+
+function updateSky() {
+  const w = document.querySelector('#wall .wall');
+  if (w && R) w.style.setProperty('--sky', skyAt(Math.min(1, R.t / DAY_LEN)));
+}
+
 const emptyIngs = () => usedIngs().filter(i => S.stock[i] <= 0);
 const lowStockIngs = () => usedIngs().filter(i => S.stock[i] > 0 && S.stock[i] < 3);
 const blockedMenus = () => unlockedMenu().filter(k => menuIngs(k).some(i => S.stock[i] <= 0));
@@ -696,7 +812,8 @@ function startDay() {
   };
   $('nightView').classList.add('hidden');
   $('dayView').classList.remove('hidden');
-  $('shopName').innerHTML = `${SHOPS[S.shop].icon} ${SHOPS[S.shop].name} — 영업 중${isWeekend() ? ' · 🎉 주말 손님 폭주!' : ''}`;
+  $('shopName').innerHTML = '';
+  $('wall').innerHTML = wallHtml(false);
   $('bookList').innerHTML = unlockedMenu().map(k =>
     `<div class="rec"><span class="r">${ic(MENU[k].icon)}</span><b>${MENU[k].name}${k === S.special ? '<span class="sale-tag">추천 ×1.5</span>' : ''}</b><span style="margin-left:auto">${recipeHtml(k)}</span></div>`).join('');
   $('book').open = S.day <= 3;
@@ -721,7 +838,7 @@ function startDay() {
 }
 
 function nextSpawn() {
-  const rate = (0.6 + S.rep / 100 + S.up.sign * 0.15 + Math.min(S.day, 30) * 0.02 + S.shop * 0.25) * (isWeekend() ? 1.4 : 1);
+  const rate = (0.6 + S.rep / 100 + S.up.sign * 0.05 + Math.min(S.day, 30) * 0.02 + S.shop * 0.25) * (isWeekend() ? 1.4 : 1);
   return (11 / rate) * (0.6 + Math.random() * 0.8);
 }
 
@@ -1311,6 +1428,7 @@ function renderDay(force) {
   cb.innerHTML = `<b>🔥${R.combo}</b>콤보${R.combo >= 2 ? ` +${Math.min(10, R.combo - 1) * 5}%` : ''}`;
   if (force) renderStock();
   else if (R.rush.length) renderStockWarn();
+  updateSky();
   applyHighlight();
 }
 
@@ -1357,7 +1475,7 @@ function upCost(k) { return Math.round(UPS[k].cost(S.up[k])); }
 
 function renderNight() {
   renderHud();
-  let html = '';
+  let html = `<div class="scene night-scene">${wallHtml(true)}</div>`;
   if (lastSummary) {
     const s = lastSummary;
     html += `<div class="card"><h2>🌙 ${s.day}일차 영업 결과</h2><div class="sum">
