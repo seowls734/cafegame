@@ -1878,7 +1878,9 @@ $('story').addEventListener('click', e => {
 
 // ---------- 뽑기 (게임 속 코인으로만) ----------
 // [그림, 나올 확률 가중치, 3개 같을 때 배당]
-const SLOT = [['☕', 30, 4], ['🍪', 25, 6], ['🥐', 20, 10], ['🍰', 13, 20], ['🍓', 8, 40], ['💰', 4, 100]];
+const SLOT = [['☕', 30, 4], ['🍪', 22, 6], ['🥐', 18, 10], ['🍰', 12, 20], ['🍓', 8, 40], ['💰', 10, 80]];
+// 2개 같을 때 배당 (나머지는 본전)
+const SLOT_PAIR = { '🥐': 1.5, '🍰': 2, '🍓': 2, '💰': 3 };
 let slotBet = 10, spinning = false, slotMsg = '';
 
 function slotRoll() {
@@ -1887,11 +1889,11 @@ function slotRoll() {
   return SLOT[0][0];
 }
 
-// 3개 같으면 배당, 2개 같으면 본전 (💰💰는 5배, 🍓🍓는 2배)
+// 3개 같으면 배당, 2개 같으면 SLOT_PAIR 배당 또는 본전
 function slotPayout(reels, bet) {
   const [sym, n] = Object.entries(countOf(reels)).sort((a, b) => b[1] - a[1])[0];
   if (n === 3) return bet * SLOT.find(x => x[0] === sym)[2];
-  if (n === 2) return bet * (sym === '💰' ? 5 : sym === '🍓' ? 2 : 1);
+  if (n === 2) return Math.round(bet * (SLOT_PAIR[sym] || 1));
   return 0;
 }
 
@@ -1967,7 +1969,7 @@ function gambleHtml() {
   return `<div class="slot-machine">
       <div class="sm-title">🎰 커피 슬롯머신</div>
       <div class="reels">${reels}</div>
-      <div class="sm-pay">3개 같으면: ☕×4 · 🍪×6 · 🥐×10 · 🍰×20 · 🍓×40 · 💰×100<br>2개 같으면 본전 (🍓🍓 ×2, 💰💰 ×5)</div>
+      <div class="sm-pay">3개 같으면: ☕×4 · 🍪×6 · 🥐×10 · 🍰×20 · 🍓×40 · 💰×80<br>2개 같으면: 🥐🥐×1.5 · 🍰🍰×2 · 🍓🍓×2 · 💰💰×3 · 나머지 본전</div>
       <div class="bets">걸기 ${bets}</div>
       <button class="spin-btn" data-act="spin" ${spinning || S.spins <= 0 || S.money < slotBet ? 'disabled' : ''}>${spinning ? '돌아가는 중…' : `🎰 돌리기! (오늘 ${S.spins}번 남음)`}</button>
       <div class="sm-msg">${slotMsg}</div>
