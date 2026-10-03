@@ -89,6 +89,17 @@
   .cust .face { font-size: 2rem; line-height: 1; }
   .bubble { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 3px 6px; font-size: 1.6rem; display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; }
   .bubble .got { background: #d8f0d2; border-radius: 4px; }
+  .bubble .nostock { background: #f8d0ca; border-radius: 4px; position: relative; }
+  .bubble .nostock::after { content: '⚠️'; position: absolute; right: -6px; top: -6px; font-size: .55rem; }
+  #stockWarn:empty { display: none; }
+  .stock-warn { margin-top: 6px; border-radius: 8px; padding: 5px 8px; font-size: .78rem; font-weight: 700; line-height: 1.5; }
+  .stock-warn.out { background: #d24b3e; color: #fff; animation: warnPulse 1.2s ease-in-out infinite; }
+  .stock-warn.low { background: #ffe3a3; color: #6b4a00; }
+  .stock-warn .ic { font-size: 1.2em; }
+  @keyframes warnPulse { 50% { background: #b5352a; } }
+  .warn-card { background: #fde4e0; border: 2px solid var(--bad); }
+  .warn-card h2 { color: var(--bad); }
+  .item.out b { color: var(--bad); }
   .bubble small { flex-basis: 100%; font-size: .6rem; color: var(--muted); text-align: center; }
   .pbar { width: 86%; height: 6px; background: #eadbc5; border-radius: 3px; overflow: hidden; }
   .pbar > div { height: 100%; }
@@ -231,6 +242,7 @@
       <span class="money" id="hudMoney"></span>
     </div>
     <div class="clock-bar"><div id="hudClock"></div></div>
+    <div id="stockWarn"></div>
   </header>
 
   <section id="dayView" class="hidden">
@@ -407,6 +419,10 @@ const menuIngs = id => MENU[id].parts.map(p => PARTS[p].ing).filter(Boolean);
 const usedIngs = () => Object.keys(ING).filter(i => unlockedMenu().some(m => menuIngs(m).includes(i)));
 const usedParts = () => Object.keys(PARTS).filter(p => unlockedMenu().some(m => MENU[m].cup === p || MENU[m].parts.includes(p)));
 const countOf = arr => arr.reduce((o, k) => (o[k] = (o[k] || 0) + 1, o), {});
+const emptyIngs = () => usedIngs().filter(i => S.stock[i] <= 0);
+const lowStockIngs = () => usedIngs().filter(i => S.stock[i] > 0 && S.stock[i] < 3);
+const blockedMenus = () => unlockedMenu().filter(k => menuIngs(k).some(i => S.stock[i] <= 0));
+const ingList = list => list.map(i => `${ic(ING[i].icon)}${ING[i].name}`).join(', ');
 const isWeekend = (d = S.day) => d % 7 === 6 || d % 7 === 0;
 const ingCost = (i, n) => Math.ceil(ING[i].cost * n * (S.sale === i ? 0.5 : 1));
 const menuPrice = id => Math.round(price(id) * (id === S.special ? 1.5 : 1));
@@ -821,7 +837,7 @@ function pressPart(id) {
   if (!b.cup) { toast('먼저 컵이나 접시를 골라주세요'); return; }
   if (b.parts.length >= 5) { toast('더 이상 넣을 수 없어요'); return; }
   if (P.ing && S.stock[P.ing] < 1) { toast(`${ic(ING[P.ing].icon)} ${ING[P.ing].name}이(가) 다 떨어졌어요!`); return; }
-  if (P.ing) { S.stock[P.ing]--; renderStock(); }
+  if (P.ing) { useStock(P.ing); renderStock(); }
   if (P.gauge) {
     const w = S.up.equip * 0.025;
     R.gauge = { part: id, mode: P.gauge.mode, speed: P.gauge.speed || 0, v: P.gauge.mode === 'mash' ? 0.12 : 0,
@@ -952,7 +968,7 @@ function staffWork() {
   const urgent = allCusts().map(([c]) => c).sort((a, b) => a.pat / a.max - b.pat / b.max);
   for (const c of urgent) for (const k of c.order) {
     if (need[k] > 0 && menuIngs(k).every(i => S.stock[i] >= 1)) {
-      menuIngs(k).forEach(i => S.stock[i]--);
+      menuIngs(k).forEach(useStock);
       R.tray.push({ id: k, q: 0.7 });
       floatAt($('tray'), `👨‍🍳 ${ic(MENU[k].icon)}`, '#5e3a1f');
       renderStock();
@@ -1018,7 +1034,27 @@ function update(dt) {
 
 function renderStock() {
   $('stockBar').innerHTML = usedIngs().map(i =>
-    `<span class="stk ${S.stock[i] < 3 ? 'low' : ''}">${ic(ING[i].icon)} ${ING[i].name} ${S.stock[i]}</span>`).join('');
+    `<span class="stk ${S.stock[i] < 3 ? 'low' : ''}">${S.stock[i] <= 0 ? '⚠️' : ''}${ic(ING[i].icon)} ${ING[i].name} ${S.stock[i]}</span>`).join('');
+  renderStockWarn();
+}
+
+// 영업 중 화면 맨 위에 재고 경고를 띄운다
+function renderStockWarn() {
+  const w = $('stockWarn');
+  if (!R) { w.innerHTML = ''; return; }
+  const out = emptyIngs(), low = lowStockIngs();
+  let html = '';
+  if (out.length) {
+    const menus = blockedMenus().map(k => `${ic(MENU[k].icon)}${MENU[k].name}`).join(', ');
+    html += `<div class="stock-warn out">⚠️ 재고 없음: ${ingList(out)}<br>→ ${menus} 못 만들어요!</div>`;
+  }
+  if (low.length) html += `<div class="stock-warn low">⚠️ 곧 떨어져요: ${low.map(i => `${ic(ING[i].icon)}${ING[i].name} ${S.stock[i]}개`).join(', ')}</div>`;
+  w.innerHTML = html;
+}
+
+function useStock(i) {
+  S.stock[i]--;
+  if (S.stock[i] === 0) toast(`⚠️ ${ic(ING[i].icon)} ${ING[i].name} 재고가 다 떨어졌어요!`);
 }
 
 function renderDay(force) {
@@ -1035,7 +1071,8 @@ function renderDay(force) {
     const items = c.order.map(k => {
       const got = have[k] > 0;
       if (got) have[k]--;
-      return `<span class="${got ? 'got' : ''}">${ic(MENU[k].icon)}</span>`;
+      const cls = got ? 'got' : menuIngs(k).some(i => S.stock[i] <= 0) ? 'nostock' : '';
+      return `<span class="${cls}">${ic(MENU[k].icon)}</span>`;
     }).join('');
     const names = c.order.length === 1 ? `<small>${MENU[c.order[0]].name}</small>` : '';
     const tag = c.deliv ? '<span class="tag">배달 ×1.3</span>' : c.order.includes(S.special) ? '<span class="tag hot">추천 메뉴</span>' : '';
@@ -1092,6 +1129,7 @@ function showNight() {
   $('nightView').classList.remove('hidden');
   window.scrollTo(0, 0);
   lastAct = null;
+  renderStockWarn();
   if (S.tut === 0) tutStart(NIGHT0_TUT);
   else if (S.tut === 1) tutStart(NIGHT1_TUT, () => { S.tut = 2; save(); });
   else renderNight();
@@ -1125,6 +1163,15 @@ function renderNight() {
       낮에는 장사를 하고, 밤에는 재료를 사고 가게를 키워요.</div></div>`;
   }
   const lowIngs = usedIngs().filter(i => S.stock[i] < 5);
+  const outIngs = emptyIngs();
+  if (outIngs.length && nightTab !== 'stock') {
+    html += `<div class="card warn-card"><h2>⚠️ 재고가 없는 재료가 있어요!</h2>
+      <div class="info-list">${ingList(outIngs)}<br>이대로 영업하면 ${blockedMenus().map(k => `${ic(MENU[k].icon)}${MENU[k].name}`).join(', ')}을(를) 못 만들어요.</div>
+      <button class="buy" style="width:100%;margin-top:8px" data-act="tab" data-id="stock">📦 재료 사러 가기</button></div>`;
+  } else if (outIngs.length) {
+    html += `<div class="card warn-card"><h2>⚠️ 재고 없음: ${ingList(outIngs)}</h2>
+      <div class="info-list">아래에서 꼭 사두세요!</div></div>`;
+  }
   html += `<div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:8px">
     <span>내일 월세 <b>${coin(rent())}</b></span>
     ${lowIngs.length ? `<span class="warn-text">재료 부족 ${lowIngs.map(i => ic(ING[i].icon)).join('')}</span>` : ''}
@@ -1147,8 +1194,8 @@ function renderNight() {
     html += `<button class="buy" style="width:100%;margin-bottom:6px" data-act="fill" ${fillCost === 0 ? 'disabled' : ''}>🛒 전부 20개까지 채우기 (${coin(fillCost)})</button>`;
     html += usedIngs().map(i => {
       const g = ING[i];
-      return `<div class="item"><div class="ico">${ic(g.icon)}</div>
-        <div class="info"><b>${g.name} · ${S.stock[i]}개${S.sale === i ? '<span class="sale-tag">반값!</span>' : ''}</b><span>개당 ${coin(g.cost)}${S.sale === i ? ' → 절반' : ''}</span></div>
+      return `<div class="item ${S.stock[i] <= 0 ? 'out' : ''}"><div class="ico">${ic(g.icon)}</div>
+        <div class="info"><b>${S.stock[i] <= 0 ? '⚠️ ' : ''}${g.name} · ${S.stock[i] <= 0 ? '재고 없음' : S.stock[i] + '개'}${S.sale === i ? '<span class="sale-tag">반값!</span>' : ''}</b><span>개당 ${coin(g.cost)}${S.sale === i ? ' → 절반' : ''}</span></div>
         <button class="buy" data-act="buy" data-id="${i}" data-n="5" ${S.money < ingCost(i, 5) ? 'disabled' : ''}>+5 (${ingCost(i, 5)})</button>
         <button class="buy" data-act="buy" data-id="${i}" data-n="20" ${S.money < ingCost(i, 20) ? 'disabled' : ''}>+20 (${ingCost(i, 20)})</button>
       </div>`;
@@ -1274,7 +1321,20 @@ document.addEventListener('click', e => {
   } else if (act === 'expand') {
     const nx = SHOPS[S.shop + 1];
     if (nx && S.money >= nx.cost) { S.money -= nx.cost; S.shop++; toast(`${nx.icon} ${nx.name}(으)로 확장했어요!`); }
-  } else if (act === 'start') { startDay(); return; }
+  } else if (act === 'start') {
+    const out = emptyIngs();
+    if (S.tut === 2 && out.length &&
+        !confirm(`⚠️ 재고가 없는 재료가 있어요: ${out.map(i => ING[i].name).join(', ')}
+
+이대로 영업하면 ${blockedMenus().map(k => MENU[k].name).join(', ')}을(를) 못 만들어요.
+그래도 영업을 시작할까요?`)) {
+      nightTab = 'stock';
+      renderNight();
+      return;
+    }
+    startDay();
+    return;
+  }
   else if (act === 'replayTut') {
     S.tut = 0; save();
     tutStart(NIGHT0_TUT);
