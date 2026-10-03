@@ -24,11 +24,7 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; height: 100%; }
   body {
-    background-color: #efe1c9;
-    background-image:
-      repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 14px, transparent 14px 28px),
-      linear-gradient(#f3e6d0, #e6d2b4);
-    background-attachment: fixed;
+    background: #3b2614;
     color: var(--ink);
     font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
     touch-action: manipulation;
@@ -36,7 +32,8 @@
     -webkit-user-select: none;
     -webkit-touch-callout: none;
   }
-  #app { max-width: 560px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; }
+  #app { min-height: 100%; display: flex; flex-direction: column; }
+  .hud-inner { max-width: 848px; margin: 0 auto; }
   body.coaching #app { padding-bottom: 150px; }
   button { font: inherit; color: inherit; cursor: pointer; }
   .ic { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; font-style: normal; line-height: 1; }
@@ -140,68 +137,103 @@
   .shake { animation: shake .3s; }
   @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 
-  /* Cafe scene */
-  .scene { border: 4px solid var(--wood-dark); border-radius: 16px; overflow: hidden; margin-bottom: 10px; box-shadow: 0 6px 16px rgba(60,30,10,.25); }
-  .wall { position: relative; height: 178px; overflow: hidden; --sky: linear-gradient(#8fd0ff, #d8f0ff); }
-  .wall.s1 { background:
-      linear-gradient(transparent 128px, #6b4226 128px, #6b4226 132px, transparent 132px),
-      repeating-linear-gradient(90deg, #9a6a42 0 30px, #8c5e38 30px 32px) 0 132px / 100% 46px no-repeat,
-      #f4e7cf; }
-  .wall.s2 { background:
-      linear-gradient(transparent 132px, #4a2c17 132px, #4a2c17 136px, transparent 136px),
-      repeating-linear-gradient(90deg, #6b4226 0 30px, #5e391f 30px 32px) 0 136px / 100% 42px no-repeat,
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='36'%3E%3Crect width='40' height='36' fill='%23b4603f'/%3E%3Cpath d='M0 17h40M0 35h40M20 0v17M1 18v17M39 18v17' stroke='%23e2cdb6' stroke-width='2'/%3E%3C/svg%3E"); }
-  .wall.s3 { background:
-      linear-gradient(transparent 128px, #c9a24a 128px, #c9a24a 131px, transparent 131px),
-      repeating-linear-gradient(90deg, #3d2a1c 0 44px, #33231a 44px 46px) 0 131px / 100% 47px no-repeat,
-      repeating-linear-gradient(90deg, #2f5c4a 0 36px, #2a5343 36px 38px); }
-  .wall.s0 { background: var(--sky); }
-  .wall.s0::before { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 58px;
-      background: linear-gradient(#9c9c9c, #888); border-top: 4px solid #b9b9b9; }
-  .wall.s0::after { content: '🏪 🏠 🌳 🏬 🌳 🏠'; position: absolute; left: 0; right: 0; bottom: 54px; text-align: left; padding-left: 10px; font-size: 2rem; letter-spacing: 4px; opacity: .55; white-space: nowrap; z-index: 0; }
-  .awning { position: absolute; top: 0; left: 0; right: 0; height: 34px; z-index: 2;
-      background: repeating-linear-gradient(90deg, #d24b3e 0 28px, #fff6ea 28px 56px);
-      box-shadow: 0 3px 4px rgba(0,0,0,.2); }
-  .awning::after { content: ''; position: absolute; left: 0; right: 0; bottom: -12px; height: 12px;
-      background: radial-gradient(circle at 14px 0, #d24b3e 13px, transparent 14px) 0 0 / 56px 12px,
-                  radial-gradient(circle at 42px 0, #fff6ea 13px, transparent 14px) 0 0 / 56px 12px; }
-  .lamps { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-around; z-index: 2; pointer-events: none; }
-  .lamp { width: 2px; height: 26px; background: #3b2614; position: relative; }
-  .lamp::after { content: ''; position: absolute; left: -9px; top: 24px; width: 20px; height: 12px; border-radius: 10px 10px 2px 2px; background: #3b2614; box-shadow: 0 10px 22px 10px rgba(255,214,120,.55); }
-  .wall.s3 .lamp::after { background: #c9a24a; }
-  .signboard { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); z-index: 3;
-      background: linear-gradient(#8b5a34, #6b4226); color: #ffe7b8; font-weight: 800; font-size: .82rem;
-      padding: 4px 14px; border-radius: 8px; border: 2px solid #4a2c17; white-space: nowrap; box-shadow: 0 3px 6px rgba(0,0,0,.3); }
-  .wall.s0 .signboard { top: 40px; background: linear-gradient(#fff6ea, #f1e0c8); color: var(--wood-dark); border-color: var(--wood); }
-  .weekend-badge { position: absolute; top: 9px; right: 8px; z-index: 3; background: #e07b39; color: #fff; font-size: .68rem; font-weight: 800; padding: 3px 8px; border-radius: 10px; transform: rotate(4deg); }
-  .wall.s0 .weekend-badge { top: 44px; right: auto; left: 8px; transform: rotate(-4deg); }
-  .wall-row { position: absolute; z-index: 2; left: 10px; right: 10px; top: 44px; display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; }
-  .wall.s0 .wall-row { top: 74px; justify-content: flex-end; }
-  .window { width: 30%; height: 76px; border: 5px solid #f8f1e4; outline: 3px solid #6b4226; border-radius: 4px; position: relative; overflow: hidden; background: var(--sky); flex-shrink: 0; }
-  .window::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; margin-left: -2px; background: #f8f1e4; z-index: 2; }
-  .window::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 4px; margin-top: -2px; background: #f8f1e4; z-index: 2; }
-  .window .view { position: absolute; bottom: -2px; left: 0; right: 0; text-align: center; font-size: 1.4rem; letter-spacing: 2px; white-space: nowrap; }
-  .window .cloud { position: absolute; top: 6px; left: 8px; font-size: .9rem; opacity: .9; animation: drift 18s linear infinite; }
-  @keyframes drift { from { transform: translateX(-20px); } to { transform: translateX(120px); } }
-  .wall.s0 .window { display: none; }
-  .chalk { flex: 1; max-width: 46%; min-height: 76px; background: #2f3a33; border: 5px solid #8b5a34; border-radius: 4px; color: #f4f1e6;
-      font-family: "Gaegu", "Malgun Gothic", sans-serif; font-size: .78rem; line-height: 1.15; padding: 3px 7px; box-shadow: inset 0 0 12px rgba(0,0,0,.5); }
-  .wall.s0 .chalk { max-width: 52%; transform: rotate(-2deg); }
-  .chalk-title { text-align: center; font-size: .9rem; color: #ffe08a; letter-spacing: 2px; }
-  .chalk .row { display: flex; justify-content: space-between; gap: 6px; white-space: nowrap; overflow: hidden; }
-  .chalk .row b { color: #ffd0d0; }
-  .shelf { width: 20%; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; padding-top: 2px; }
-  .shelf div { border-bottom: 5px solid #6b4226; text-align: center; font-size: 1.05rem; line-height: 1; padding-bottom: 1px; white-space: nowrap; overflow: hidden; }
-  .wall.s3 .shelf div { border-bottom-color: #c9a24a; }
+  /* ===== 화면 전체 카페 배경 ===== */
+  #bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; --sky: linear-gradient(#8fd0ff, #d8f0ff); background: #f1e2c8; }
+  #bg .wallp { position: absolute; left: 0; right: 0; top: 0; bottom: 24%; }
+  #bg.s0 .wallp { background: var(--sky); }
+  #bg.s1 .wallp { background: repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 18px, transparent 18px 36px), #f1e2c8; }
+  #bg.s2 .wallp { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='40'%3E%3Crect width='48' height='40' fill='%23b4603f'/%3E%3Cpath d='M0 19h48M0 39h48M24 0v19M1 20v19M47 20v19' stroke='%23e2cdb6' stroke-width='2'/%3E%3C/svg%3E"); }
+  #bg.s3 .wallp { background: repeating-linear-gradient(90deg, #2f5c4a 0 46px, #2a5343 46px 48px); }
+  #bg .wainscot { position: absolute; left: 0; right: 0; bottom: 24%; height: 15%; border-top: 7px solid #6b4226;
+    background: repeating-linear-gradient(90deg, #9a6a42 0 54px, #8c5e38 54px 58px); }
+  #bg.s2 .wainscot { background: repeating-linear-gradient(90deg, #6b4226 0 54px, #5e391f 54px 58px); border-top-color: #4a2c17; }
+  #bg.s3 .wainscot { background: repeating-linear-gradient(90deg, #3d2a1c 0 64px, #33231a 64px 68px); border-top-color: #c9a24a; }
+  #bg .floor { position: absolute; left: 0; right: 0; bottom: 0; height: 24%;
+    background: linear-gradient(rgba(40,20,5,.35), transparent 40%),
+      repeating-linear-gradient(90deg, #c99d6e 0 90px, #b48659 90px 92px, #c4976a 92px 180px, #b0835a 180px 182px); }
+  #bg.s0 .floor { background: linear-gradient(rgba(0,0,0,.15), transparent 30%), repeating-linear-gradient(90deg, #b9b9b9 0 70px, #a5a5a5 70px 72px); border-top: 7px solid #d4d4d4; }
+  #bg.s3 .floor { background: linear-gradient(rgba(0,0,0,.25), transparent 40%), conic-gradient(#ece6dc 25%, #cbbfae 0 50%, #ece6dc 0 75%, #cbbfae 0) 0 0 / 64px 64px; }
+  #bg .awning-top { position: absolute; top: 0; left: 0; right: 0; height: 64px; background: repeating-linear-gradient(90deg, #d24b3e 0 40px, #fff6ea 40px 80px); box-shadow: 0 4px 6px rgba(0,0,0,.2); }
+  #bg .awning-top::after { content: ''; position: absolute; left: 0; right: 0; bottom: -16px; height: 16px;
+    background: radial-gradient(circle at 20px 0, #d24b3e 19px, transparent 20px) 0 0 / 80px 16px,
+                radial-gradient(circle at 60px 0, #fff6ea 19px, transparent 20px) 0 0 / 80px 16px; }
+  #bg .city { position: absolute; left: 0; right: 0; bottom: 24%; font-size: clamp(2.5rem, 6vw, 5rem); white-space: nowrap; letter-spacing: 1vw; opacity: .55; text-align: center; line-height: 1; }
+  #bg .lamps { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-around; }
+  #bg .lamp { width: 3px; height: 70px; background: #3b2614; position: relative; }
+  #bg .lamp::after { content: ''; position: absolute; left: -16px; top: 66px; width: 34px; height: 20px; border-radius: 18px 18px 3px 3px; background: #3b2614;
+    box-shadow: 0 16px 40px 18px rgba(255,214,120,.5); }
+  #bg.s3 .lamp::after { background: #c9a24a; }
+  #bg .win { position: absolute; top: 15%; width: 16vw; min-width: 110px; height: 26vh; border: 9px solid #f8f1e4; outline: 4px solid #6b4226; border-radius: 4px; overflow: hidden; background: var(--sky); }
+  #bg .win.l { left: 3vw; } #bg .win.r { right: 3vw; }
+  #bg .win::before, #bg .win::after { content: ''; position: absolute; background: #f8f1e4; z-index: 2; }
+  #bg .win::before { left: 50%; top: 0; bottom: 0; width: 6px; margin-left: -3px; }
+  #bg .win::after { top: 50%; left: 0; right: 0; height: 6px; margin-top: -3px; }
+  #bg .win .view { position: absolute; bottom: -4px; left: 0; right: 0; text-align: center; font-size: clamp(1.6rem, 3.2vw, 3rem); white-space: nowrap; }
+  #bg .cloud { position: absolute; top: 10%; font-size: clamp(1.2rem, 2vw, 2rem); animation: drift 30s linear infinite; }
+  @keyframes drift { from { left: -20%; } to { left: 100%; } }
+  #bg .stars { position: absolute; inset: 0; color: #fff; font-size: .8rem; letter-spacing: 1.4vw; line-height: 3; opacity: .85; padding: 6px; }
+  #bg .sky-stars { bottom: 40%; font-size: 1rem; }
+  #bg .shelf { position: absolute; top: calc(15% + 26vh + 34px); width: 16vw; min-width: 110px; display: flex; flex-direction: column; gap: 3vh; }
+  #bg .shelf.l { left: 3vw; }
+  #bg .shelf div { border-bottom: 8px solid #6b4226; text-align: center; font-size: clamp(1.3rem, 2.2vw, 2.4rem); line-height: 1; white-space: nowrap; overflow: hidden; box-shadow: 0 6px 6px -4px rgba(0,0,0,.3); }
+  #bg.s3 .shelf div { border-bottom-color: #c9a24a; }
+  #bg .frame { position: absolute; top: calc(15% + 26vh + 40px); right: 5vw; width: 11vw; height: 9vw; min-width: 80px; min-height: 64px; background: #fffaf2;
+    border: 10px solid #8b5a34; box-shadow: inset 0 0 0 3px #c9a24a, 0 6px 10px rgba(0,0,0,.25); display: flex; align-items: center; justify-content: center; font-size: clamp(2rem, 5vw, 4.5rem); }
+  #bg.s3 .frame { border-color: #c9a24a; }
+  #bg .clock { position: absolute; top: 7%; right: 22vw; font-size: clamp(1.8rem, 3vw, 3rem); }
+  #bg .plant { position: absolute; bottom: 14%; display: flex; flex-direction: column; align-items: center; }
+  #bg .plant.l { left: 1.5vw; } #bg .plant.r { right: 1.5vw; }
+  #bg .plant span { font-size: clamp(3rem, 7vw, 6rem); line-height: .9; }
+  #bg .plant i { width: clamp(46px, 6vw, 84px); height: clamp(34px, 4.5vw, 60px); background: linear-gradient(#b8643c, #8e4524); clip-path: polygon(0 0, 100% 0, 85% 100%, 15% 100%); }
+  #bg .closed-sign { position: absolute; z-index: 3; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-5deg); background: #fff6ea; color: #d24b3e; font-weight: 900; font-size: 1rem; padding: 4px 12px; border: 3px solid #d24b3e; border-radius: 6px; }
+  #bg .closed-sign.street { top: 30%; left: auto; right: 4vw; transform: rotate(-5deg); font-size: 1.3rem; }
+  #bg.night .wallp, #bg.night .wainscot, #bg.night .floor, #bg.night .shelf, #bg.night .frame, #bg.night .city, #bg.night .plant, #bg.night .awning-top { filter: brightness(.5); }
+  #bg.night .win .view { filter: brightness(.6); }
+
+  /* ===== 레이아웃: 왼쪽 레시피 칠판 + 가운데 게임 ===== */
+  #layout { display: grid; grid-template-columns: 270px minmax(0, 560px); gap: 18px; justify-content: center; padding: 0 12px; }
+  #main { min-width: 0; }
+  #side { position: sticky; top: 84px; align-self: start; padding-top: 12px; max-height: calc(100vh - 92px); overflow-y: auto; }
+  .chalkboard { background: #2f3a33; border: 10px solid #8b5a34; border-radius: 8px; padding: 10px 12px;
+    box-shadow: inset 0 0 26px rgba(0,0,0,.55), 0 8px 18px rgba(40,20,5,.35);
+    color: #f4f1e6; font-family: "Gaegu", "Malgun Gothic", sans-serif; }
+  .cb-head { display: flex; align-items: center; justify-content: center; position: relative; }
+  .cb-title { text-align: center; color: #ffe08a; font-size: 1.35rem; letter-spacing: 2px; }
+  .cb-close { display: none; position: absolute; right: 0; top: 0; background: none; border: 0; color: #fff; font-size: 1.2rem; }
+  .cb-row { padding: 7px 0 6px; border-bottom: 1px dashed rgba(255,255,255,.22); }
+  .cb-row:last-child { border-bottom: 0; }
+  .cb-row .top { display: flex; justify-content: space-between; align-items: center; font-size: 1.08rem; gap: 6px; }
+  .cb-row .top .ic { font-size: 1.3rem; }
+  .cb-row .top b { color: #ffd0d0; font-size: 1.05rem; }
+  .cb-row .r { font-size: 1.2rem; display: flex; align-items: center; gap: 2px; flex-wrap: wrap; margin-top: 2px; }
+  .cb-row .r .op { font-size: .8rem; color: #b9c4bd; }
+  .cb-row.hot .top > span:first-child::after { content: ' 추천'; color: #ffb36b; font-size: .8rem; }
+  .cb-hint { margin-top: 8px; padding-top: 6px; border-top: 2px solid rgba(255,255,255,.25); font-size: .9rem; color: #d7e0da; line-height: 1.4; }
+  #bookToggle { display: none; position: fixed; left: 0; top: 42%; z-index: 16; writing-mode: vertical-rl; background: #2f3a33; color: #ffe08a;
+    border: 3px solid #8b5a34; border-left: 0; border-radius: 0 12px 12px 0; padding: 12px 6px; font-weight: 800; font-family: "Gaegu", sans-serif; font-size: 1.05rem; letter-spacing: 2px; box-shadow: 2px 4px 10px rgba(0,0,0,.3); }
+  @media (max-width: 860px) {
+    #layout { grid-template-columns: minmax(0, 1fr); max-width: 560px; margin: 0 auto; padding: 0; }
+    #side { position: fixed; z-index: 17; left: 0; top: 0; bottom: 0; width: 86%; max-width: 320px; max-height: none; padding: 12px;
+      background: rgba(30,18,8,.55); transform: translateX(-105%); transition: transform .25s; }
+    body.book-open #side { transform: none; }
+    #bookToggle { display: block; }
+    body.book-open #bookToggle { display: none; }
+    .cb-close { display: block; }
+    /* 좁은 화면에서는 내용 뒤로 비치는 소품을 줄인다 */
+    #bg .win, #bg .shelf, #bg .frame, #bg .clock { display: none; }
+  }
+
+  /* 손님이 서는 곳 + 앞쪽 카운터 */
+  .scene { border: 4px solid var(--wood-dark); border-radius: 16px; overflow: hidden; margin-bottom: 10px; box-shadow: 0 8px 18px rgba(40,20,5,.3); }
+  .shopname { display: block; text-align: center; margin: 0 auto 10px; width: fit-content; max-width: 100%;
+    background: linear-gradient(#8b5a34, #6b4226); color: #ffe7b8; font-weight: 800; font-size: .9rem;
+    padding: 6px 18px; border-radius: 10px; border: 3px solid #4a2c17; box-shadow: 0 4px 8px rgba(0,0,0,.3); }
   .counter-bar { position: relative; height: 34px; background: linear-gradient(#a8703f, #7e4f2b 60%, #5e391f);
       border-top: 5px solid #d9b48a; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 12px 4px; font-size: 1.3rem; }
   .counter-bar .glass { background: rgba(220,240,255,.55); border: 2px solid rgba(255,255,255,.8); border-radius: 6px 6px 0 0; padding: 0 6px; position: relative; top: -14px; font-size: 1.1rem; }
-  .wall.night { --sky: linear-gradient(#141a33, #2e3560); }
-  .wall.night::before { filter: brightness(.5); }
-  .wall.night .chalk, .wall.night .shelf, .wall.night .window .view { filter: brightness(.65); }
-  .closed-sign { position: absolute; right: 10px; bottom: 10px; z-index: 3; background: #fff6ea; color: #d24b3e; font-weight: 900; font-size: .8rem; padding: 3px 10px; border: 2px solid #d24b3e; border-radius: 6px; transform: rotate(-4deg); }
-  .stars { position: absolute; inset: 0; font-size: .5rem; color: #fff; letter-spacing: 9px; line-height: 2.2; opacity: .8; }
-  .night-scene { margin: -12px -16px 12px; border-radius: 0; border-left: 0; border-right: 0; border-top: 0; }
+  /* 배경 위에서 제목이 잘 보이게 */
+  #dayView h3 { display: inline-block; background: rgba(255,250,242,.9); padding: 3px 10px; border-radius: 8px; }
+  #dayView h3.row-title { display: flex; }
 
   /* Tray */
   .row-title { display: flex; justify-content: space-between; align-items: center; }
@@ -253,13 +285,6 @@
   .btn-done:disabled { background: #c9b8a6; }
   .btn-trash { background: #e8d6c0; }
 
-  /* Recipe book */
-  details.book { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; margin-top: 12px; }
-  details.book summary { font-weight: 700; color: var(--wood); cursor: pointer; }
-  .rec { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: .85rem; border-bottom: 1px dashed var(--line); }
-  .rec:last-child { border-bottom: 0; }
-  .rec .r { font-size: 1.5rem; display: flex; align-items: center; gap: 2px; }
-  .rec .r .op { font-size: .8rem; color: var(--muted); }
   #stockBar { display: flex; flex-wrap: wrap; gap: 6px; font-size: .85rem; }
   .stk { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 3px 7px; display: flex; align-items: center; gap: 4px; }
   .stk .ic { font-size: 1.3rem; }
@@ -332,8 +357,9 @@
 </style>
 </head>
 <body>
+<div id="bg"></div>
 <div id="app">
-  <header id="hud">
+  <header id="hud"><div class="hud-inner">
     <div class="hud-row">
       <span id="hudDay">1일차</span>
       <span class="rep" id="hudRep"></span>
@@ -341,13 +367,22 @@
     </div>
     <div class="clock-bar"><div id="hudClock"></div></div>
     <div id="stockWarn"></div>
-  </header>
+  </div></header>
+
+  <div id="layout">
+  <aside id="side">
+    <div class="chalkboard">
+      <div class="cb-head"><div class="cb-title">📖 레시피</div><button class="cb-close" data-act="bookClose">✕</button></div>
+      <div id="bookList"></div>
+      <div class="cb-hint">🟤 샷 · 💧 물 · 🍼 우유는 <b>꾹 눌렀다가</b> 초록 구간에서 떼기<br>🔥 굽기는 눌렀다가 <b>다시 눌러</b> 꺼내기<br>🌀 블렌더는 <b>연타</b>!</div>
+    </div>
+  </aside>
+  <main id="main">
 
   <section id="dayView" class="hidden">
     <div class="shopname" id="shopName"></div>
     <div class="daybar"><div id="quests"></div><div id="combo"></div></div>
     <div class="scene">
-      <div id="wall"></div>
       <div id="counter"></div>
       <div class="counter-bar"><span>💰</span><span class="glass">🍰🧁🍩</span><span>☕</span></div>
     </div>
@@ -367,13 +402,15 @@
         <button class="btn-done" data-act="done" id="doneBtn">✅ 완성</button>
       </div>
     </div>
-    <details class="book" id="book" open><summary>📖 레시피</summary><div id="bookList"></div></details>
     <h3>📦 재고</h3>
     <div id="stockBar"></div>
   </section>
 
   <section id="nightView" class="hidden"></section>
+  </main>
+  </div>
 </div>
+<button id="bookToggle" data-act="book">📖 레시피</button>
 <div id="coach" class="hidden"></div>
 <div id="soldPanel" class="hidden"></div>
 <div id="overlay" class="hidden"></div>
@@ -542,28 +579,35 @@ function skyAt(p) {
   return 'linear-gradient(#5b4e8a, #f08a6a)';
 }
 
-function wallHtml(night) {
-  const sh = S.shop;
-  const menu = unlockedMenu().slice(0, 5).map(k =>
-    `<div class="row"><span>${ic(MENU[k].icon)} ${MENU[k].name}</span><b>${menuPrice(k)}</b></div>`).join('');
-  const more = unlockedMenu().length > 5 ? `<div class="row" style="justify-content:center">… 외 ${unlockedMenu().length - 5}개</div>` : '';
-  return `<div class="wall s${sh} ${night ? 'night' : ''}">
-    ${sh === 0 ? '<div class="awning"></div>' : `<div class="lamps">${'<span class="lamp"></span>'.repeat(sh + 2)}</div>`}
-    <div class="signboard">${SHOPS[sh].icon} ${SHOPS[sh].name}</div>
-    ${!night && isWeekend() ? '<div class="weekend-badge">🎉 주말 손님 폭주!</div>' : ''}
-    ${night && sh === 0 ? '<div class="stars">✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧</div>' : ''}
-    <div class="wall-row">
-      ${sh > 0 ? `<div class="window">${night ? '<div class="stars">✦ · ✧ · ✦</div>' : '<span class="cloud">☁️</span>'}<div class="view">${VIEWS[sh]}</div></div>` : ''}
-      <div class="chalk"><div class="chalk-title">✿ MENU ✿</div>${menu}${more}</div>
-      ${sh > 0 ? `<div class="shelf">${SHELVES[sh].map(r => `<div>${r}</div>`).join('')}</div>` : ''}
-    </div>
-    ${night ? '<div class="closed-sign">CLOSED</div>' : ''}
-  </div>`;
+// 화면 전체 배경: 가게 단계마다 인테리어가 다르고, 밤에는 불이 꺼진다
+function renderBg(night) {
+  const sh = S.shop, bg = $('bg');
+  bg.className = `s${sh}${night ? ' night' : ''}`;
+  const win = side => `<div class="win ${side}">${night ? '<div class="stars">✦ · ✧ · ✦ · ✧ · ✦</div>' : '<span class="cloud">☁️</span>'}
+    <div class="view">${VIEWS[sh]}</div>${night && side === 'r' ? '<div class="closed-sign">CLOSED</div>' : ''}</div>`;
+  bg.innerHTML = `<div class="wallp"></div>
+    ${sh === 0 ? `<div class="awning-top"></div><div class="city">🏪 🏠 🌳 🏬 🏢 🌳 🏠 🏪 🏬 🌳 🏠 🏢</div>
+      ${night ? '<div class="stars sky-stars">✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧</div><div class="closed-sign street">CLOSED</div>' : ''}`
+    : `<div class="wainscot"></div>
+      <div class="lamps">${'<span class="lamp"></span>'.repeat(4 + sh * 2)}</div>
+      ${win('l')}${win('r')}
+      <div class="shelf l">${SHELVES[sh].map(r => `<div>${r}</div>`).join('')}</div>
+      <div class="frame">${['', '🌄', '🌅', '🎨'][sh]}</div>
+      <div class="clock">🕰️</div>`}
+    <div class="floor"></div>
+    <div class="plant l"><span>🌿</span><i></i></div>
+    <div class="plant r"><span>${sh === 0 ? '🌳' : '🌵'}</span><i></i></div>`;
+  updateSky();
 }
 
 function updateSky() {
-  const w = document.querySelector('#wall .wall');
-  if (w && R) w.style.setProperty('--sky', skyAt(Math.min(1, R.t / DAY_LEN)));
+  $('bg').style.setProperty('--sky', R ? skyAt(Math.min(1, R.t / DAY_LEN)) : 'linear-gradient(#141a33, #2e3560)');
+}
+
+// 왼쪽 칠판 레시피
+function renderBook() {
+  $('bookList').innerHTML = unlockedMenu().map(k =>
+    `<div class="cb-row ${k === S.special ? 'hot' : ''}"><div class="top"><span>${ic(MENU[k].icon)} ${MENU[k].name}</span><b>${menuPrice(k)}</b></div>${recipeHtml(k)}</div>`).join('');
 }
 
 const emptyIngs = () => usedIngs().filter(i => S.stock[i] <= 0);
@@ -715,7 +759,7 @@ const DAY_TUT = [
     target: '.cust', done: () => R.stats.served >= 1 },
   { say: `두 번째 손님은 ${ic('cookie')} <b>쿠키</b>를 원해요.<br>쿠키는 ${ic('plate')} 접시 + ${ic('cookie')} 쿠키! 반짝이는 버튼을 따라 만들고 서빙해보세요.`,
     target: () => guideTarget('cookie'), setup: () => tutCustomer('cookie'), done: () => R.stats.served >= 2 },
-  { say: `세 번째 손님은 ${ic('latte')} <b>카페라떼</b>예요.<br>레시피는 화면 아래 📖 <b>레시피</b>에서 언제든 볼 수 있어요. 잘못 넣었으면 🗑 <b>버리기</b>로 다시!`,
+  { say: `세 번째 손님은 ${ic('latte')} <b>카페라떼</b>예요.<br>레시피는 <b>왼쪽 📖 레시피 칠판</b>에서 언제든 볼 수 있어요. 잘못 넣었으면 🗑 <b>버리기</b>로 다시!`,
     target: () => guideTarget('latte'), setup: () => tutCustomer('latte'), done: () => R.stats.served >= 3 },
   { say: `완벽해요! 🎉<br>손님 아래 <b>초록 막대</b>는 인내심이에요. 다 떨어지면 화내고 떠나요 😠<br>맨 위 <b>시계 막대</b>가 다 차면 영업이 끝나요.<br>손님 위의 <b>📜 의뢰</b>를 달성하면 보너스 돈을 받고, 연속으로 서빙하면 <b>🔥 콤보</b>로 돈을 더 받아요!`,
     next: '영업 시작!' },
@@ -812,11 +856,9 @@ function startDay() {
   };
   $('nightView').classList.add('hidden');
   $('dayView').classList.remove('hidden');
-  $('shopName').innerHTML = '';
-  $('wall').innerHTML = wallHtml(false);
-  $('bookList').innerHTML = unlockedMenu().map(k =>
-    `<div class="rec"><span class="r">${ic(MENU[k].icon)}</span><b>${MENU[k].name}${k === S.special ? '<span class="sale-tag">추천 ×1.5</span>' : ''}</b><span style="margin-left:auto">${recipeHtml(k)}</span></div>`).join('');
-  $('book').open = S.day <= 3;
+  $('shopName').innerHTML = `${SHOPS[S.shop].icon} ${SHOPS[S.shop].name} — 영업 중${isWeekend() ? ' · 🎉 주말 손님 폭주!' : ''}`;
+  renderBg(false);
+  renderBook();
   window.scrollTo(0, 0);
   last = performance.now();
   renderBench();
@@ -1475,7 +1517,9 @@ function upCost(k) { return Math.round(UPS[k].cost(S.up[k])); }
 
 function renderNight() {
   renderHud();
-  let html = `<div class="scene night-scene">${wallHtml(true)}</div>`;
+  renderBg(true);
+  renderBook();
+  let html = '';
   if (lastSummary) {
     const s = lastSummary;
     html += `<div class="card"><h2>🌙 ${s.day}일차 영업 결과</h2><div class="sum">
@@ -1696,6 +1740,11 @@ document.addEventListener('click', e => {
   save();
   renderNight();
   tutTick();
+});
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act="book"], [data-act="bookClose"]');
+  if (el) document.body.classList.toggle('book-open', el.dataset.act === 'book');
 });
 
 // ---------- 루프 ----------
