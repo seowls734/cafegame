@@ -30,7 +30,9 @@
     -webkit-touch-callout: none;
   }
   #app { max-width: 560px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; }
+  body.coaching #app { padding-bottom: 150px; }
   button { font: inherit; color: inherit; cursor: pointer; }
+  svg.ic { width: 1em; height: 1em; vertical-align: -0.15em; display: inline-block; overflow: visible; }
 
   /* HUD */
   #hud {
@@ -66,9 +68,9 @@
   .cust.ready { border-color: var(--good); box-shadow: 0 0 0 3px rgba(79,157,74,.3); }
   .cust.vip { background: #fff3c4; }
   .cust .face { font-size: 2rem; line-height: 1; }
-  .bubble { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 2px 6px; font-size: 1.3rem; display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; }
+  .bubble { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 3px 6px; font-size: 1.6rem; display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; }
   .bubble .got { background: #d8f0d2; border-radius: 4px; }
-  .bubble small { display: block; font-size: .6rem; color: var(--muted); text-align: center; }
+  .bubble small { flex-basis: 100%; font-size: .6rem; color: var(--muted); text-align: center; }
   .pbar { width: 86%; height: 6px; background: #eadbc5; border-radius: 3px; overflow: hidden; }
   .pbar > div { height: 100%; }
   .shake { animation: shake .3s; }
@@ -78,39 +80,41 @@
   .row-title { display: flex; justify-content: space-between; align-items: center; }
   .small-btn { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 3px 8px; font-size: .78rem; }
   #tray {
-    min-height: 52px; background: #d9b98f; border: 2px solid var(--wood); border-radius: 12px;
-    display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding: 6px 8px; font-size: 1.6rem;
+    min-height: 56px; background: #d9b98f; border: 2px solid var(--wood); border-radius: 12px;
+    display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding: 6px 8px; font-size: 2rem;
   }
   #tray .empty { font-size: .85rem; color: var(--wood-dark); opacity: .7; }
-  .titem { position: relative; }
+  .titem { position: relative; line-height: 1; }
   .titem i { position: absolute; right: -4px; bottom: -2px; font-size: .6rem; font-style: normal; }
 
   /* Workbench */
   #bench { background: var(--panel); border: 3px solid var(--wood); border-radius: 14px; padding: 10px; }
   .build {
-    min-height: 54px; border-radius: 10px; background: #f1e3cd; display: flex; align-items: center; gap: 6px;
-    padding: 6px 10px; font-size: 1.6rem; flex-wrap: wrap;
+    min-height: 58px; border-radius: 10px; background: #f1e3cd; display: flex; align-items: center; gap: 6px;
+    padding: 6px 10px 12px; font-size: 1.8rem; flex-wrap: wrap;
   }
   .build .hint { font-size: .85rem; color: var(--muted); }
-  .build .part { position: relative; }
-  .build .part i { position: absolute; left: 50%; bottom: -10px; transform: translateX(-50%); font-size: .55rem; font-style: normal; white-space: nowrap; font-weight: 700; }
+  .build .plus-sign { font-size: 1rem; color: var(--muted); }
+  .build .part { position: relative; line-height: 1; }
+  .build .part i { position: absolute; left: 50%; bottom: -12px; transform: translateX(-50%); font-size: .55rem; font-style: normal; white-space: nowrap; }
   .build.bad { background: #f6d3cc; }
   .build-status { font-size: .85rem; margin: 6px 0 2px; min-height: 1.2em; font-weight: 700; }
+  .build-status svg.ic { font-size: 1.3em; }
   .gauge-wrap { margin: 8px 0; }
-  .gauge-wrap .lbl { font-size: .8rem; color: var(--wood-dark); margin-bottom: 4px; font-weight: 700; }
-  .gauge { position: relative; height: 26px; background: #e6d6be; border-radius: 13px; overflow: hidden; border: 2px solid var(--wood); }
-  .gauge .zone { position: absolute; top: 0; bottom: 0; background: rgba(79,157,74,.45); }
+  .gauge-wrap .lbl { font-size: .85rem; color: var(--wood-dark); margin-bottom: 4px; font-weight: 700; }
+  .gauge { position: relative; height: 28px; background: #e6d6be; border-radius: 14px; overflow: hidden; border: 2px solid var(--wood); }
+  .gauge .zone { position: absolute; top: 0; bottom: 0; background: rgba(79,157,74,.5); }
   .gauge .fill { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(139,90,52,.6); }
   .gauge .mark { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--wood-dark); }
   .grp-label { font-size: .75rem; color: var(--muted); margin: 8px 0 4px; }
   .parts { display: grid; grid-template-columns: repeat(auto-fill, minmax(74px, 1fr)); gap: 6px; }
   .pbtn {
     background: #fff; border: 2px solid var(--wood); border-radius: 12px; padding: 6px 2px;
-    display: flex; flex-direction: column; align-items: center; gap: 1px; box-shadow: 0 3px 0 var(--wood);
+    display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 3px 0 var(--wood);
     touch-action: none;
   }
   .pbtn:active, .pbtn.active { transform: translateY(2px); box-shadow: 0 1px 0 var(--wood); background: #ffe9cf; }
-  .pbtn .ico { font-size: 1.5rem; }
+  .pbtn .ico { font-size: 2rem; line-height: 1; }
   .pbtn .nm { font-size: .7rem; font-weight: 700; }
   .pbtn .sub { font-size: .6rem; color: var(--muted); }
   .pbtn.off { opacity: .4; }
@@ -124,11 +128,13 @@
   /* Recipe book */
   details.book { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; margin-top: 12px; }
   details.book summary { font-weight: 700; color: var(--wood); cursor: pointer; }
-  .rec { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: .85rem; border-bottom: 1px dashed var(--line); }
+  .rec { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: .85rem; border-bottom: 1px dashed var(--line); }
   .rec:last-child { border-bottom: 0; }
-  .rec .r { font-size: 1.1rem; }
+  .rec .r { font-size: 1.5rem; display: flex; align-items: center; gap: 2px; }
+  .rec .r .op { font-size: .8rem; color: var(--muted); }
   #stockBar { display: flex; flex-wrap: wrap; gap: 6px; font-size: .85rem; }
-  .stk { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 3px 7px; }
+  .stk { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 3px 7px; display: flex; align-items: center; gap: 4px; }
+  .stk svg.ic { font-size: 1.3rem; }
   .stk.low { border-color: var(--bad); color: var(--bad); font-weight: 700; }
 
   /* Night */
@@ -142,10 +148,12 @@
   .tab.on { background: var(--wood); color: #fff; }
   .item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
   .item:last-child { border-bottom: 0; }
-  .item .ico { font-size: 1.8rem; width: 40px; text-align: center; }
+  .item .ico { font-size: 2.2rem; width: 44px; text-align: center; line-height: 1; }
   .item .info { flex: 1; min-width: 0; }
   .item .info b { display: block; }
   .item .info span { font-size: .78rem; color: var(--muted); }
+  .item .info .r { font-size: 1.2rem; display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
+  .item .info .r .op { font-size: .7rem; }
   .buy {
     border: 0; background: var(--accent); color: #fff; font-weight: 700; border-radius: 10px; padding: 8px 10px; font-size: .8rem; white-space: nowrap;
   }
@@ -155,19 +163,42 @@
     background: var(--accent); color: #fff; box-shadow: 0 4px 0 #a9541f;
   }
   .big:active { transform: translateY(2px); box-shadow: 0 2px 0 #a9541f; }
-  .warn-text { color: var(--bad); font-size: .85rem; font-weight: 700; }
-  .reset { background: none; border: 0; color: var(--muted); text-decoration: underline; font-size: .8rem; margin-top: 18px; }
+  .warn-text { color: var(--bad); font-size: .85rem; font-weight: 700; display: flex; align-items: center; gap: 2px; }
+  .warn-text svg.ic { font-size: 1.3rem; }
+  .links { text-align: center; margin-top: 18px; display: flex; justify-content: center; gap: 16px; }
+  .reset { background: none; border: 0; color: var(--muted); text-decoration: underline; font-size: .8rem; }
+
+  /* Tutorial */
+  #coach {
+    position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 15;
+    width: calc(100% - 24px); max-width: 536px;
+    background: #fff; border: 3px solid var(--accent); border-radius: 16px; padding: 10px 12px;
+    box-shadow: 0 6px 20px rgba(60,30,10,.3);
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  #coach .who { font-size: 2.2rem; line-height: 1; }
+  #coach .say { flex: 1; font-size: .92rem; line-height: 1.55; }
+  #coach .say svg.ic { font-size: 1.35em; vertical-align: -0.3em; }
+  #coach .step { font-size: .7rem; color: var(--muted); }
+  #coach button { margin-top: 6px; border: 0; background: var(--accent); color: #fff; font-weight: 800; border-radius: 10px; padding: 7px 14px; }
+  .tut-glow { position: relative; z-index: 2; animation: glow 1s ease-in-out infinite; }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 0 3px #ffb347, 0 0 14px 4px rgba(255,160,50,.7); }
+    50% { box-shadow: 0 0 0 5px #ff8c1a, 0 0 22px 8px rgba(255,140,30,.9); }
+  }
 
   /* Overlay, toast, floats */
   #overlay { position: fixed; inset: 0; background: rgba(40,25,10,.7); display: flex; align-items: center; justify-content: center; z-index: 20; padding: 16px; }
   #overlay .card { max-width: 380px; width: 100%; text-align: center; }
   #toast {
-    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 30;
-    background: rgba(40,25,10,.9); color: #fff; padding: 8px 14px; border-radius: 20px; font-size: .9rem;
+    position: fixed; left: 50%; top: 70px; transform: translateX(-50%); z-index: 30;
+    background: rgba(40,25,10,.92); color: #fff; padding: 8px 14px; border-radius: 20px; font-size: .9rem;
     opacity: 0; transition: opacity .2s; pointer-events: none; max-width: calc(100% - 32px); text-align: center;
   }
+  #toast svg.ic { font-size: 1.3em; vertical-align: -0.3em; }
   #toast.show { opacity: 1; }
   .float { position: fixed; z-index: 25; font-weight: 800; pointer-events: none; animation: floatUp 1s forwards; text-shadow: 0 1px 2px #fff; white-space: nowrap; }
+  .float svg.ic { font-size: 1.4em; vertical-align: -0.3em; }
   @keyframes floatUp { to { transform: translateY(-40px); opacity: 0; } }
 </style>
 </head>
@@ -187,7 +218,7 @@
     <div id="counter"></div>
     <h3 class="row-title"><span>🍽️ 쟁반 <small id="trayCount"></small></span><button class="small-btn" data-act="clearTray">🗑 비우기</button></h3>
     <div id="tray"></div>
-    <h3>🧑‍🍳 작업대</h3>
+    <h3>👨‍🍳 작업대</h3>
     <div id="bench">
       <div class="build" id="build"></div>
       <div class="build-status" id="buildStatus"></div>
@@ -208,22 +239,118 @@
 
   <section id="nightView" class="hidden"></section>
 </div>
+<div id="coach" class="hidden"></div>
 <div id="overlay" class="hidden"></div>
 <div id="toast"></div>
 
 <script>
 'use strict';
 
+// ---------- 그림 ----------
+// 이모지는 기기(특히 윈도우 10)마다 안 보이거나 다르게 보여서, 음식·재료·도구는 직접 그린 SVG를 쓴다.
+const LINE = '#5e3a1f';
+const steam = `<path d="M17 9q3-3 0-6M24 9q3-3 0-6M31 9q3-3 0-6" stroke="#c4b09a" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+const mug = (liquid, extra = '') => `
+  <path d="M34 19h3a6 6 0 0 1 0 12h-3" fill="none" stroke="${LINE}" stroke-width="3"/>
+  <path d="M9 13h26v21a9 9 0 0 1-9 9h-8a9 9 0 0 1-9-9z" fill="#fffaf2" stroke="${LINE}" stroke-width="3" stroke-linejoin="round"/>
+  ${liquid ? `<ellipse cx="22" cy="16.5" rx="11" ry="3" fill="${liquid}"/>${steam}` : ''}${extra}`;
+const iceCup = (liquid, extra = '') => `
+  ${liquid ? `<path d="M13.4 19h21.2l-2.2 22h-16.8z" fill="${liquid}"/>
+    <rect x="16" y="21" width="7" height="7" rx="1.5" fill="#fff" opacity=".75" transform="rotate(-12 19.5 24.5)"/>
+    <rect x="25" y="24" width="7" height="7" rx="1.5" fill="#fff" opacity=".75" transform="rotate(10 28.5 27.5)"/>` : ''}
+  <path d="M11 11h26l-3 32h-20z" fill="${liquid ? 'none' : '#eaf6fd'}" stroke="#4d7f9e" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M9 11h30" stroke="#4d7f9e" stroke-width="3" stroke-linecap="round"/>
+  <path d="M27 11l5-9" stroke="${liquid ? '#e0534a' : '#4d7f9e'}" stroke-width="3" stroke-linecap="round"/>${extra}`;
+const strawberry = (s = 1, x = 0, y = 0) => `<g transform="translate(${x} ${y}) scale(${s})">
+  <path d="M24 44C10 34 6 22 12 16c6-5 18-5 24 0 6 6 2 18-12 28z" fill="#e0453f" stroke="#a52a24" stroke-width="2"/>
+  <path d="M14 14l5 4 5-6 5 6 5-4-4-4-6-1-6 1z" fill="#4f9d4a"/>
+  <g fill="#ffe08a"><circle cx="18" cy="24" r="1.4"/><circle cx="24" cy="22" r="1.4"/><circle cx="30" cy="24" r="1.4"/><circle cx="21" cy="31" r="1.4"/><circle cx="27" cy="31" r="1.4"/><circle cx="24" cy="37" r="1.4"/></g></g>`;
+const cakeSlice = `
+  <path d="M8 20l22-10 12 6-22 10z" fill="#fff" stroke="#c98a8a" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M8 20l12 6v14L8 34z" fill="#f4d6a0" stroke="#a8702e" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M20 26l22-10v14L20 40z" fill="#f8e2b8" stroke="#a8702e" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M8.5 27.5l11.5 6 21.5-10" fill="none" stroke="#fff" stroke-width="3"/>
+  <path d="M8.5 27.5l11.5 6 21.5-10" fill="none" stroke="#f08a9a" stroke-width="1.2"/>
+  <circle cx="27" cy="15" r="4" fill="#e0453f"/><path d="M24.5 11.5l2.5 2 2.5-2" stroke="#4f9d4a" stroke-width="2" fill="none"/>`;
+const cookie = `<circle cx="24" cy="24" r="17" fill="#d9a35b" stroke="#a8702e" stroke-width="2.5"/>
+  <g fill="#4a2a14"><circle cx="18" cy="17" r="2.6"/><circle cx="30" cy="19" r="2.6"/><circle cx="20" cy="30" r="2.6"/><circle cx="31" cy="30" r="2.6"/><circle cx="25" cy="24" r="2.2"/></g>`;
+const croissant = (c1 = '#d98f3a', c2 = '#e6a24b', c3 = '#f0b45a', st = '#9c6020') => `
+  <ellipse cx="10" cy="32" rx="5" ry="7" transform="rotate(-50 10 32)" fill="${c1}" stroke="${st}" stroke-width="2"/>
+  <ellipse cx="38" cy="32" rx="5" ry="7" transform="rotate(50 38 32)" fill="${c1}" stroke="${st}" stroke-width="2"/>
+  <ellipse cx="16" cy="25" rx="6" ry="9" transform="rotate(-30 16 25)" fill="${c2}" stroke="${st}" stroke-width="2"/>
+  <ellipse cx="32" cy="25" rx="6" ry="9" transform="rotate(30 32 25)" fill="${c2}" stroke="${st}" stroke-width="2"/>
+  <ellipse cx="24" cy="22" rx="7" ry="11" fill="${c3}" stroke="${st}" stroke-width="2"/>`;
+const leaf = `<path d="M8 40C8 18 22 8 42 6c-2 20-12 34-34 34z" fill="#5aa64a" stroke="#356b2b" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M8 40c10-10 18-18 28-28" fill="none" stroke="#356b2b" stroke-width="2"/>`;
+const cocoa = `<path d="M11 25c3-11 23-11 26 0z" fill="#7a4428"/>
+  <path d="M6 25h36a18 15 0 0 1-36 0z" fill="#e8d6c0" stroke="#8a7360" stroke-width="2.5" stroke-linejoin="round"/>`;
+const drop = (fill, stroke) => `<path d="M24 5C24 5 10 22 10 30a14 14 0 0 0 28 0C38 22 24 5 24 5z" fill="${fill}" stroke="${stroke}" stroke-width="2.5"/>
+  <path d="M17 30a7 7 0 0 0 5 7" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".8"/>`;
+const milkCarton = `<path d="M14 16L24 7l10 9v26H14z" fill="#fff" stroke="#4d7f9e" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M14 16h20" stroke="#4d7f9e" stroke-width="2.5"/><rect x="15" y="24" width="18" height="10" fill="#5ba3d6"/>
+  <path d="M20 4h8v5h-8z" fill="#fff" stroke="#4d7f9e" stroke-width="2"/>`;
+
+const ICONS = {
+  coin: `<circle cx="24" cy="24" r="19" fill="#f4c542" stroke="#b8860b" stroke-width="3"/><circle cx="24" cy="24" r="12" fill="none" stroke="#d9a520" stroke-width="2.5"/>`,
+  // 메뉴
+  americano: mug('#3b2312'),
+  latte: mug('#d2a679', `<path d="M22 16.8c-1.6-1.8-4-.3-2.4 1.3L22 20l2.4-1.9c1.6-1.6-.8-3.1-2.4-1.3z" fill="#fff"/>`),
+  choco: mug('#6b3a22', `<g fill="#fff" stroke="#e2cfb8" stroke-width="1.5"><circle cx="16" cy="13" r="4.5"/><circle cx="28" cy="13" r="4.5"/><circle cx="22" cy="10" r="5.5"/></g>`),
+  teaCup: mug('#c0602a', `<path d="M27 16l6-9" stroke="#999" stroke-width="1.5"/><rect x="31" y="2" width="7" height="7" rx="1" fill="#e8c35a" stroke="#a8862a" stroke-width="1.5"/>`),
+  iceame: iceCup('#4a2c17'),
+  icelatte: iceCup('#c79a6c'),
+  smoothie: iceCup('#f07a9a', strawberry(0.38, 4, 4)),
+  cookie,
+  cakeSlice,
+  croissant: croissant(),
+  // 도구·재료 넣기
+  mug: mug(null),
+  icecup: iceCup(null),
+  plate: `<ellipse cx="24" cy="29" rx="20" ry="9" fill="#fff" stroke="#8a7360" stroke-width="2.5"/><ellipse cx="24" cy="28" rx="12" ry="5" fill="none" stroke="#d8c8b4" stroke-width="2"/>`,
+  shot: `<rect x="15" y="2" width="18" height="6" rx="1.5" fill="#666"/><path d="M24 8v12" stroke="#4a2a14" stroke-width="3"/>
+    <path d="M36 25h2a4 4 0 0 1 0 8h-2" fill="none" stroke="${LINE}" stroke-width="2.5"/>
+    <path d="M12 21h24v8a10 10 0 0 1-10 10h-4a10 10 0 0 1-10-10z" fill="#fff" stroke="${LINE}" stroke-width="2.5"/>
+    <ellipse cx="24" cy="22.5" rx="10.5" ry="2.5" fill="#b0743c"/>
+    <ellipse cx="24" cy="42" rx="16" ry="3.5" fill="#e8d6c0" stroke="${LINE}" stroke-width="2"/>`,
+  water: drop('#5bb6f0', '#2f7fb5'),
+  milk: milkCarton,
+  ice: `<path d="M24 6l16 8v18l-16 10-16-10V14z" fill="#d6f1fc" stroke="#6fb3d6" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M8 14l16 8 16-8M24 22v20" fill="none" stroke="#6fb3d6" stroke-width="2"/><path d="M13 18l5 2.5" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`,
+  leaf,
+  cocoa,
+  strawberry: strawberry(),
+  blender: `<path d="M12 7h24l-3 25H15z" fill="#eaf6fd" stroke="#4d7f9e" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M14.5 19h19l-1.4 13H15.9z" fill="#f07a9a"/>
+    <path d="M18 27l12-3M18 24l12 3" stroke="#888" stroke-width="2"/>
+    <rect x="10" y="3" width="28" height="5" rx="2" fill="#4d7f9e"/>
+    <rect x="10" y="32" width="28" height="11" rx="3" fill="#555"/><circle cx="24" cy="37.5" r="2.5" fill="#e0a526"/>`,
+  oven: `<rect x="5" y="7" width="38" height="34" rx="4" fill="#a3a3a3" stroke="#555" stroke-width="2.5"/>
+    <rect x="10" y="16" width="28" height="19" rx="2" fill="#f59a3c" stroke="#555" stroke-width="2"/>
+    <g transform="translate(14 19) scale(.42)">${croissant('#f2d49a', '#f6dca8', '#f9e4b8', '#b8925a')}</g>
+    <circle cx="11" cy="11.5" r="2" fill="#333"/><circle cx="17" cy="11.5" r="2" fill="#333"/><rect x="26" y="10" width="12" height="3" rx="1.5" fill="#333"/>`,
+  // 재료(재고)
+  bean: `<ellipse cx="24" cy="24" rx="12" ry="17" transform="rotate(30 24 24)" fill="#6b3b22" stroke="#3e2112" stroke-width="2"/>
+    <path d="M16 13c10 6 6 17 16 23" fill="none" stroke="#3e2112" stroke-width="2.5" stroke-linecap="round"/>`,
+  cakeWhole: `<path d="M7 18v16a17 6 0 0 0 34 0V18" fill="#f4d6a0" stroke="#a8702e" stroke-width="2"/>
+    <path d="M7 26a17 6 0 0 0 34 0" fill="none" stroke="#fff" stroke-width="3"/>
+    <ellipse cx="24" cy="18" rx="17" ry="6" fill="#fff" stroke="#c98a8a" stroke-width="2"/>
+    <g fill="#e0453f"><circle cx="15" cy="17.5" r="3"/><circle cx="24" cy="15" r="3"/><circle cx="33" cy="17.5" r="3"/><circle cx="24" cy="20.5" r="3"/></g>`,
+  dough: `<path d="M7 33c0-11 8-18 17-18s17 7 17 18c0 5-8 7-17 7S7 38 7 33z" fill="#f6e3bd" stroke="#b8925a" stroke-width="2.5"/>
+    <g fill="#fff"><circle cx="17" cy="26" r="1.6"/><circle cx="27" cy="22" r="1.6"/><circle cx="32" cy="29" r="1.6"/></g>`,
+};
+
+const ic = key => `<svg class="ic" viewBox="0 0 48 48" aria-hidden="true">${ICONS[key] || ''}</svg>`;
+
 // ---------- 데이터 ----------
 const ING = {
-  bean:   { name: '원두',   icon: '🫘', cost: 1 },
-  milk:   { name: '우유',   icon: '🥛', cost: 1 },
-  cookie: { name: '쿠키',   icon: '🍪', cost: 1 },
-  tea:    { name: '찻잎',   icon: '🌿', cost: 2 },
-  cake:   { name: '케이크', icon: '🎂', cost: 4 },
-  dough:  { name: '생지',   icon: '🥖', cost: 2 },
-  fruit:  { name: '딸기',   icon: '🍓', cost: 3 },
-  cocoa:  { name: '코코아', icon: '🟤', cost: 3 },
+  bean:   { name: '원두',   icon: 'bean',       cost: 1 },
+  milk:   { name: '우유',   icon: 'milk',       cost: 1 },
+  cookie: { name: '쿠키',   icon: 'cookie',     cost: 1 },
+  tea:    { name: '찻잎',   icon: 'leaf',       cost: 2 },
+  cake:   { name: '케이크', icon: 'cakeWhole',  cost: 4 },
+  dough:  { name: '생지',   icon: 'dough',      cost: 2 },
+  fruit:  { name: '딸기',   icon: 'strawberry', cost: 3 },
+  cocoa:  { name: '코코아', icon: 'cocoa',      cost: 3 },
 };
 
 // 작업대 부품. gauge가 있는 부품은 직접 조작해야 하고, 결과에 따라 품질이 매겨진다.
@@ -231,33 +358,33 @@ const ING = {
 //   auto: 한 번 누르면 저절로 차오르고, 다시 눌러서 멈춤
 //   mash: 연타해서 끝까지 채우기 (가만히 있으면 줄어듦)
 const PARTS = {
-  mug:    { name: '머그컵',     icon: '☕', cup: true },
-  icecup: { name: '아이스컵',   icon: '🥤', cup: true },
-  plate:  { name: '접시',       icon: '🍽️', cup: true },
-  shot:   { name: '샷 추출',    icon: '⚫', ing: 'bean', gauge: { mode: 'hold', speed: 0.5,  zone: [0.62, 0.78] } },
-  water:  { name: '물 붓기',    icon: '💧',              gauge: { mode: 'hold', speed: 0.75, zone: [0.70, 0.86] } },
-  milk:   { name: '우유 붓기',  icon: '🥛', ing: 'milk', gauge: { mode: 'hold', speed: 0.6,  zone: [0.66, 0.82] } },
-  ice:    { name: '얼음',       icon: '🧊' },
-  tea:    { name: '찻잎',       icon: '🌿', ing: 'tea' },
-  cocoa:  { name: '코코아',     icon: '🟤', ing: 'cocoa' },
-  fruit:  { name: '딸기',       icon: '🍓', ing: 'fruit' },
-  blend:  { name: '블렌더',     icon: '🌀',              gauge: { mode: 'mash' } },
-  cookie: { name: '쿠키',       icon: '🍪', ing: 'cookie' },
-  cake:   { name: '케이크',     icon: '🍰', ing: 'cake' },
-  bake:   { name: '생지 굽기',  icon: '🥐', ing: 'dough', gauge: { mode: 'auto', speed: 0.32, zone: [0.70, 0.84] } },
+  mug:    { name: '머그컵',     icon: 'mug', cup: true },
+  icecup: { name: '아이스컵',   icon: 'icecup', cup: true },
+  plate:  { name: '접시',       icon: 'plate', cup: true },
+  shot:   { name: '샷 추출',    icon: 'shot',  ing: 'bean', gauge: { mode: 'hold', speed: 0.5,  zone: [0.62, 0.78] } },
+  water:  { name: '물 붓기',    icon: 'water',              gauge: { mode: 'hold', speed: 0.75, zone: [0.70, 0.86] } },
+  milk:   { name: '우유 붓기',  icon: 'milk',  ing: 'milk', gauge: { mode: 'hold', speed: 0.6,  zone: [0.66, 0.82] } },
+  ice:    { name: '얼음',       icon: 'ice' },
+  tea:    { name: '찻잎',       icon: 'leaf',  ing: 'tea' },
+  cocoa:  { name: '코코아',     icon: 'cocoa', ing: 'cocoa' },
+  fruit:  { name: '딸기',       icon: 'strawberry', ing: 'fruit' },
+  blend:  { name: '블렌더',     icon: 'blender',            gauge: { mode: 'mash' } },
+  cookie: { name: '쿠키',       icon: 'cookie', ing: 'cookie' },
+  cake:   { name: '케이크',     icon: 'cakeSlice', ing: 'cake' },
+  bake:   { name: '생지 굽기',  icon: 'oven',  ing: 'dough', gauge: { mode: 'auto', speed: 0.32, zone: [0.70, 0.84] } },
 };
 
 const MENU = {
-  americano: { name: '아메리카노',     icon: '☕', cup: 'mug',    parts: ['shot', 'water'],                 price: 5,  cost: 0,   shop: 0 },
-  latte:     { name: '카페라떼',       icon: '🧋', cup: 'mug',    parts: ['shot', 'milk'],                  price: 7,  cost: 0,   shop: 0 },
-  cookie:    { name: '쿠키',           icon: '🍪', cup: 'plate',  parts: ['cookie'],                        price: 3,  cost: 0,   shop: 0 },
-  iceame:    { name: '아이스아메리카노', icon: '🥤', cup: 'icecup', parts: ['ice', 'shot', 'water'],         price: 6,  cost: 40,  shop: 0 },
-  tea:       { name: '홍차',           icon: '🍵', cup: 'mug',    parts: ['tea', 'water'],                  price: 6,  cost: 60,  shop: 0 },
-  cake:      { name: '조각케이크',     icon: '🍰', cup: 'plate',  parts: ['cake'],                          price: 10, cost: 100, shop: 0 },
-  icelatte:  { name: '아이스라떼',     icon: '🧊', cup: 'icecup', parts: ['ice', 'shot', 'milk'],           price: 8,  cost: 120, shop: 0 },
-  croissant: { name: '크루아상',       icon: '🥐', cup: 'plate',  parts: ['bake'],                          price: 8,  cost: 180, shop: 1 },
-  smoothie:  { name: '딸기스무디',     icon: '🍹', cup: 'icecup', parts: ['fruit', 'milk', 'ice', 'blend'], price: 13, cost: 250, shop: 1 },
-  choco:     { name: '핫초코',         icon: '🍫', cup: 'mug',    parts: ['cocoa', 'milk'],                 price: 11, cost: 400, shop: 2 },
+  americano: { name: '아메리카노',       icon: 'americano', cup: 'mug',    parts: ['shot', 'water'],                 price: 5,  cost: 0,   shop: 0 },
+  latte:     { name: '카페라떼',         icon: 'latte',     cup: 'mug',    parts: ['shot', 'milk'],                  price: 7,  cost: 0,   shop: 0 },
+  cookie:    { name: '쿠키',             icon: 'cookie',    cup: 'plate',  parts: ['cookie'],                        price: 3,  cost: 0,   shop: 0 },
+  iceame:    { name: '아이스아메리카노', icon: 'iceame',    cup: 'icecup', parts: ['ice', 'shot', 'water'],          price: 6,  cost: 40,  shop: 0 },
+  tea:       { name: '홍차',             icon: 'teaCup',    cup: 'mug',    parts: ['tea', 'water'],                  price: 6,  cost: 60,  shop: 0 },
+  cake:      { name: '조각케이크',       icon: 'cakeSlice', cup: 'plate',  parts: ['cake'],                          price: 10, cost: 100, shop: 0 },
+  icelatte:  { name: '아이스라떼',       icon: 'icelatte',  cup: 'icecup', parts: ['ice', 'shot', 'milk'],           price: 8,  cost: 120, shop: 0 },
+  croissant: { name: '크루아상',         icon: 'croissant', cup: 'plate',  parts: ['bake'],                          price: 8,  cost: 180, shop: 1 },
+  smoothie:  { name: '딸기스무디',       icon: 'smoothie',  cup: 'icecup', parts: ['fruit', 'milk', 'ice', 'blend'], price: 13, cost: 250, shop: 1 },
+  choco:     { name: '핫초코',           icon: 'choco',     cup: 'mug',    parts: ['cocoa', 'milk'],                 price: 11, cost: 400, shop: 2 },
 };
 
 const SHOPS = [
@@ -272,19 +399,20 @@ const UPS = {
              max: () => 1 + S.shop * 2, cost: l => 60 * Math.pow(1.9, l) },
   tray:    { name: '큰 쟁반',     icon: '🍽️', desc: l => `쟁반 칸 ${trayCap(l)} → ${trayCap(l + 1)}`,
              max: () => 1 + S.shop, cost: l => 50 * Math.pow(2, l) },
-  counter: { name: '카운터 확장', icon: '🪑', desc: l => `손님 자리 ${l} → ${l + 1}`,
+  counter: { name: '카운터 확장', icon: '🛋️', desc: l => `손님 자리 ${l} → ${l + 1}`,
              max: () => 3 + S.shop, cost: l => 60 * Math.pow(2, l - 2) },
-  decor:   { name: '인테리어',    icon: '🪴', desc: l => `손님 인내심·팁 증가 (Lv.${l + 1})`,
+  decor:   { name: '인테리어',    icon: '🖼️', desc: l => `손님 인내심·팁 증가 (Lv.${l + 1})`,
              max: () => 1 + S.shop * 2, cost: l => 70 * Math.pow(1.9, l) },
   sign:    { name: '홍보 간판',   icon: '📣', desc: l => `손님이 더 자주 와요 (Lv.${l + 1})`,
              max: () => 1 + S.shop * 2, cost: l => 60 * Math.pow(1.8, l) },
-  staff:   { name: '알바생',      icon: '🧑‍🍳', desc: l => `가끔 메뉴를 대신 만들어줘요 (Lv.${l + 1})`,
+  staff:   { name: '알바생',      icon: '👨‍🍳', desc: l => `가끔 메뉴를 대신 만들어줘요 (Lv.${l + 1})`,
              max: () => Math.min(3, S.shop), cost: l => 200 * Math.pow(2.5, l) },
   robot:   { name: '서빙 로봇',   icon: '🤖', desc: () => '준비된 주문을 자동으로 서빙해요',
              max: () => (S.shop >= 2 ? 1 : 0), cost: () => 1500 },
 };
 
-const FACES = ['🧑', '👩', '👨', '🧓', '👵', '👴', '👧', '👦', '🧑‍🎓', '👩‍💼', '👨‍💼', '🧑‍🎨', '👩‍🔧', '🧑‍💻'];
+// 윈도우 10에서도 한 글자로 보이는 이모지만 쓴다
+const FACES = ['👩', '👨', '👵', '👴', '👧', '👦', '👱', '👱‍♀️', '👩‍🎓', '👨‍🎓', '👩‍💼', '👨‍💼', '👩‍💻', '👨‍🎨', '👩‍🔧', '👮'];
 const DAY_LEN = 120;   // 영업 시간(초)
 const SAVE_KEY = 'cafeSim_v1';
 
@@ -297,6 +425,7 @@ let lastSummary = null;
 function newGame() {
   return {
     day: 1, money: 60, rep: 50, shop: 0, totalEarned: 0, bestDay: 0,
+    tut: 0, // 0: 첫 영업 튜토리얼 전, 1: 첫 밤 안내 전, 2: 튜토리얼 끝
     stock: { bean: 12, milk: 6, cookie: 6, tea: 0, cake: 0, dough: 0, fruit: 0, cocoa: 0 },
     unlocked: { americano: true, latte: true, cookie: true },
     up: { equip: 0, tray: 0, counter: 2, decor: 0, sign: 0, staff: 0, robot: 0 },
@@ -312,13 +441,16 @@ function load() {
     const base = newGame();
     const up = { ...base.up };
     for (const k in up) if (d.up && typeof d.up[k] === 'number') up[k] = d.up[k];
-    return { ...base, ...d, stock: { ...base.stock, ...d.stock }, up, unlocked: { ...base.unlocked, ...d.unlocked } };
+    // 튜토리얼이 생기기 전 저장이면 이미 해본 사람으로 본다
+    const tut = typeof d.tut === 'number' ? d.tut : (d.day > 1 ? 2 : 0);
+    return { ...base, ...d, tut, stock: { ...base.stock, ...d.stock }, up, unlocked: { ...base.unlocked, ...d.unlocked } };
   } catch (e) { return null; }
 }
 
 // ---------- 공통 ----------
 const $ = id => document.getElementById(id);
 const fmt = n => Math.floor(n).toLocaleString('ko-KR');
+const coin = n => `${ic('coin')}${fmt(n)}`;
 const price = id => Math.round(MENU[id].price * SHOPS[S.shop].priceMult);
 const rent = () => Math.round((8 + S.day * 2) * SHOPS[S.shop].rentMult);
 const trayCap = (l = S.up.tray) => 4 + l * 2;
@@ -327,23 +459,23 @@ const menuIngs = id => MENU[id].parts.map(p => PARTS[p].ing).filter(Boolean);
 const usedIngs = () => Object.keys(ING).filter(i => unlockedMenu().some(m => menuIngs(m).includes(i)));
 const usedParts = () => Object.keys(PARTS).filter(p => unlockedMenu().some(m => MENU[m].cup === p || MENU[m].parts.includes(p)));
 const countOf = arr => arr.reduce((o, k) => (o[k] = (o[k] || 0) + 1, o), {});
-const recipeText = id => [MENU[id].cup, ...MENU[id].parts].map(p => PARTS[p].icon).join(' + ');
+const recipeHtml = id => `<span class="r">${[MENU[id].cup, ...MENU[id].parts].map(p => ic(PARTS[p].icon)).join('<span class="op">+</span>')}</span>`;
 
 let toastTimer;
 function toast(msg) {
   const t = $('toast');
-  t.textContent = msg;
+  t.innerHTML = msg;
   t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
-function floatAt(el, text, color) {
+function floatAt(el, html, color) {
   if (!el) return;
   const r = el.getBoundingClientRect();
   const f = document.createElement('div');
   f.className = 'float';
-  f.textContent = text;
+  f.innerHTML = html;
   f.style.color = color;
   f.style.left = (r.left + r.width / 2 - 24) + 'px';
   f.style.top = (r.top + 6) + 'px';
@@ -356,20 +488,138 @@ function stars(rep) {
   return '★'.repeat(n) + '☆'.repeat(5 - n);
 }
 
-function qualityMark(q) { return q >= 0.95 ? '⭐' : q >= 0.6 ? '' : '💧'; }
+function qualityMark(q) { return q >= 0.95 ? '⭐' : q >= 0.6 ? '' : '💦'; }
 
 function renderHud() {
   $('hudDay').textContent = `${S.day}일차 ${R ? '☀️' : '🌙'}`;
   $('hudRep').textContent = `${stars(S.rep)} ${Math.round(S.rep)}`;
-  $('hudMoney').textContent = `🪙 ${fmt(S.money)}`;
+  $('hudMoney').innerHTML = coin(S.money);
   const p = R ? Math.min(1, R.t / DAY_LEN) : 0;
   $('hudClock').style.width = (p * 100) + '%';
 }
 
+// ---------- 튜토리얼 ----------
+let tut = null;          // { steps, i, onEnd }
+let lastTarget = null;
+let lastAct = null;      // 밤 화면에서 마지막으로 누른 버튼
+
+// 지금 만들어야 할 메뉴의 다음 단계 버튼을 가리킨다
+function guideTarget(id) {
+  const m = MENU[id];
+  if (R.tray.some(t => t.id === id)) return '.cust';
+  const b = R.bench;
+  const ids = b.parts.map(p => p.id);
+  if (b.cup && (b.cup !== m.cup || !isSubset(ids, m.parts))) return '[data-act="trash"]';
+  if (R.gauge) return `[data-id="${R.gauge.part}"]`;
+  if (!b.cup) return `[data-id="${m.cup}"]`;
+  const next = m.parts.find((p, i) => (countOf(ids)[p] || 0) < countOf(m.parts)[p]);
+  return next ? `[data-id="${next}"]` : '#doneBtn';
+}
+
+function tutCustomer(id) {
+  const idx = R.counter.indexOf(null);
+  R.counter[idx < 0 ? 0 : idx] = { face: FACES[Math.floor(Math.random() * FACES.length)], order: [id], pat: 60, max: 60, vip: false };
+  renderDay(true);
+}
+
+const NIGHT0_TUT = [
+  { say: `어서 오세요, 새 사장님! 👋<br>오늘부터 이 작은 <b>길거리 노점</b>을 운영하게 됐어요. 제가 처음부터 차근차근 알려드릴게요.<br>아래 <b>☀️ 영업 시작</b>을 눌러보세요!`,
+    target: '[data-act="start"]' },
+];
+
+const DAY_TUT = [
+  { say: `첫 손님이 왔어요! 손님 위 <b>말풍선</b>이 주문한 메뉴예요.<br>${ic('americano')} <b>아메리카노</b>를 주문했네요. 같이 만들어봐요.`,
+    target: '.cust', next: '좋아요!', setup: () => tutCustomer('americano') },
+  { say: `① 먼저 컵을 골라요.<br>반짝이는 ${ic('mug')} <b>머그컵</b>을 눌러주세요.`,
+    target: '[data-id="mug"]', only: ['mug'], done: () => R.bench.cup === 'mug' },
+  { say: `② ${ic('shot')} <b>샷 추출</b> 버튼을 <b>꾹 누르고 있으세요.</b><br>게이지가 차오르다가 <b style="color:#4f9d4a">초록 구간</b>에 들어오면 <b>손을 떼세요!</b>`,
+    target: '[data-id="shot"]', only: ['shot'], done: () => R.bench.parts.some(p => p.id === 'shot') },
+  { say: `잘했어요! 결과에 따라 ⭐완벽 / 👌괜찮음 / ❌실패가 붙어요.<br>③ ${ic('water')} <b>물 붓기</b>도 똑같이 꾹 눌렀다가 초록 구간에서 떼세요.`,
+    target: '[data-id="water"]', only: ['water'], done: () => R.tray.length > 0 },
+  { say: `${ic('americano')} 완성! 레시피가 맞으면 자동으로 <b>쟁반</b>에 올라가요.<br>④ 이제 반짝이는 <b>손님을 눌러서</b> 서빙하세요!`,
+    target: '.cust', done: () => R.stats.served >= 1 },
+  { say: `두 번째 손님은 ${ic('cookie')} <b>쿠키</b>를 원해요.<br>쿠키는 ${ic('plate')} 접시 + ${ic('cookie')} 쿠키! 반짝이는 버튼을 따라 만들고 서빙해보세요.`,
+    target: () => guideTarget('cookie'), setup: () => tutCustomer('cookie'), done: () => R.stats.served >= 2 },
+  { say: `세 번째 손님은 ${ic('latte')} <b>카페라떼</b>예요.<br>레시피는 화면 아래 📖 <b>레시피</b>에서 언제든 볼 수 있어요. 잘못 넣었으면 🗑 <b>버리기</b>로 다시!`,
+    target: () => guideTarget('latte'), setup: () => tutCustomer('latte'), done: () => R.stats.served >= 3 },
+  { say: `완벽해요! 🎉<br>손님 아래 <b>초록 막대</b>는 인내심이에요. 다 떨어지면 화내고 떠나요 😠<br>맨 위 <b>시계 막대</b>가 다 차면 영업이 끝나요. 이제 진짜 영업을 시작해볼까요?`,
+    next: '영업 시작!' },
+];
+
+const NIGHT1_TUT = [
+  { say: `첫 영업 수고했어요! 🌙 밤에는 내일을 준비해요.<br>재료를 써서 줄었으니 <b>🛒 전부 20개까지 채우기</b>를 눌러 재료를 사세요.`,
+    target: '[data-act="fill"]', tab: 'stock', done: () => lastAct === 'fill' },
+  { say: `좋아요! 이제 <b>🔧 업그레이드</b> 탭을 눌러보세요.`,
+    target: '[data-act="tab"][data-id="up"]', done: () => nightTab === 'up' },
+  { say: `돈을 모아 장비와 가게를 키울 수 있어요. <b>⚙️ 고급 장비</b>는 초록 구간을 넓혀줘서 초보에게 좋아요!<br><b>📋 메뉴</b> 탭에서는 새 메뉴를, <b>🏪 확장</b> 탭에서는 더 큰 가게를 살 수 있어요.`,
+    next: '알겠어요' },
+  { say: `마지막으로! 매일 밤 <b>월세</b>가 빠져나가요. 돈이 모자라면 <b>파산</b>이니 조심하세요.<br>준비가 됐으면 <b>☀️ 영업 시작</b>! 이제부터는 혼자서도 잘할 수 있을 거예요 💪`,
+    target: '[data-act="start"]' },
+];
+
+function tutStart(steps, onEnd) {
+  tut = { steps, i: -1, onEnd };
+  tutAdvance();
+}
+
+function tutAdvance() {
+  if (!tut) return;
+  tut.i++;
+  const st = tut.steps[tut.i];
+  if (!st) {
+    const end = tut.onEnd;
+    tut = null;
+    renderCoach();
+    applyHighlight();
+    if (end) end();
+    return;
+  }
+  if (st.tab) nightTab = st.tab;
+  if (st.setup) st.setup();
+  if (!R) renderNight();
+  renderCoach();
+  applyHighlight();
+}
+
+function tutTick() {
+  if (!tut) return;
+  const st = tut.steps[tut.i];
+  if (st && st.done && st.done()) tutAdvance();
+  else applyHighlight();
+}
+
+function renderCoach() {
+  const c = $('coach');
+  const st = tut && tut.steps[tut.i];
+  document.body.classList.toggle('coaching', !!st);
+  if (!st) { c.classList.add('hidden'); return; }
+  c.classList.remove('hidden');
+  c.innerHTML = `<div class="who">👩‍🍳</div><div class="say">${st.say}
+    ${st.next ? `<div><button data-act="tutNext">${st.next}</button></div>` : ''}
+    <div class="step">${tut.i + 1} / ${tut.steps.length}</div></div>`;
+}
+
+function applyHighlight() {
+  document.querySelectorAll('.tut-glow').forEach(e => e.classList.remove('tut-glow'));
+  const st = tut && tut.steps[tut.i];
+  if (!st || !st.target) { lastTarget = null; return; }
+  const sel = typeof st.target === 'function' ? st.target() : st.target;
+  const el = document.querySelector(sel);
+  if (!el) return;
+  el.classList.add('tut-glow');
+  if (sel !== lastTarget) {
+    lastTarget = sel;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
 // ---------- 영업(낮) ----------
 function startDay() {
+  const tutorial = S.tut === 0;
+  if (tut) { tut = null; renderCoach(); }
+  if (S.tut === 1) { S.tut = 2; save(); }
   R = {
-    t: 0, closing: false,
+    t: 0, closing: false, tutorial,
     counter: Array(S.up.counter).fill(null),
     tray: [],                       // { id, q }
     bench: { cup: null, parts: [] }, // parts: { id, q }
@@ -381,12 +631,26 @@ function startDay() {
   $('dayView').classList.remove('hidden');
   $('shopName').textContent = `${SHOPS[S.shop].icon} ${SHOPS[S.shop].name} — 영업 중`;
   $('bookList').innerHTML = unlockedMenu().map(k =>
-    `<div class="rec"><span class="r">${MENU[k].icon}</span><b>${MENU[k].name}</b><span style="margin-left:auto" class="r">${recipeText(k)}</span></div>`).join('');
+    `<div class="rec"><span class="r">${ic(MENU[k].icon)}</span><b>${MENU[k].name}</b><span style="margin-left:auto">${recipeHtml(k)}</span></div>`).join('');
   $('book').open = S.day <= 3;
   window.scrollTo(0, 0);
   last = performance.now();
   renderBench();
   renderDay(true);
+  if (tutorial) {
+    // 튜토리얼에 쓸 재료는 넉넉히 채워준다
+    S.stock.bean = Math.max(S.stock.bean, 6);
+    S.stock.milk = Math.max(S.stock.milk, 3);
+    S.stock.cookie = Math.max(S.stock.cookie, 3);
+    renderStock();
+    tutStart(DAY_TUT, () => {
+      R.tutorial = false;
+      R.t = 0;
+      R.spawnT = 1;
+      S.tut = 1;
+      toast('☀️ 본격 영업 시작! 화이팅!');
+    });
+  }
 }
 
 function nextSpawn() {
@@ -420,8 +684,8 @@ function serve(i) {
   if (!canServe(c)) {
     const have = countOf(R.tray.map(t => t.id));
     const missing = Object.entries(countOf(c.order)).filter(([k, n]) => (have[k] || 0) < n)
-      .map(([k, n]) => `${MENU[k].icon}${MENU[k].name}×${n - (have[k] || 0)}`).join(', ');
-    toast(`쟁반에 부족해요: ${missing}`);
+      .map(([k, n]) => `${ic(MENU[k].icon)}${MENU[k].name}×${n - (have[k] || 0)}`).join(', ');
+    toast(`아직 쟁반에 없어요: ${missing}`);
     if (el) { el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
     return;
   }
@@ -456,6 +720,7 @@ function serve(i) {
   floatAt(el, msg, color);
   R.counter[i] = null;
   renderDay(true);
+  if (R.tutorial) tutTick();
 }
 
 // ----- 작업대 -----
@@ -493,17 +758,20 @@ function pressPart(id) {
     toast('지금 하던 걸 먼저 끝내세요!');
     return;
   }
+  if (R.tutorial) tutTick();
+  const st = tut && tut.steps[tut.i];
+  if (st && st.only && !st.only.includes(id)) { toast('👆 반짝이는 버튼을 눌러주세요'); return; }
   const P = PARTS[id];
   const b = R.bench;
   if (P.cup) {
-    if (b.cup) { toast('이미 컵/접시가 놓여 있어요'); return; }
+    if (b.cup) { toast('이미 컵/접시가 놓여 있어요. 바꾸려면 🗑 버리기'); return; }
     b.cup = id;
     renderBench();
     return;
   }
   if (!b.cup) { toast('먼저 컵이나 접시를 골라주세요'); return; }
   if (b.parts.length >= 5) { toast('더 이상 넣을 수 없어요'); return; }
-  if (P.ing && S.stock[P.ing] < 1) { toast(`${ING[P.ing].icon} ${ING[P.ing].name}이(가) 다 떨어졌어요!`); return; }
+  if (P.ing && S.stock[P.ing] < 1) { toast(`${ic(ING[P.ing].icon)} ${ING[P.ing].name}이(가) 다 떨어졌어요!`); return; }
   if (P.ing) { S.stock[P.ing]--; renderStock(); }
   if (P.gauge) {
     const w = S.up.equip * 0.025;
@@ -536,7 +804,7 @@ function finishGauge(overflow) {
     else { q = 0.15; label = g.v < a ? (g.mode === 'auto' ? '덜 익었어요' : '너무 적어요') : '너무 많아요'; }
   }
   R.bench.parts.push({ id: g.part, q });
-  floatAt($('build'), `${PARTS[g.part].icon} ${label}`, q >= 1 ? '#4f9d4a' : q >= 0.6 ? '#e0a526' : '#d24b3e');
+  floatAt($('build'), `${ic(PARTS[g.part].icon)} ${label}`, q >= 1 ? '#4f9d4a' : q >= 0.6 ? '#e0a526' : '#d24b3e');
   afterAdd();
 }
 
@@ -555,10 +823,11 @@ function completeBench() {
   const q = parts.reduce((s, p) => s + p.q, 0) / parts.length;
   R.tray.push({ id: m, q });
   if (q >= 0.95) R.stats.perfect++;
-  floatAt($('tray'), `${MENU[m].icon} ${MENU[m].name} 완성!`, '#5e3a1f');
+  floatAt($('tray'), `${ic(MENU[m].icon)} ${MENU[m].name} 완성!`, '#5e3a1f');
   R.bench = { cup: null, parts: [] };
   renderBench();
   renderDay(true);
+  if (R.tutorial) tutTick();
 }
 
 function trashBench() {
@@ -576,25 +845,28 @@ function renderBench() {
   const bad = b.cup && !match && !benchCanGrow() && !g;
   buildEl.className = 'build' + (bad ? ' bad' : '');
   if (!b.cup) buildEl.innerHTML = `<span class="hint">컵이나 접시를 골라서 시작하세요</span>`;
-  else buildEl.innerHTML = [`<span class="part">${PARTS[b.cup].icon}</span>`,
-    ...b.parts.map(p => `<span class="part">${PARTS[p.id].icon}<i>${p.q >= 1 ? '⭐' : p.q >= 0.6 ? '👌' : '❌'}</i></span>`),
-    g ? `<span class="part" style="opacity:.5">${PARTS[g.part].icon}</span>` : ''].join(' + ').replace(/ \+ $/, '');
+  else {
+    const items = [`<span class="part">${ic(PARTS[b.cup].icon)}</span>`,
+      ...b.parts.map(p => `<span class="part">${ic(PARTS[p.id].icon)}<i>${p.q >= 1 ? '⭐' : p.q >= 0.6 ? '👌' : '❌'}</i></span>`)];
+    if (g) items.push(`<span class="part" style="opacity:.45">${ic(PARTS[g.part].icon)}</span>`);
+    buildEl.innerHTML = items.join('<span class="plus-sign">+</span>');
+  }
   const st = $('buildStatus');
   if (bad) { st.textContent = '❌ 레시피에 없는 조합이에요 — 버리고 다시!'; st.style.color = 'var(--bad)'; }
-  else if (match) { st.textContent = `✅ ${MENU[match].name} 완성 가능`; st.style.color = 'var(--good)'; }
+  else if (match) { st.innerHTML = `✅ ${ic(MENU[match].icon)} ${MENU[match].name} 완성 가능`; st.style.color = 'var(--good)'; }
   else if (b.cup) {
     const ids = b.parts.map(p => p.id);
-    const cands = unlockedMenu().filter(k => MENU[k].cup === b.cup && isSubset(ids, MENU[k].parts)).map(k => MENU[k].icon);
-    st.textContent = cands.length ? `만들 수 있는 것: ${cands.join(' ')}` : '';
+    const cands = unlockedMenu().filter(k => MENU[k].cup === b.cup && isSubset(ids, MENU[k].parts)).map(k => ic(MENU[k].icon));
+    st.innerHTML = cands.length ? `만들 수 있는 것: ${cands.join(' ')}` : '';
     st.style.color = 'var(--muted)';
   } else st.textContent = '';
   $('doneBtn').disabled = !match || !!g;
 
   $('gaugeWrap').classList.toggle('hidden', !g);
   if (g) {
-    $('gaugeLbl').textContent = g.mode === 'hold' ? `${PARTS[g.part].icon} 꾹 누르고 있다가 초록 구간에서 떼세요!`
-      : g.mode === 'auto' ? `${PARTS[g.part].icon} 노릇노릇해지면 다시 눌러서 꺼내세요!`
-      : `${PARTS[g.part].icon} 빠르게 연타해서 끝까지 갈아주세요!`;
+    $('gaugeLbl').textContent = g.mode === 'hold' ? `${PARTS[g.part].name}: 꾹 누르고 있다가 초록 구간에서 떼세요!`
+      : g.mode === 'auto' ? `${PARTS[g.part].name}: 노릇노릇해지면(초록 구간) 다시 눌러서 꺼내세요!`
+      : `${PARTS[g.part].name}: 빠르게 연타해서 끝까지 갈아주세요!`;
     const z = $('gaugeZone');
     if (g.zone) { z.style.left = g.zone[0] * 100 + '%'; z.style.width = (g.zone[1] - g.zone[0]) * 100 + '%'; z.style.display = ''; }
     else z.style.display = 'none';
@@ -606,12 +878,13 @@ function renderBench() {
   const btn = p => {
     const P = PARTS[p];
     const out = P.ing && S.stock[P.ing] < 1;
-    const sub = P.gauge ? (P.gauge.mode === 'hold' ? '꾹 누르기' : P.gauge.mode === 'auto' ? '눌러서 굽기' : '연타') : (P.ing ? `재고 ${S.stock[P.ing]}` : '');
+    const sub = P.gauge ? (P.gauge.mode === 'hold' ? '꾹 누르기' : P.gauge.mode === 'auto' ? '눌러서 굽기' : '연타') : (P.ing ? `재고 ${S.stock[P.ing]}` : '무료');
     return `<button class="pbtn ${P.cup ? 'cup' : ''} ${out ? 'off' : ''} ${g && g.part === p ? 'active' : ''}" data-act="part" data-id="${p}">
-      <span class="ico">${P.icon}</span><span class="nm">${P.name}</span><span class="sub">${sub}</span></button>`;
+      <span class="ico">${ic(P.icon)}</span><span class="nm">${P.name}</span><span class="sub">${sub}</span></button>`;
   };
   $('benchBtns').innerHTML = `<div class="grp-label">컵 / 접시</div><div class="parts">${cups.map(btn).join('')}</div>
     <div class="grp-label">재료 · 조리</div><div class="parts">${rest.map(btn).join('')}</div>`;
+  applyHighlight();
 }
 
 function updateGauge() {
@@ -632,7 +905,7 @@ function staffWork() {
     if (need[k] > 0 && menuIngs(k).every(i => S.stock[i] >= 1)) {
       menuIngs(k).forEach(i => S.stock[i]--);
       R.tray.push({ id: k, q: 0.7 });
-      floatAt($('tray'), `🧑‍🍳 ${MENU[k].icon}`, '#5e3a1f');
+      floatAt($('tray'), `👨‍🍳 ${ic(MENU[k].icon)}`, '#5e3a1f');
       renderStock();
       renderBench();
       return;
@@ -641,6 +914,18 @@ function staffWork() {
 }
 
 function update(dt) {
+  const g = R.gauge;
+  if (g) {
+    if (g.mode === 'mash') g.v = Math.max(0, g.v - 0.22 * dt);
+    else if (g.mode === 'auto' || g.holding) {
+      g.v += g.speed * dt;
+      if (g.v >= 1) { g.v = 1; finishGauge(true); }
+    }
+    updateGauge();
+  }
+  // 튜토리얼 중에는 시간과 손님 인내심이 멈춘다
+  if (R.tutorial) { tutTick(); return; }
+
   R.t += dt;
   if (!R.closing && R.t >= DAY_LEN) {
     R.closing = true;
@@ -660,16 +945,6 @@ function update(dt) {
       S.rep = Math.max(0, S.rep - (c.vip ? 5 : 3));
     }
   });
-  const g = R.gauge;
-  if (g) {
-    if (g.mode === 'mash') {
-      g.v = Math.max(0, g.v - 0.22 * dt);
-    } else if (g.mode === 'auto' || g.holding) {
-      g.v += g.speed * dt;
-      if (g.v >= 1) { g.v = 1; finishGauge(true); }
-    }
-    updateGauge();
-  }
   if (S.up.staff > 0) {
     R.staffT += dt;
     if (R.staffT >= 13 - S.up.staff * 3) { R.staffT = 0; staffWork(); }
@@ -688,7 +963,7 @@ function update(dt) {
 
 function renderStock() {
   $('stockBar').innerHTML = usedIngs().map(i =>
-    `<span class="stk ${S.stock[i] < 3 ? 'low' : ''}">${ING[i].icon} ${S.stock[i]}</span>`).join('');
+    `<span class="stk ${S.stock[i] < 3 ? 'low' : ''}">${ic(ING[i].icon)} ${ING[i].name} ${S.stock[i]}</span>`).join('');
 }
 
 function renderDay(force) {
@@ -704,7 +979,7 @@ function renderDay(force) {
     const items = c.order.map(k => {
       const got = have[k] > 0;
       if (got) have[k]--;
-      return `<span class="${got ? 'got' : ''}">${MENU[k].icon}</span>`;
+      return `<span class="${got ? 'got' : ''}">${ic(MENU[k].icon)}</span>`;
     }).join('');
     const names = c.order.length === 1 ? `<small>${MENU[c.order[0]].name}</small>` : '';
     return `<div class="slot cust ${ready ? 'ready' : ''} ${c.vip ? 'vip' : ''}" data-act="serve" data-slot="${i}">
@@ -715,9 +990,10 @@ function renderDay(force) {
     </div>`;
   }).join('');
   $('trayCount').textContent = `${R.tray.length}/${trayCap()}`;
-  $('tray').innerHTML = R.tray.length ? R.tray.map(t => `<span class="titem">${MENU[t.id].icon}<i>${qualityMark(t.q)}</i></span>`).join('')
+  $('tray').innerHTML = R.tray.length ? R.tray.map(t => `<span class="titem">${ic(MENU[t.id].icon)}<i>${qualityMark(t.q)}</i></span>`).join('')
     : `<span class="empty">${R.closing ? '마감 중…' : '완성한 음식이 여기에 올라와요'}</span>`;
   if (force) renderStock();
+  applyHighlight();
 }
 
 function endDay() {
@@ -738,8 +1014,11 @@ function endDay() {
 function showNight() {
   $('dayView').classList.add('hidden');
   $('nightView').classList.remove('hidden');
-  renderNight();
   window.scrollTo(0, 0);
+  lastAct = null;
+  if (S.tut === 0) tutStart(NIGHT0_TUT);
+  else if (S.tut === 1) tutStart(NIGHT1_TUT, () => { S.tut = 2; save(); });
+  else renderNight();
 }
 
 function upCost(k) { return Math.round(UPS[k].cost(S.up[k])); }
@@ -760,16 +1039,13 @@ function renderNight() {
     </div></div>`;
   } else {
     html += `<div class="card"><h2>☕ 나의 작은 카페</h2>
-      <div style="font-size:.9rem;line-height:1.7">
-      1. 손님 주문을 보고 <b>작업대</b>에서 컵을 고른 뒤 재료를 넣어 직접 만드세요.<br>
-      2. <b>샷 추출·물·우유</b>는 꾹 누르고 있다가 <b style="color:var(--good)">초록 구간</b>에서 떼야 맛있어요.<br>
-      3. 완성된 메뉴는 쟁반에 올라가요. 손님을 탭해서 서빙!<br>
-      4. 밤에는 재료를 사고 가게를 키우세요. 월세를 못 내면 파산이에요!</div></div>`;
+      <div style="font-size:.9rem;line-height:1.7">손님의 주문을 보고 직접 음료와 디저트를 만들어 파는 카페 경영 게임이에요.
+      낮에는 장사를 하고, 밤에는 재료를 사고 가게를 키워요.</div></div>`;
   }
   const lowIngs = usedIngs().filter(i => S.stock[i] < 5);
-  html += `<div class="card" style="display:flex;justify-content:space-between;align-items:center">
-    <span>내일 월세 <b>🪙${fmt(rent())}</b></span>
-    ${lowIngs.length ? `<span class="warn-text">재료 부족: ${lowIngs.map(i => ING[i].icon).join('')}</span>` : ''}
+  html += `<div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+    <span>내일 월세 <b>${coin(rent())}</b></span>
+    ${lowIngs.length ? `<span class="warn-text">재료 부족 ${lowIngs.map(i => ic(ING[i].icon)).join('')}</span>` : ''}
   </div>`;
 
   const tabs = [['stock', '📦 재료'], ['up', '🔧 업그레이드'], ['menu', '📋 메뉴'], ['shop', '🏪 확장']];
@@ -778,16 +1054,16 @@ function renderNight() {
 
   if (nightTab === 'stock') {
     const fillCost = usedIngs().reduce((s, i) => s + Math.max(0, 20 - S.stock[i]) * ING[i].cost, 0);
-    html += `<button class="buy" style="width:100%;margin-bottom:6px" data-act="fill" ${fillCost === 0 ? 'disabled' : ''}>🛒 전부 20개까지 채우기 (🪙${fmt(fillCost)})</button>`;
+    html += `<button class="buy" style="width:100%;margin-bottom:6px" data-act="fill" ${fillCost === 0 ? 'disabled' : ''}>🛒 전부 20개까지 채우기 (${coin(fillCost)})</button>`;
     html += usedIngs().map(i => {
       const g = ING[i];
-      return `<div class="item"><div class="ico">${g.icon}</div>
-        <div class="info"><b>${g.name} · ${S.stock[i]}개</b><span>개당 🪙${g.cost}</span></div>
+      return `<div class="item"><div class="ico">${ic(g.icon)}</div>
+        <div class="info"><b>${g.name} · ${S.stock[i]}개</b><span>개당 ${coin(g.cost)}</span></div>
         <button class="buy" data-act="buy" data-id="${i}" data-n="5" ${S.money < g.cost * 5 ? 'disabled' : ''}>+5 (${g.cost * 5})</button>
         <button class="buy" data-act="buy" data-id="${i}" data-n="20" ${S.money < g.cost * 20 ? 'disabled' : ''}>+20 (${g.cost * 20})</button>
       </div>`;
     }).join('');
-    html += `<div style="font-size:.75rem;color:var(--muted);margin-top:6px">💧 물과 🧊 얼음은 공짜예요.</div>`;
+    html += `<div style="font-size:.75rem;color:var(--muted);margin-top:6px">${ic('water')} 물과 ${ic('ice')} 얼음은 공짜예요.</div>`;
   } else if (nightTab === 'up') {
     html += Object.entries(UPS).map(([k, u]) => {
       const lv = S.up[k], max = u.max();
@@ -795,7 +1071,7 @@ function renderNight() {
       const cost = upCost(k);
       let btn;
       if (atMax) btn = `<button class="buy" disabled>${S.shop < 3 ? '확장 필요' : 'MAX'}</button>`;
-      else btn = `<button class="buy" data-act="up" data-id="${k}" ${S.money < cost ? 'disabled' : ''}>🪙${fmt(cost)}</button>`;
+      else btn = `<button class="buy" data-act="up" data-id="${k}" ${S.money < cost ? 'disabled' : ''}>${coin(cost)}</button>`;
       return `<div class="item"><div class="ico">${u.icon}</div>
         <div class="info"><b>${u.name} <small>(${lv}/${max})</small></b><span>${atMax ? '현재 최대' : u.desc(lv)}</span></div>${btn}</div>`;
     }).join('');
@@ -804,9 +1080,9 @@ function renderNight() {
       let btn;
       if (S.unlocked[k]) btn = `<button class="buy" disabled>판매 중</button>`;
       else if (S.shop < m.shop) btn = `<button class="buy" disabled>${SHOPS[m.shop].name} 필요</button>`;
-      else btn = `<button class="buy" data-act="unlock" data-id="${k}" ${S.money < m.cost ? 'disabled' : ''}>🪙${fmt(m.cost)}</button>`;
-      return `<div class="item"><div class="ico">${m.icon}</div>
-        <div class="info"><b>${m.name} · 🪙${price(k)}</b><span>${recipeText(k)}</span></div>${btn}</div>`;
+      else btn = `<button class="buy" data-act="unlock" data-id="${k}" ${S.money < m.cost ? 'disabled' : ''}>${coin(m.cost)}</button>`;
+      return `<div class="item"><div class="ico">${ic(m.icon)}</div>
+        <div class="info"><b>${m.name} · ${coin(price(k))}</b>${recipeHtml(k)}</div>${btn}</div>`;
     }).join('');
   } else {
     const cur = SHOPS[S.shop], nx = SHOPS[S.shop + 1];
@@ -815,16 +1091,18 @@ function renderNight() {
     if (nx) {
       html += `<div class="item"><div class="ico">${nx.icon}</div><div class="info"><b>다음: ${nx.name}</b>
         <span>판매가 ×${nx.priceMult} · 손님 증가 · 업그레이드 한도 증가 · 새 메뉴/알바${S.shop + 1 >= 2 ? '/로봇' : ''} · 월세 ×${nx.rentMult}</span></div>
-        <button class="buy" data-act="expand" ${S.money < nx.cost ? 'disabled' : ''}>🪙${fmt(nx.cost)}</button></div>`;
+        <button class="buy" data-act="expand" ${S.money < nx.cost ? 'disabled' : ''}>${coin(nx.cost)}</button></div>`;
     } else {
       html += `<div style="text-align:center;padding:10px">🎉 최고 단계에 도달했어요!</div>`;
     }
-    html += `<div style="font-size:.8rem;color:var(--muted);margin-top:8px">누적 수입 🪙${fmt(S.totalEarned)}</div>`;
+    html += `<div style="font-size:.8rem;color:var(--muted);margin-top:8px">누적 수입 ${coin(S.totalEarned)}</div>`;
   }
   html += `</div>`;
   html += `<button class="big" data-act="start">☀️ ${S.day}일차 영업 시작</button>`;
-  html += `<div style="text-align:center"><button class="reset" data-act="reset">처음부터 다시하기</button></div>`;
+  html += `<div class="links">${S.tut === 2 ? `<button class="reset" data-act="replayTut">📘 튜토리얼 다시 보기</button>` : ''}
+    <button class="reset" data-act="reset">처음부터 다시하기</button></div>`;
   $('nightView').innerHTML = html;
+  applyHighlight();
 }
 
 function buy(i, n) {
@@ -838,8 +1116,8 @@ function gameOver() {
   $('dayView').classList.add('hidden');
   const s = lastSummary;
   $('overlay').innerHTML = `<div class="card"><h2>💸 파산했어요…</h2>
-    <p>${s.day}일차 월세 🪙${fmt(s.rent)}을 낼 돈이 없었어요.</p>
-    <p>누적 수입 🪙${fmt(S.totalEarned)}<br>${SHOPS[S.shop].icon} ${SHOPS[S.shop].name}까지 키웠어요</p>
+    <p>${s.day}일차 월세 ${coin(s.rent)}을 낼 돈이 없었어요.</p>
+    <p>누적 수입 ${coin(S.totalEarned)}<br>${SHOPS[S.shop].icon} ${SHOPS[S.shop].name}까지 키웠어요</p>
     <button class="big" data-act="restart">다시 시작</button></div>`;
   $('overlay').classList.remove('hidden');
   try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
@@ -851,7 +1129,8 @@ document.addEventListener('pointerdown', e => {
   const el = e.target.closest('[data-act]');
   if (!el || !R) return;
   const act = el.dataset.act;
-  if (act === 'serve') serve(+el.dataset.slot);
+  if (act === 'tutNext') tutAdvance();
+  else if (act === 'serve') serve(+el.dataset.slot);
   else if (act === 'part') { e.preventDefault(); pressPart(el.dataset.id); }
   else if (act === 'done') completeBench();
   else if (act === 'trash') trashBench();
@@ -868,6 +1147,8 @@ document.addEventListener('click', e => {
   const el = e.target.closest('[data-act]');
   if (!el || R) return;
   const act = el.dataset.act, id = el.dataset.id;
+  lastAct = act;
+  if (act === 'tutNext') { tutAdvance(); return; }
   if (act === 'tab') nightTab = id;
   else if (act === 'buy') buy(id, +el.dataset.n);
   else if (act === 'fill') usedIngs().forEach(i => {
@@ -880,21 +1161,29 @@ document.addEventListener('click', e => {
     if (S.money >= c && S.up[id] < UPS[id].max()) { S.money -= c; S.up[id]++; toast(`${UPS[id].icon} ${UPS[id].name} 완료!`); }
   } else if (act === 'unlock') {
     const c = MENU[id].cost;
-    if (S.money >= c) { S.money -= c; S.unlocked[id] = true; toast(`${MENU[id].icon} ${MENU[id].name} 판매 시작! 재료를 사두세요`); }
+    if (S.money >= c) { S.money -= c; S.unlocked[id] = true; toast(`${ic(MENU[id].icon)} ${MENU[id].name} 판매 시작! 재료를 사두세요`); }
   } else if (act === 'expand') {
     const nx = SHOPS[S.shop + 1];
     if (nx && S.money >= nx.cost) { S.money -= nx.cost; S.shop++; toast(`${nx.icon} ${nx.name}(으)로 확장했어요!`); }
   } else if (act === 'start') { startDay(); return; }
-  else if (act === 'reset') {
+  else if (act === 'replayTut') {
+    S.tut = 0; save();
+    tutStart(NIGHT0_TUT);
+    return;
+  } else if (act === 'reset') {
     if (!confirm('정말 처음부터 다시 할까요? 저장된 진행이 사라져요.')) return;
-    S = newGame(); lastSummary = null;
+    S = newGame(); lastSummary = null; save();
+    showNight();
+    return;
   } else if (act === 'restart') {
     $('overlay').classList.add('hidden');
-    S = newGame(); lastSummary = null;
+    S = newGame(); lastSummary = null; save();
     showNight();
+    return;
   } else return;
   save();
   renderNight();
+  tutTick();
 });
 
 // ---------- 루프 ----------
