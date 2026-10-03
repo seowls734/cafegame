@@ -189,6 +189,8 @@
   #bg .closed-sign.street { top: 30%; left: auto; right: 4vw; transform: rotate(-5deg); font-size: 1.3rem; }
   #bg.night .wallp, #bg.night .wainscot, #bg.night .floor, #bg.night .shelf, #bg.night .frame, #bg.night .city, #bg.night .plant, #bg.night .awning-top { filter: brightness(.5); }
   #bg.night .win .view { filter: brightness(.6); }
+  #bg .cat { position: absolute; bottom: 9%; left: 13vw; font-size: clamp(2rem, 3.5vw, 3.2rem); animation: catNap 4s ease-in-out infinite; }
+  @keyframes catNap { 50% { transform: scale(1.06, .94); } }
 
   /* ===== 레이아웃: 왼쪽 레시피 칠판 + 가운데 게임 ===== */
   #layout { display: grid; grid-template-columns: 270px minmax(0, 560px); gap: 18px; justify-content: center; padding: 0 212px 0 12px; }
@@ -341,6 +343,46 @@
     50% { box-shadow: 0 0 0 5px #ff8c1a, 0 0 22px 8px rgba(255,140,30,.9); }
   }
 
+  /* ===== 스토리 ===== */
+  #story { position: fixed; inset: 0; z-index: 40; background: rgba(20,12,5,.72); display: flex; align-items: flex-end; justify-content: center; padding: 16px; cursor: pointer; }
+  .st-wrap { width: 100%; max-width: 640px; }
+  .st-chapter { text-align: center; color: #ffe08a; font-weight: 800; margin-bottom: 10px; font-size: .95rem; letter-spacing: 1px; }
+  .st-face { font-size: 5.5rem; line-height: 1; text-align: center; margin-bottom: -14px; position: relative; z-index: 1; filter: drop-shadow(0 6px 8px rgba(0,0,0,.4)); animation: bob 2.4s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(-6px); } }
+  .st-box { background: #fffaf2; border: 4px solid var(--wood); border-radius: 16px; padding: 18px 18px 12px; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+  .st-name { display: inline-block; background: var(--wood); color: #ffe7b8; font-weight: 800; font-size: .85rem; padding: 3px 12px; border-radius: 8px; margin-bottom: 8px; }
+  .st-text { font-size: 1.02rem; line-height: 1.7; min-height: 3.4em; }
+  .st-text.narr { font-style: italic; color: var(--wood-dark); }
+  .st-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: .78rem; color: var(--muted); }
+  .st-foot button { background: none; border: 0; color: var(--muted); text-decoration: underline; font-size: .78rem; }
+  .st-next { animation: blink 1s infinite; color: var(--accent); font-weight: 800; }
+  @keyframes blink { 50% { opacity: .3; } }
+  .st-list { background: #fffaf2; border: 4px solid var(--wood); border-radius: 16px; padding: 14px; max-height: 70vh; overflow-y: auto; cursor: default; }
+  .st-list h2 { margin: 0 0 8px; font-size: 1.1rem; }
+  .st-list button.ch { display: block; width: 100%; text-align: left; border: 1px solid var(--line); background: #fff; border-radius: 10px; padding: 9px 12px; margin-bottom: 6px; font-weight: 700; }
+  .st-list .locked { color: var(--muted); font-weight: 400; padding: 9px 12px; }
+  .duel-line { color: #b5352a; font-weight: 800; }
+
+  /* ===== 뽑기 ===== */
+  .slot-machine { background: linear-gradient(#d24b3e, #a8352a); border-radius: 18px; padding: 12px; color: #fff; text-align: center; box-shadow: inset 0 -6px 0 rgba(0,0,0,.2); }
+  .sm-title { font-weight: 900; font-size: 1.1rem; letter-spacing: 1px; text-shadow: 0 2px 0 rgba(0,0,0,.25); }
+  .reels { display: flex; justify-content: center; gap: 8px; margin: 10px 0; }
+  .reels div { width: 74px; height: 74px; background: #fff; border-radius: 12px; border: 4px solid #ffd34d; display: flex; align-items: center; justify-content: center; font-size: 2.6rem; box-shadow: inset 0 4px 8px rgba(0,0,0,.25); font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+  .sm-pay { font-size: .72rem; line-height: 1.6; background: rgba(0,0,0,.2); border-radius: 8px; padding: 5px 8px; }
+  .bets { display: flex; gap: 6px; justify-content: center; margin: 10px 0 8px; align-items: center; font-size: .85rem; }
+  .bets button { border: 2px solid #fff; background: transparent; color: #fff; border-radius: 10px; padding: 5px 12px; font-weight: 800; }
+  .bets button.on { background: #ffd34d; color: #6b2a10; border-color: #ffd34d; }
+  .bets button:disabled { opacity: .4; }
+  .spin-btn { width: 100%; border: 0; border-radius: 12px; padding: 12px; font-size: 1.05rem; font-weight: 900; background: #ffd34d; color: #6b2a10; box-shadow: 0 4px 0 #c99a1a; }
+  .spin-btn:disabled { opacity: .5; }
+  .sm-msg { min-height: 1.4em; margin-top: 8px; font-weight: 800; }
+  .lotto { margin-top: 12px; background: #fff3c4; border: 2px dashed #e0a526; border-radius: 14px; padding: 12px; text-align: center; }
+  .lotto h3 { margin: 0 0 6px; color: #8a5a00; }
+  .cells { display: flex; gap: 8px; justify-content: center; margin: 8px 0; }
+  .cells button { width: 64px; height: 64px; border-radius: 10px; border: 0; font-size: 2rem; background: repeating-linear-gradient(45deg, #b9b9b9 0 6px, #a9a9a9 6px 12px); color: #555; font-weight: 900; }
+  .cells button.open { background: #fff; border: 2px solid #e0a526; }
+  .gamble-note { font-size: .72rem; color: var(--muted); text-align: center; margin-top: 10px; }
+
   /* Overlay, toast, floats */
   #overlay { position: fixed; inset: 0; background: rgba(40,25,10,.7); display: flex; align-items: center; justify-content: center; z-index: 20; padding: 16px; }
   #overlay .card { max-width: 380px; width: 100%; text-align: center; }
@@ -413,6 +455,7 @@
 <button id="bookToggle" data-act="book">📖 레시피</button>
 <div id="coach" class="hidden"></div>
 <div id="soldPanel" class="hidden"></div>
+<div id="story" class="hidden"></div>
 <div id="overlay" class="hidden"></div>
 <div id="toast"></div>
 
@@ -522,7 +565,15 @@ function newGame() {
   return {
     day: 1, money: 80, rep: 50, shop: 0, totalEarned: 0, bestDay: 0,
     tut: 0, // 0: 첫 영업 튜토리얼 전, 1: 첫 밤 안내 전, 2: 튜토리얼 끝
-    stats: { served: 0, perfect: 0, vip: 0, delivery: 0, maxCombo: 0, bestRevenue: 0 },
+    stats: { served: 0, perfect: 0, vip: 0, delivery: 0, maxCombo: 0, bestRevenue: 0, jackpot: 0 },
+    story: { seen: {}, ending: false },
+    cat: false,       // 가게 고양이 (스토리 5화)
+    duel: null,       // 블랙빈과의 매출 대결 { target }
+    duelResult: null, // 'win' | 'lose'
+    spins: 5,         // 오늘 밤 남은 슬롯머신 횟수
+    ticketUsed: false,
+    ticket: null,     // 즉석 복권 { prize, cells, open }
+    lastReels: ['☕', '🍰', '💰'],
     ach: {},          // 받은 업적
     quests: [],       // 오늘의 의뢰
     special: null,    // 오늘의 추천 메뉴
@@ -546,7 +597,8 @@ function load() {
     // 튜토리얼이 생기기 전 저장이면 이미 해본 사람으로 본다
     const tut = typeof d.tut === 'number' ? d.tut : (d.day > 1 ? 2 : 0);
     return { ...base, ...d, tut, stock: { ...base.stock, ...d.stock }, up, unlocked: { ...base.unlocked, ...d.unlocked },
-             stats: { ...base.stats, ...d.stats }, ach: { ...d.ach }, quests: Array.isArray(d.quests) ? d.quests : [] };
+             stats: { ...base.stats, ...d.stats }, ach: { ...d.ach }, quests: Array.isArray(d.quests) ? d.quests : [],
+             story: { ...base.story, ...d.story, seen: { ...(d.story && d.story.seen) } } };
   } catch (e) { return null; }
 }
 
@@ -599,7 +651,8 @@ function renderBg(night) {
       <div class="clock">🕰️</div>`}
     <div class="floor"></div>
     <div class="plant l"><span>🌿</span><i></i></div>
-    <div class="plant r"><span>${sh === 0 ? '🌳' : '🌵'}</span><i></i></div>`;
+    <div class="plant r"><span>${sh === 0 ? '🌳' : '🌵'}</span><i></i></div>
+    ${S.cat ? '<div class="cat">🐈</div>' : ''}`;
   updateSky();
 }
 
@@ -654,6 +707,9 @@ function prepareDay() {
   const ings = usedIngs();
   S.sale = ings[Math.floor(Math.random() * ings.length)];
   S.quests = makeQuests();
+  S.spins = 5;
+  S.ticketUsed = false;
+  S.ticket = null;
 }
 
 // ---------- 업적 ----------
@@ -678,6 +734,9 @@ const ACHS = [
   { id: 'shop3',     name: '프랜차이즈 사장', desc: '프랜차이즈 본점 확장',  goal: 3,    val: () => S.shop,              reward: 3000 },
   { id: 'day7',      name: '일주일 버티기',   desc: '7일차 도달',            goal: 7,    val: () => S.day,               reward: 100 },
   { id: 'day30',     name: '한 달 장사',      desc: '30일차 도달',           goal: 30,   val: () => S.day,               reward: 1000 },
+  { id: 'duel',      name: '라이벌을 이기다', desc: '⚔️ 블랙빈과의 매출 대결 승리', goal: 1, val: () => (S.story.seen.duelWin ? 1 : 0), reward: 300 },
+  { id: 'ending',    name: '할머니의 꿈',     desc: '📜 스토리 엔딩 보기',    goal: 1,    val: () => (S.story.ending ? 1 : 0), reward: 500 },
+  { id: 'jackpot',   name: '잭팟!',           desc: '🎰 슬롯머신 💰💰💰',     goal: 1,    val: () => S.stats.jackpot,     reward: 300 },
 ];
 const achReady = () => ACHS.filter(a => !S.ach[a.id] && a.val() >= a.goal);
 
@@ -1053,7 +1112,7 @@ function spawn() {
   const order = [];
   for (let i = 0; i < size; i++) order.push(randomMenu());
   const vip = Math.random() < 0.08 + S.up.decor * 0.01;
-  const max = (26 + 14 * size) * (1 + S.up.decor * 0.12) * (vip ? 0.75 : 1);
+  const max = (26 + 14 * size) * (1 + S.up.decor * 0.12) * (vip ? 0.75 : 1) * (S.cat ? 1.05 : 1);
   R.counter[idx] = { face: vip ? '😎' : FACES[Math.floor(Math.random() * FACES.length)], order, pat: max, max, vip };
 }
 
@@ -1469,11 +1528,12 @@ function renderDay(force) {
   $('trayCount').textContent = `${R.tray.length}/${trayCap()}`;
   $('tray').innerHTML = R.tray.length ? R.tray.map(t => `<span class="titem">${ic(MENU[t.id].icon)}<i>${qualityMark(t.q)}</i></span>`).join('')
     : `<span class="empty">${R.closing ? '마감 중…' : '완성한 음식이 여기에 올라와요'}</span>`;
-  $('quests').innerHTML = S.quests.length ? S.quests.map(q => {
+  const duel = S.duel ? `<div class="q duel-line"><span>⚔️ 블랙빈과 매출 대결</span><span>${fmt(R.stats.revenue + R.stats.tips)}/${fmt(S.duel.target)}</span></div>` : '';
+  $('quests').innerHTML = duel + (S.quests.length ? S.quests.map(q => {
     const v = questVal(q, R.stats, false);
     const ok = v >= q.n;
     return `<div class="q ${ok ? 'ok' : ''}"><span>${ok ? '✅' : '📜'} ${questText(q)}</span><span>${q.type === 'nolost' ? (R.stats.lost ? '❌' : '진행 중') : `${v}/${q.n}`}</span></div>`;
-  }).join('') : '';
+  }).join('') : '');
   const cb = $('combo');
   cb.className = R.combo >= 3 ? 'hot' : '';
   cb.innerHTML = `<b>🔥${R.combo}</b>콤보${R.combo >= 2 ? ` +${Math.min(10, R.combo - 1) * 5}%` : ''}`;
@@ -1501,6 +1561,10 @@ function endDay() {
   const r = rent();
   S.money -= r;
   lastSummary = { ...st, rent: r, day: S.day, quests, questReward };
+  if (S.duel && !S.duelResult) {
+    S.duelResult = st.revenue + st.tips >= S.duel.target ? 'win' : 'lose';
+    lastSummary.duel = { target: S.duel.target, got: st.revenue + st.tips, win: S.duelResult === 'win' };
+  }
   S.bestDay = Math.max(S.bestDay, S.day);
   R = null;
   if (S.money < 0) { gameOver(); return; }
@@ -1517,9 +1581,15 @@ function showNight() {
   window.scrollTo(0, 0);
   lastAct = null;
   renderStockWarn();
-  if (S.tut === 0) tutStart(NIGHT0_TUT);
-  else if (S.tut === 1) tutStart(NIGHT1_TUT, () => { S.tut = 2; save(); });
-  else renderNight();
+  const after = () => {
+    if (S.tut === 0) tutStart(NIGHT0_TUT);
+    else if (S.tut === 1) tutStart(NIGHT1_TUT, () => { S.tut = 2; save(); });
+    else renderNight();
+  };
+  renderNight();
+  const ch = nextStory();
+  if (ch) playStory(ch, true, after);
+  else after();
 }
 
 function upCost(k) { return Math.round(UPS[k].cost(S.up[k])); }
@@ -1544,9 +1614,10 @@ function renderNight() {
       ${s.sorry ? `<span>🙇 사과하고 보낸 손님</span><span class="v">${s.sorry}명</span>` : ''}
       <span>월세</span><span class="v minus">-${fmt(s.rent)}</span>
       ${s.wasted ? `<span>버린 음식</span><span class="v minus">${s.wasted}개</span>` : ''}
+      ${s.duel ? `<span>⚔️ 블랙빈과 대결</span><span class="v ${s.duel.win ? 'plus' : 'minus'}">${fmt(s.duel.got)}/${fmt(s.duel.target)} ${s.duel.win ? '승리!' : '패배'}</span>` : ''}
     </div>
     ${s.quests && s.quests.length ? `<div class="info-list" style="margin-top:8px;border-top:1px dashed var(--line);padding-top:6px">
-      ${s.quests.map(q => `<div>${q.ok ? '✅' : '❌'} ${q.text} <b class="${q.ok ? 'plus' : ''}" style="float:right">${q.ok ? '+' : ''}${fmt(q.reward)}</b></div>`).join('')}</div>` : ''}
+      ${s.quests.map(q => `<div style="display:flex;justify-content:space-between;gap:8px"><span>${q.ok ? '✅' : '❌'} ${q.text}</span><b class="${q.ok ? 'plus' : ''}">${q.ok ? '+' : ''}${fmt(q.reward)}</b></div>`).join('')}</div>` : ''}
     </div>`;
   } else {
     html += `<div class="card"><h2>☕ 나의 작은 카페</h2>
@@ -1572,11 +1643,13 @@ function renderNight() {
     ${S.special ? `<div>⭐ 추천 메뉴: ${ic(MENU[S.special].icon)} <b>${MENU[S.special].name}</b> — 1.5배 가격, 주문 많음</div>` : ''}
     ${S.sale ? `<div>🏷️ 시장 특가: ${ic(ING[S.sale].icon)} <b>${ING[S.sale].name}</b> 오늘 밤 반값!</div>` : ''}
     ${S.day >= 2 ? `<div>🛵 가끔 <b>배달 주문</b>이 들어와요 (1.3배 + 배달비)</div>` : ''}
-    ${S.quests.map(q => `<div>📜 ${questText(q)} <b style="float:right">${coin(q.reward)}</b></div>`).join('')}
+    ${S.duel ? `<div class="duel-line">⚔️ 블랙빈과 매출 대결: 내일 매출+팁 ${coin(S.duel.target)} 넘기기!</div>` : ''}
+    ${S.cat ? `<div>🐈 가게 고양이 덕분에 손님들이 5% 더 오래 기다려 줘요</div>` : ''}
+    ${S.quests.map(q => `<div style="display:flex;justify-content:space-between;gap:8px"><span>📜 ${questText(q)}</span><b>${coin(q.reward)}</b></div>`).join('')}
   </div></div>`;
 
   const ready = achReady().length;
-  const tabs = [['stock', '📦 재료'], ['up', '🔧 업그레이드'], ['menu', '📋 메뉴'], ['shop', '🏪 확장'], ['ach', '🏆 업적']];
+  const tabs = [['stock', '📦 재료'], ['up', '🔧 업그레이드'], ['menu', '📋 메뉴'], ['shop', '🏪 확장'], ['ach', '🏆 업적'], ['game', '🎰 뽑기']];
   html += `<div class="tabs">${tabs.map(([k, n]) => `<button class="tab ${nightTab === k ? 'on' : ''}" data-act="tab" data-id="${k}">${n}${k === 'ach' && ready ? `<span class="dot">${ready}</span>` : ''}</button>`).join('')}</div>`;
   html += `<div class="card">`;
 
@@ -1612,6 +1685,8 @@ function renderNight() {
       return `<div class="item"><div class="ico">${ic(m.icon)}</div>
         <div class="info"><b>${m.name} · ${coin(price(k))}${k === S.special ? '<span class="sale-tag">내일 추천</span>' : ''}</b>${recipeHtml(k)}</div>${btn}</div>`;
     }).join('');
+  } else if (nightTab === 'game') {
+    html += gambleHtml();
   } else if (nightTab === 'ach') {
     const list = ACHS.slice().sort((a, b) => (!!S.ach[a.id] - !!S.ach[b.id]) || ((b.val() >= b.goal) - (a.val() >= a.goal)));
     html += list.map(a => {
@@ -1637,10 +1712,269 @@ function renderNight() {
   }
   html += `</div>`;
   html += `<button class="big" data-act="start">☀️ ${S.day}일차 영업 시작</button>`;
-  html += `<div class="links">${S.tut === 2 ? `<button class="reset" data-act="replayTut">📘 튜토리얼 다시 보기</button>` : ''}
+  html += `<div class="links"><button class="reset" data-act="storyList">📜 지난 이야기</button>${S.tut === 2 ? `<button class="reset" data-act="replayTut">📘 튜토리얼 다시 보기</button>` : ''}
     <button class="reset" data-act="reset">처음부터 다시하기</button></div>`;
   $('nightView').innerHTML = html;
   applyHighlight();
+}
+
+// ---------- 스토리 ----------
+const CAST = {
+  grandma: { name: '할머니',      face: '👵' },
+  me:      { name: '나',          face: '🙋' },
+  minji:   { name: '단골 민지',   face: '👧' },
+  rival:   { name: '블랙빈 사장', face: '🤵' },
+  cat:     { name: '길고양이',    face: '🐈' },
+  narr:    { name: '',            face: '📜' },
+};
+
+const duelTarget = () => Math.max(250, Math.round((S.stats.bestRevenue || 200) * 1.1 / 10) * 10);
+
+// cond를 만족하는 첫 이야기가 밤이 시작될 때 나온다 (repeat이 아니면 한 번만)
+const STORY = [
+  { id: 'intro', title: '1화. 할머니의 편지', cond: () => true, lines: [
+    ['narr', '어느 날, 낡은 커피 수레와 함께 편지 한 통이 도착했다.'],
+    ['grandma', '사랑하는 손주야. 할머니가 평생 끌던 이 커피 수레를 너에게 맡기려고 한단다.'],
+    ['grandma', '젊었을 때 할머니 꿈은 이 거리에서 제일 사랑받는 카페를 여는 거였어. 끝내 이루지는 못했지만…'],
+    ['grandma', '너라면 할 수 있을 거야. 한 잔 한 잔 정성을 담으렴. 사랑한다. — 할머니가'],
+    ['me', '…할머니의 꿈, 제가 꼭 이뤄드릴게요!'],
+  ] },
+  { id: 'duelWin', title: '7화. 대결의 끝', cond: () => S.duelResult === 'win',
+    reward: () => { S.money += 500; S.duel = null; S.duelResult = null; return '💰500'; }, lines: [
+    ['rival', '…말도 안 돼. 이 내가, 졌다고?'],
+    ['rival', '사실 나도 처음엔 작은 수레 하나로 시작했지. 너를 보니 그 시절이 생각나는군.'],
+    ['rival', '인정하지. 네 커피는 진짜야. 앞으로는 좋은 라이벌로 지내자고.'],
+    ['me', '언제든 커피 한 잔 하러 오세요, 사장님!'],
+  ] },
+  { id: 'duelLose', title: '대결… 패배', repeat: true, cond: () => S.duelResult === 'lose',
+    reward: () => { S.duelResult = null; S.duel.target = Math.max(250, Math.round(S.duel.target * 0.95 / 10) * 10); return null; }, lines: [
+    ['rival', '흥, 그 정도인가? 역시 운이 좋았던 거였군.'],
+    ['rival', () => `좋아, 한 번 더 기회를 주지. 내일 매출 ${fmt(S.duel.target)} 정도는 넘겨 보라고.`],
+    ['me', '다음엔 꼭 이길 거예요!'],
+  ] },
+  { id: 'minji', title: '2화. 첫 단골손님', cond: () => S.day >= 3,
+    reward: () => { S.rep = Math.min(100, S.rep + 5); S.money += 30; return '평판 +5, 💰30'; }, lines: [
+    ['minji', '저기요! 어제 마신 라떼 진짜 맛있었어요! 저 앞 대학교 다니는 민지예요.'],
+    ['minji', '시험 기간이라 매일 올 것 같아요. 과 친구들한테도 소문낼게요!'],
+    ['me', '고마워요, 민지 씨! 첫 단골이 생겼다…!'],
+    ['minji', '이거, 단골 기념 선물이에요. 히히.'],
+  ] },
+  { id: 'rival', title: '3화. 블랙빈의 등장', cond: () => S.day >= 5, lines: [
+    ['narr', '길 건너편에 번쩍이는 대형 카페 「블랙빈 커피」가 문을 열었다.'],
+    ['rival', '흠, 이런 수레에서 커피를 판다고? 귀엽군.'],
+    ['rival', '이 거리는 곧 우리 블랙빈 차지가 될 거야. 손님 다 뺏기기 전에 일찌감치 접는 게 어때?'],
+    ['me', '…절대 안 접어요. 할머니 수레는 제가 지킬 거예요!'],
+    ['narr', '🎯 목표: 돈을 모아 🏠 동네 카페로 확장하자!'],
+  ] },
+  { id: 'shop1', title: '4화. 첫 번째 가게', cond: () => S.shop >= 1,
+    reward: () => {
+      if (!S.unlocked.tea) { S.unlocked.tea = true; S.stock.tea += 10; return '🍵 홍차 메뉴 + 찻잎 10개'; }
+      S.money += 150; return '💰150';
+    }, lines: [
+    ['grandma', '어머나, 세상에! 우리 손주가 진짜 가게를 차렸구나!'],
+    ['grandma', '수레 끌던 게 엊그제 같은데… 할머니 눈물 나려고 한다.'],
+    ['grandma', '자, 이건 할머니가 아끼던 비밀 레시피란다. 따뜻한 홍차 한 잔이면 누구든 마음이 녹지.'],
+    ['me', '할머니 레시피…! 소중히 쓸게요.'],
+    ['narr', '🎯 다음 목표: 🏢 2층 카페로 확장하자!'],
+  ] },
+  { id: 'cat', title: '5화. 비 오는 밤의 손님', cond: () => S.day >= 8 && S.shop >= 1,
+    reward: () => { S.cat = true; return '🐈 가게 고양이 (손님 인내심 +5%)'; }, lines: [
+    ['narr', '비 오는 밤, 가게 문 앞에 젖은 고양이 한 마리가 웅크리고 있었다.'],
+    ['cat', '냐아…'],
+    ['me', '추웠지? 들어와. 따뜻한 우유 줄게.'],
+    ['cat', '골골골…'],
+    ['narr', '그날부터 고양이는 가게의 마스코트가 되었다. 손님들이 고양이를 보며 조금 더 느긋하게 기다려 준다.'],
+  ] },
+  { id: 'duel', title: '6화. 블랙빈의 도전장', cond: () => S.shop >= 2,
+    reward: () => { S.duel = { target: duelTarget() }; S.duelResult = null; return null; }, lines: [
+    ['rival', '2층 카페라… 제법이군. 하지만 그건 운이 좋았을 뿐이야.'],
+    ['rival', () => `도전장이다! 내일 하루 매출로 승부하자. 팁 포함 ${fmt(S.duel ? S.duel.target : duelTarget())}을 넘기면 네 실력을 인정하지.`],
+    ['me', '좋아요. 받아들일게요!'],
+    ['narr', '⚔️ 매출 대결: 내일 하루 매출(팁 포함) 목표를 넘기자! 영업 중 위쪽에 진행 상황이 보여요.'],
+  ] },
+  { id: 'minji2', title: '8화. 민지의 졸업', cond: () => S.day >= 15,
+    reward: () => { S.money += 300; return '💰300 (단체 주문)'; }, lines: [
+    ['minji', '사장님! 저 드디어 졸업했어요! 그리고… 회사에 붙었어요!'],
+    ['minji', '시험 기간마다 여기 라떼 덕분에 버텼어요. 진짜예요.'],
+    ['minji', '그래서 첫 출근 기념으로 우리 팀 커피, 여기서 단체 주문했어요!'],
+    ['me', '축하해요, 민지 씨! 오늘 커피는 제가 제일 맛있게 만들게요.'],
+  ] },
+  { id: 'ending', title: '최종화. 할머니의 꿈', cond: () => S.shop >= 3 && S.story.seen.duelWin,
+    reward: () => { S.story.ending = true; S.money += 1000; return '💰1000 · 🏆 엔딩 달성!'; }, lines: [
+    ['narr', '프랜차이즈 본점 개업식 날. 가게 앞에 반가운 얼굴들이 모였다.'],
+    ['minji', '사장님! 개업 축하드려요! 수레 시절부터 봤는데… 감동이에요.'],
+    ['rival', '흥, 축하 화환은 우리 블랙빈이 제일 큰 걸로 보냈다고.'],
+    ['cat', '냐앙!'],
+    ['grandma', '…얘야. 할머니가 평생 꿈꾸던 카페가 바로 여기 있구나.'],
+    ['grandma', '고맙다. 정말 고마워. 넌 할머니의 자랑이란다.'],
+    ['me', '할머니 수레에서 시작했어요. 이 가게는 할머니 거예요.'],
+    ['narr', '🎉 THE END — 하지만 카페는 계속 영업합니다. 앞으로도 맛있는 커피를!'],
+  ] },
+];
+
+const nextStory = () => STORY.find(c => (c.repeat || !S.story.seen[c.id]) && c.cond());
+
+let story = null; // { ch, i, lines, done }
+function playStory(ch, first, done) {
+  const got = first && ch.reward ? ch.reward() : null;
+  const lines = ch.lines.map(([who, text]) => [who, typeof text === 'function' ? text() : text]);
+  if (got) lines.push(['narr', `🎁 보상: ${got}`]);
+  if (first && !ch.repeat) S.story.seen[ch.id] = true;
+  if (first) save();
+  story = { ch, i: 0, lines, done };
+  renderStory();
+}
+
+function renderStory() {
+  const el = $('story');
+  if (!story) { el.classList.add('hidden'); return; }
+  const [who, text] = story.lines[story.i];
+  const c = CAST[who];
+  el.innerHTML = `<div class="st-wrap">
+    <div class="st-chapter">${story.ch.title}</div>
+    <div class="st-face">${c.face}</div>
+    <div class="st-box">
+      ${c.name ? `<div class="st-name">${c.name}</div>` : ''}
+      <div class="st-text ${who === 'narr' ? 'narr' : ''}">${text}</div>
+      <div class="st-foot"><button data-st="skip">건너뛰기 ⏭</button><span>${story.i + 1}/${story.lines.length} <span class="st-next">▶ 눌러서 계속</span></span></div>
+    </div></div>`;
+  el.classList.remove('hidden');
+}
+
+function storyNext(skip) {
+  if (!story) return;
+  story.i++;
+  if (skip || story.i >= story.lines.length) {
+    const done = story.done;
+    story = null;
+    renderStory();
+    renderBg(!R);
+    if (!R) renderNight();
+    if (done) done();
+    return;
+  }
+  renderStory();
+}
+
+function showStoryList() {
+  const el = $('story');
+  el.innerHTML = `<div class="st-wrap"><div class="st-list">
+    <h2>📜 지난 이야기</h2>
+    ${STORY.filter(c => !c.repeat).map(c => S.story.seen[c.id]
+      ? `<button class="ch" data-st="replay" data-id="${c.id}">${c.title}</button>`
+      : `<div class="locked">🔒 ???</div>`).join('')}
+    <button class="reset" data-st="close" style="width:100%">닫기</button>
+  </div></div>`;
+  el.classList.remove('hidden');
+}
+
+$('story').addEventListener('click', e => {
+  const b = e.target.closest('[data-st]');
+  if (b && b.dataset.st === 'skip') return storyNext(true);
+  if (b && b.dataset.st === 'close') { $('story').classList.add('hidden'); return; }
+  if (b && b.dataset.st === 'replay') return playStory(STORY.find(c => c.id === b.dataset.id), false, null);
+  if (story) storyNext(false);
+});
+
+// ---------- 뽑기 (게임 속 코인으로만) ----------
+// [그림, 나올 확률 가중치, 3개 같을 때 배당]
+const SLOT = [['☕', 30, 4], ['🍪', 25, 6], ['🥐', 20, 10], ['🍰', 13, 20], ['🍓', 8, 40], ['💰', 4, 100]];
+let slotBet = 10, spinning = false, slotMsg = '';
+
+function slotRoll() {
+  let r = Math.random() * 100;
+  for (const [sym, w] of SLOT) if ((r -= w) < 0) return sym;
+  return SLOT[0][0];
+}
+
+// 3개 같으면 배당, 2개 같으면 본전 (💰💰는 5배, 🍓🍓는 2배)
+function slotPayout(reels, bet) {
+  const [sym, n] = Object.entries(countOf(reels)).sort((a, b) => b[1] - a[1])[0];
+  if (n === 3) return bet * SLOT.find(x => x[0] === sym)[2];
+  if (n === 2) return bet * (sym === '💰' ? 5 : sym === '🍓' ? 2 : 1);
+  return 0;
+}
+
+function spinSlot() {
+  if (spinning || S.spins <= 0 || S.money < slotBet) return;
+  spinning = true;
+  S.money -= slotBet;
+  S.spins--;
+  const bet = slotBet;
+  const result = [slotRoll(), slotRoll(), slotRoll()];
+  slotMsg = '두근두근…';
+  renderNight();
+  let t = 0;
+  const iv = setInterval(() => {
+    t += 70;
+    result.forEach((sym, i) => {
+      const reel = $('reel' + i);
+      if (reel) reel.textContent = t < 700 + i * 350 ? SLOT[Math.floor(Math.random() * SLOT.length)][0] : sym;
+    });
+    if (t >= 700 + 2 * 350) {
+      clearInterval(iv);
+      const win = slotPayout(result, bet);
+      S.money += win;
+      S.lastReels = result;
+      if (result.every(x => x === '💰')) S.stats.jackpot++;
+      slotMsg = win > bet ? `🎉 ${win} 획득! (+${win - bet})` : win === bet ? '본전이에요 😌' : '꽝… 😢';
+      spinning = false;
+      save();
+      if (!R) renderNight();
+    }
+  }, 70);
+}
+
+const TICKET_COST = 30;
+// [당첨금, 확률(%), 그림]
+const TICKET_PRIZES = [[0, 60, ''], [20, 25, '🍪'], [50, 10, '🥐'], [200, 4.5, '🍰'], [1000, 0.5, '💰']];
+
+function buyTicket() {
+  if (S.ticketUsed || S.money < TICKET_COST) return;
+  S.money -= TICKET_COST;
+  S.ticketUsed = true;
+  let r = Math.random() * 100, prize = TICKET_PRIZES[0];
+  for (const t of TICKET_PRIZES) if ((r -= t[1]) < 0) { prize = t; break; }
+  let cells;
+  if (prize[0] > 0) cells = [prize[2], prize[2], prize[2]];
+  else {
+    const syms = TICKET_PRIZES.slice(1).map(t => t[2]);
+    do cells = [0, 1, 2].map(() => syms[Math.floor(Math.random() * syms.length)]);
+    while (cells[0] === cells[1] && cells[1] === cells[2]);
+  }
+  S.ticket = { prize: prize[0], cells, open: [false, false, false], paid: false };
+}
+
+function scratch(i) {
+  const t = S.ticket;
+  if (!t || t.open[i]) return;
+  t.open[i] = true;
+  if (t.open.every(Boolean) && !t.paid) {
+    t.paid = true;
+    S.money += t.prize;
+    toast(t.prize ? `🎟️ 당첨! +${t.prize}` : '🎟️ 아쉽게도 꽝!');
+  }
+}
+
+function gambleHtml() {
+  const reels = S.lastReels.map((sym, i) => `<div id="reel${i}">${spinning ? '❔' : sym}</div>`).join('');
+  const bets = [10, 50, 100].map(b => `<button class="${slotBet === b ? 'on' : ''}" data-act="bet" data-n="${b}" ${S.money < b ? 'disabled' : ''}>${b}</button>`).join('');
+  const t = S.ticket;
+  const lotto = t
+    ? `<div class="cells">${t.cells.map((sym, i) => `<button class="${t.open[i] ? 'open' : ''}" data-act="scratch" data-n="${i}">${t.open[i] ? sym : '?'}</button>`).join('')}</div>
+       <div>${t.paid ? (t.prize ? `🎉 당첨! ${coin(t.prize)}` : '꽝! 내일 다시 도전해요') : '칸을 눌러서 긁어보세요! 같은 그림 3개면 당첨'}</div>`
+    : `<button class="buy" data-act="ticket" ${S.ticketUsed || S.money < TICKET_COST ? 'disabled' : ''}>${S.ticketUsed ? '오늘은 이미 샀어요' : `🎟️ 복권 사기 (${coin(TICKET_COST)})`}</button>`;
+  return `<div class="slot-machine">
+      <div class="sm-title">🎰 커피 슬롯머신</div>
+      <div class="reels">${reels}</div>
+      <div class="sm-pay">3개 같으면: ☕×4 · 🍪×6 · 🥐×10 · 🍰×20 · 🍓×40 · 💰×100<br>2개 같으면 본전 (🍓🍓 ×2, 💰💰 ×5)</div>
+      <div class="bets">걸기 ${bets}</div>
+      <button class="spin-btn" data-act="spin" ${spinning || S.spins <= 0 || S.money < slotBet ? 'disabled' : ''}>${spinning ? '돌아가는 중…' : `🎰 돌리기! (오늘 ${S.spins}번 남음)`}</button>
+      <div class="sm-msg">${slotMsg}</div>
+    </div>
+    <div class="lotto"><h3>🎟️ 즉석 복권</h3>
+      <div style="font-size:.78rem;color:#8a5a00;margin-bottom:6px">하루 한 장 · 🍪20 · 🥐50 · 🍰200 · 💰1000</div>${lotto}</div>
+    <div class="gamble-note">※ 게임 속 코인으로만 하는 놀이예요. 평균적으로는 잃게 되어 있으니 적당히! 🙂</div>`;
 }
 
 function buy(i, n) {
@@ -1731,6 +2065,11 @@ document.addEventListener('click', e => {
     startDay();
     return;
   }
+  else if (act === 'bet') slotBet = +el.dataset.n;
+  else if (act === 'spin') { spinSlot(); return; }
+  else if (act === 'ticket') buyTicket();
+  else if (act === 'scratch') scratch(+el.dataset.n);
+  else if (act === 'storyList') { showStoryList(); return; }
   else if (act === 'replayTut') {
     S.tut = 0; save();
     tutStart(NIGHT0_TUT);
