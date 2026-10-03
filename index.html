@@ -71,6 +71,27 @@
   .cust .tag { font-size: .65rem; font-weight: 800; color: #fff; background: #4d7f9e; border-radius: 6px; padding: 1px 6px; }
   .cust .tag.hot { background: var(--accent); }
   .cust .tag.staff { background: var(--good); }
+  .cust .tag.sold { background: var(--bad); }
+  #soldPanel { position: fixed; inset: 0; z-index: 18; background: rgba(40,25,10,.45); display: flex; align-items: flex-end; justify-content: center; padding: 12px; }
+  .sp-card { width: 100%; max-width: 536px; background: var(--panel); border: 3px solid var(--bad); border-radius: 16px; padding: 12px 14px; max-height: 80vh; overflow-y: auto; }
+  .sp-title { font-weight: 800; font-size: .95rem; line-height: 1.5; margin-bottom: 4px; }
+  .sp-title .ic { font-size: 1.3em; }
+  .sp-sub { font-size: .78rem; color: var(--muted); margin-bottom: 8px; }
+  .sp-sec { font-size: .8rem; font-weight: 800; color: var(--wood); margin: 10px 0 6px; }
+  .sp-alts { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; }
+  .sp-alt { background: #fff; border: 2px solid var(--wood); border-radius: 10px; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; font-size: .72rem; font-weight: 700; gap: 1px; }
+  .sp-alt .ic { font-size: 1.6rem; }
+  .sp-alt small { font-weight: 400; color: var(--muted); font-size: .62rem; }
+  .sp-alt.ontray { border-color: var(--good); background: #eef8ec; }
+  .sp-alt:disabled { opacity: .35; }
+  .sp-btn { width: 100%; margin-top: 6px; border: 0; border-radius: 10px; padding: 10px; font-weight: 800; font-size: .85rem; text-align: left; }
+  .sp-btn small { display: block; font-weight: 400; font-size: .7rem; opacity: .85; }
+  .sp-btn.rush { background: #4d7f9e; color: #fff; }
+  .sp-btn.sorry { background: #e8d6c0; }
+  .sp-btn.close { background: none; text-align: center; color: var(--muted); text-decoration: underline; }
+  .sp-btn:disabled { opacity: .45; }
+  .stock-warn .rush-btn { margin-left: 6px; border: 0; border-radius: 6px; background: #fff; color: var(--bad); font-weight: 800; font-size: .72rem; padding: 2px 7px; }
+  .stock-warn.coming { background: #d6ebfa; color: #24506e; }
   .daybar { display: flex; gap: 8px; align-items: stretch; margin-bottom: 8px; }
   #quests { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: .75rem; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 5px 8px; }
   #quests .q { display: flex; justify-content: space-between; gap: 6px; align-items: center; }
@@ -274,6 +295,7 @@
   <section id="nightView" class="hidden"></section>
 </div>
 <div id="coach" class="hidden"></div>
+<div id="soldPanel" class="hidden"></div>
 <div id="overlay" class="hidden"></div>
 <div id="toast"></div>
 
@@ -420,6 +442,14 @@ const menuIngs = id => MENU[id].parts.map(p => PARTS[p].ing).filter(Boolean);
 const usedIngs = () => Object.keys(ING).filter(i => unlockedMenu().some(m => menuIngs(m).includes(i)));
 const usedParts = () => Object.keys(PARTS).filter(p => unlockedMenu().some(m => MENU[m].cup === p || MENU[m].parts.includes(p)));
 const countOf = arr => arr.reduce((o, k) => (o[k] = (o[k] || 0) + 1, o), {});
+// 받침에 따라 조사를 고른다: josa('라떼', '이', '가') → '라떼가'
+function josa(word, withFinal, noFinal) {
+  const code = word.charCodeAt(word.length - 1) - 0xAC00;
+  if (code < 0 || code > 11171) return word + noFinal;
+  const fin = code % 28;
+  if (withFinal === '으로') return word + (fin === 0 || fin === 8 ? '로' : '으로');
+  return word + (fin ? withFinal : noFinal);
+}
 const emptyIngs = () => usedIngs().filter(i => S.stock[i] <= 0);
 const lowStockIngs = () => usedIngs().filter(i => S.stock[i] > 0 && S.stock[i] < 3);
 const blockedMenus = () => unlockedMenu().filter(k => menuIngs(k).some(i => S.stock[i] <= 0));
@@ -659,8 +689,10 @@ function startDay() {
     gauge: null,
     spawnT: 2, staffT: 0, robotT: 0,
     delivery: null, delivT: 20 + Math.random() * 15,
+    rush: [],        // 긴급 발주: { ing, n, t }
+    panel: null,     // 품절 대응 창을 연 손님 자리
     combo: 0,
-    stats: { served: 0, lost: 0, revenue: 0, tips: 0, wasted: 0, perfect: 0, sold: {}, maxCombo: 0, vip: 0, delivery: 0 },
+    stats: { served: 0, lost: 0, revenue: 0, tips: 0, wasted: 0, perfect: 0, sold: {}, maxCombo: 0, vip: 0, delivery: 0, sorry: 0, subst: 0 },
   };
   $('nightView').classList.add('hidden');
   $('dayView').classList.remove('hidden');
@@ -697,7 +729,156 @@ function nextSpawn() {
 function randomMenu() {
   const menu = unlockedMenu();
   const bag = menu.concat(menu.includes(S.special) ? [S.special, S.special] : []);
-  return bag[Math.floor(Math.random() * bag.length)];
+  let k = bag[Math.floor(Math.random() * bag.length)];
+  // 품절 안내를 보고 대부분은 다른 메뉴를 고른다
+  if (isSoldOut(k) && Math.random() < 0.85) {
+    const ok = bag.filter(m => !isSoldOut(m));
+    if (ok.length) k = ok[Math.floor(Math.random() * ok.length)];
+  }
+  return k;
+}
+
+// ---------- 품절 대응 ----------
+const isSoldOut = k => menuIngs(k).some(i => S.stock[i] <= 0);
+const RUSH_N = 5, RUSH_TIME = 8;
+const rushCost = i => ING[i].cost * RUSH_N * 2;
+const rushPending = i => R.rush.some(o => o.ing === i);
+
+// 쟁반으로 채울 수 없고 재료도 없는 메뉴들
+function soldOutFor(c) {
+  const have = countOf(R.tray.map(t => t.id));
+  const out = [];
+  for (const k of c.order) {
+    if (have[k] > 0) { have[k]--; continue; }
+    if (isSoldOut(k)) out.push(k);
+  }
+  return out;
+}
+
+function openSoldPanel(i) {
+  R.panel = i;
+  renderSoldPanel();
+}
+function closeSoldPanel() {
+  if (R) R.panel = null;
+  $('soldPanel').classList.add('hidden');
+}
+
+// 같은 종류(같은 컵 > 음료끼리/디저트끼리)일수록 대체 메뉴를 잘 받아준다
+function substChance(from, to) {
+  const a = MENU[from], b = MENU[to];
+  let p = a.cup === b.cup ? 0.85 : (a.cup === 'plate') === (b.cup === 'plate') ? 0.65 : 0.35;
+  if (b.price > a.price) p -= 0.1; // 더 비싼 걸 권하면 조금 망설인다
+  return Math.max(0.15, Math.min(0.95, p + S.up.decor * 0.02));
+}
+
+function renderSoldPanel() {
+  const P = $('soldPanel');
+  const c = R && R.panel !== null ? getCust(R.panel) : null;
+  const out = c ? soldOutFor(c) : [];
+  if (!c || !out.length) { closeSoldPanel(); return; }
+  const k = out[0];
+  const trayHave = countOf(R.tray.map(t => t.id));
+  const refusedList = c.refused || [];
+  const alts = unlockedMenu().filter(m => m !== k && (!isSoldOut(m) || trayHave[m] > 0))
+    .sort((a, b) => (trayHave[b] > 0) - (trayHave[a] > 0));
+  const needIngs = menuIngs(k).filter(i => S.stock[i] <= 0);
+  const cost = needIngs.filter(i => !rushPending(i)).reduce((s, i) => s + rushCost(i), 0);
+  const pending = needIngs.every(rushPending);
+  const altHtml = alts.map(m => {
+    const refused = refusedList.includes(m);
+    const chance = Math.round(substChance(k, m) * 100);
+    const sub = refused ? '싫대요 😤' : trayHave[m] > 0 ? `쟁반에 있음 · ${chance}%` : `수락 ${chance}%`;
+    return `<button class="sp-alt ${trayHave[m] > 0 ? 'ontray' : ''}" data-act="subst" data-id="${m}" ${refused ? 'disabled' : ''}>
+      ${ic(MENU[m].icon)}${MENU[m].name}<small>${sub}</small></button>`;
+  }).join('');
+  P.innerHTML = `<div class="sp-card">
+    <div class="sp-title">😟 ${c.face} 손님이 원하는 ${ic(MENU[k].icon)} <b>${josa(MENU[k].name, '이', '가')}</b> 품절이에요!</div>
+    <div class="sp-sub">없는 재료: ${ingList(needIngs)} · 손님 남은 시간 ${Math.ceil(c.pat)}초</div>
+    <div class="sp-sec">🔄 다른 메뉴 추천하기 <small style="font-weight:400;color:var(--muted)">(비슷한 종류일수록 잘 받아줘요)</small></div>
+    <div class="sp-alts">${altHtml || '<div class="sp-sub">추천할 수 있는 메뉴가 없어요</div>'}</div>
+    <button class="sp-btn rush" data-act="rush" ${pending || S.money < cost ? 'disabled' : ''}>🚚 긴급 발주 ${pending ? '(오는 중…)' : `${ingList(needIngs)} ${RUSH_N}개씩 · ${coin(cost)}`}
+      <small>평소의 2배 가격 · ${RUSH_TIME}초 뒤 도착 · 손님이 그동안 기다려 줘요</small></button>
+    <button class="sp-btn sorry" data-act="sorry">🙇 사과하고 보내기<small>돈은 못 벌지만 평판이 깎이지 않고 콤보도 유지돼요</small></button>
+    <button class="sp-btn close" data-act="spClose">닫기</button>
+  </div>`;
+  P.classList.remove('hidden');
+}
+
+function trySubst(m) {
+  const i = R.panel, c = getCust(i);
+  if (!c) return closeSoldPanel();
+  const k = soldOutFor(c)[0];
+  if (!k) return closeSoldPanel();
+  const el = document.querySelector(`[data-slot="${i}"]`);
+  if (Math.random() < substChance(k, m)) {
+    c.order[c.order.indexOf(k)] = m;
+    c.pat = Math.min(c.max, c.pat + 5);
+    R.stats.subst++;
+    floatAt(el, `😊 ${ic(MENU[m].icon)} 좋아요!`, '#4f9d4a');
+    toast(`${c.face} "${josa(MENU[m].name, '으로', '로')} 할게요!"`);
+  } else {
+    c.refused = (c.refused || []).concat(m);
+    c.pat = Math.max(1, c.pat - 3);
+    floatAt(el, `😤 ${ic(MENU[m].icon)} 싫어요`, '#d24b3e');
+  }
+  renderDay(true);
+  renderSoldPanel();
+}
+
+function orderRush(ings) {
+  const todo = ings.filter(i => !rushPending(i));
+  const cost = todo.reduce((s, i) => s + rushCost(i), 0);
+  if (!todo.length) return true;
+  if (S.money < cost) { toast('돈이 부족해요'); return false; }
+  S.money -= cost;
+  todo.forEach(i => R.rush.push({ ing: i, n: RUSH_N, t: RUSH_TIME }));
+  toast(`🚚 긴급 발주! ${ingList(todo)} ${RUSH_TIME}초 뒤 도착`);
+  renderStockWarn();
+  return true;
+}
+
+function rushForPanel() {
+  const c = getCust(R.panel);
+  if (!c) return closeSoldPanel();
+  const k = soldOutFor(c)[0];
+  if (!k) return closeSoldPanel();
+  if (orderRush(menuIngs(k).filter(i => S.stock[i] <= 0))) {
+    // 재료가 오고 만들 시간까지 기다려 준다
+    c.pat = Math.max(c.pat, RUSH_TIME + 12);
+    c.max = Math.max(c.max, c.pat);
+    floatAt(document.querySelector(`[data-slot="${R.panel}"]`), '🙂 기다릴게요', '#4f9d4a');
+    closeSoldPanel();
+    renderDay(true);
+  } else renderSoldPanel();
+}
+
+function sendSorry() {
+  const i = R.panel;
+  const c = getCust(i);
+  if (c) {
+    floatAt(document.querySelector(`[data-slot="${i}"]`), '🙇 다음에 올게요', '#8a7360');
+    clearCust(i);
+    R.stats.sorry++;
+  }
+  closeSoldPanel();
+  renderDay(true);
+}
+
+function updateRush(dt) {
+  if (!R.rush.length) return;
+  let arrived = false;
+  R.rush.forEach(o => {
+    o.t -= dt;
+    if (o.t <= 0) { S.stock[o.ing] += o.n; arrived = true; toast(`🚚 ${ic(ING[o.ing].icon)} ${ING[o.ing].name} ${o.n}개 도착!`); }
+  });
+  R.rush = R.rush.filter(o => o.t > 0);
+  if (arrived) {
+    renderStock();
+    renderBench();
+    renderDay(true);
+    if (R.panel !== null) renderSoldPanel();
+  }
 }
 
 function spawn() {
@@ -738,6 +919,7 @@ function serve(i) {
   if (!c) return;
   const el = document.querySelector(`[data-slot="${i}"]`);
   if (!canServe(c)) {
+    if (soldOutFor(c).length) { openSoldPanel(i); return; }
     const have = countOf(R.tray.map(t => t.id));
     const missing = Object.entries(countOf(c.order)).filter(([k, n]) => (have[k] || 0) < n)
       .map(([k, n]) => `${ic(MENU[k].icon)}${MENU[k].name}×${n - (have[k] || 0)}`).join(', ');
@@ -837,7 +1019,7 @@ function pressPart(id) {
   }
   if (!b.cup) { toast('먼저 컵이나 접시를 골라주세요'); return; }
   if (b.parts.length >= 5) { toast('더 이상 넣을 수 없어요'); return; }
-  if (P.ing && S.stock[P.ing] < 1) { toast(`${ic(ING[P.ing].icon)} ${ING[P.ing].name}이(가) 다 떨어졌어요!`); return; }
+  if (P.ing && S.stock[P.ing] < 1) { toast(`${ic(ING[P.ing].icon)} ${josa(ING[P.ing].name, '이', '가')} 다 떨어졌어요!`); return; }
   if (P.ing) { useStock(P.ing); renderStock(); }
   if (P.gauge) {
     const w = S.up.equip * 0.025;
@@ -1053,6 +1235,8 @@ function update(dt) {
       if (order.length) serve(order[0][1]);
     }
   }
+  updateRush(dt);
+  if (R.panel !== null && !getCust(R.panel)) closeSoldPanel();
   if (R.closing && !allCusts().length) endDay();
 }
 
@@ -1070,8 +1254,12 @@ function renderStockWarn() {
   let html = '';
   if (out.length) {
     const menus = blockedMenus().map(k => `${ic(MENU[k].icon)}${MENU[k].name}`).join(', ');
-    html += `<div class="stock-warn out">⚠️ 재고 없음: ${ingList(out)}<br>→ ${menus} 못 만들어요!</div>`;
+    const need = out.filter(i => !rushPending(i));
+    const cost = need.reduce((s, i) => s + rushCost(i), 0);
+    html += `<div class="stock-warn out">⚠️ 재고 없음: ${ingList(out)}<br>→ ${menus} 못 만들어요!
+      ${need.length ? `<button class="rush-btn" data-act="rushAll">🚚 긴급 발주 ${coin(cost)}</button>` : ''}</div>`;
   }
+  if (R.rush.length) html += `<div class="stock-warn coming">🚚 오는 중: ${R.rush.map(o => `${ic(ING[o.ing].icon)}${ING[o.ing].name} ${o.n}개 (${Math.ceil(o.t)}초)`).join(', ')}</div>`;
   if (low.length) html += `<div class="stock-warn low">⚠️ 곧 떨어져요: ${low.map(i => `${ic(ING[i].icon)}${ING[i].name} ${S.stock[i]}개`).join(', ')}</div>`;
   w.innerHTML = html;
 }
@@ -1101,11 +1289,13 @@ function renderDay(force) {
     const names = c.order.length === 1 ? `<small>${MENU[c.order[0]].name}</small>` : '';
     let tag = c.deliv ? '<span class="tag">배달 ×1.3</span>' : c.order.includes(S.special) ? '<span class="tag hot">추천 메뉴</span>' : '';
     if (R.staffFor === c && !ready) tag += '<span class="tag staff">👨‍🍳 알바 준비 중</span>';
+    const soldOut = !ready && soldOutFor(c).length > 0;
+    if (soldOut) tag = '<span class="tag sold">품절! 탭해서 대응</span>';
     return `<div class="slot cust ${ready ? 'ready' : ''} ${c.vip ? 'vip' : ''} ${c.deliv ? 'deliv' : ''}" data-act="serve" data-slot="${i}">
       ${tag}<div class="face">${c.face}</div>
       <div class="bubble">${items}${names}</div>
       <div class="pbar"><div style="width:${p * 100}%;background:${col}"></div></div>
-      <small>${ready ? '탭해서 서빙!' : (c.vip ? 'VIP ×2' : '')}</small>
+      <small>${ready ? '탭해서 서빙!' : soldOut ? '😟 품절이에요…' : (c.vip ? 'VIP ×2' : '')}</small>
     </div>`;
   }).join('');
   $('trayCount').textContent = `${R.tray.length}/${trayCap()}`;
@@ -1120,12 +1310,15 @@ function renderDay(force) {
   cb.className = R.combo >= 3 ? 'hot' : '';
   cb.innerHTML = `<b>🔥${R.combo}</b>콤보${R.combo >= 2 ? ` +${Math.min(10, R.combo - 1) * 5}%` : ''}`;
   if (force) renderStock();
+  else if (R.rush.length) renderStockWarn();
   applyHighlight();
 }
 
 function endDay() {
   const st = R.stats;
   st.wasted += R.tray.length;
+  R.rush.forEach(o => { S.stock[o.ing] += o.n; });
+  closeSoldPanel();
   // 의뢰 보상
   const quests = S.quests.map(q => ({ text: questText(q), reward: q.reward, ok: questVal(q, st, true) >= q.n }));
   const questReward = quests.filter(q => q.ok).reduce((s, q) => s + q.reward, 0);
@@ -1176,6 +1369,8 @@ function renderNight() {
       ${s.questReward ? `<span>📜 의뢰 보상</span><span class="v plus">+${fmt(s.questReward)}</span>` : ''}
       ${s.maxCombo >= 2 ? `<span>🔥 최고 콤보</span><span class="v">${s.maxCombo}</span>` : ''}
       ${s.delivery ? `<span>🛵 배달 완료</span><span class="v">${s.delivery}건</span>` : ''}
+      ${s.subst ? `<span>🔄 대체 메뉴 수락</span><span class="v">${s.subst}명</span>` : ''}
+      ${s.sorry ? `<span>🙇 사과하고 보낸 손님</span><span class="v">${s.sorry}명</span>` : ''}
       <span>월세</span><span class="v minus">-${fmt(s.rent)}</span>
       ${s.wasted ? `<span>버린 음식</span><span class="v minus">${s.wasted}개</span>` : ''}
     </div>
@@ -1191,7 +1386,7 @@ function renderNight() {
   const outIngs = emptyIngs();
   if (outIngs.length && nightTab !== 'stock') {
     html += `<div class="card warn-card"><h2>⚠️ 재고가 없는 재료가 있어요!</h2>
-      <div class="info-list">${ingList(outIngs)}<br>이대로 영업하면 ${blockedMenus().map(k => `${ic(MENU[k].icon)}${MENU[k].name}`).join(', ')}을(를) 못 만들어요.</div>
+      <div class="info-list">${ingList(outIngs)}<br>이대로 영업하면 ${josa(blockedMenus().map(k => `${ic(MENU[k].icon)}${MENU[k].name}`).join(', '), '을', '를')} 못 만들어요.</div>
       <button class="buy" style="width:100%;margin-top:8px" data-act="tab" data-id="stock">📦 재료 사러 가기</button></div>`;
   } else if (outIngs.length) {
     html += `<div class="card warn-card"><h2>⚠️ 재고 없음: ${ingList(outIngs)}</h2>
@@ -1306,6 +1501,11 @@ document.addEventListener('pointerdown', e => {
   else if (act === 'part') { e.preventDefault(); pressPart(el.dataset.id); }
   else if (act === 'done') completeBench();
   else if (act === 'trash') trashBench();
+  else if (act === 'subst') trySubst(el.dataset.id);
+  else if (act === 'rush') rushForPanel();
+  else if (act === 'sorry') sendSorry();
+  else if (act === 'spClose') closeSoldPanel();
+  else if (act === 'rushAll') orderRush(emptyIngs());
   else if (act === 'clearTray') {
     if (R.tray.length) { R.stats.wasted += R.tray.length; R.tray = []; renderDay(true); }
   }
@@ -1345,13 +1545,13 @@ document.addEventListener('click', e => {
     if (S.money >= c) { S.money -= c; S.unlocked[id] = true; toast(`${ic(MENU[id].icon)} ${MENU[id].name} 판매 시작! 재료를 사두세요`); }
   } else if (act === 'expand') {
     const nx = SHOPS[S.shop + 1];
-    if (nx && S.money >= nx.cost) { S.money -= nx.cost; S.shop++; toast(`${nx.icon} ${nx.name}(으)로 확장했어요!`); }
+    if (nx && S.money >= nx.cost) { S.money -= nx.cost; S.shop++; toast(`${nx.icon} ${josa(nx.name, '으로', '로')} 확장했어요!`); }
   } else if (act === 'start') {
     const out = emptyIngs();
     if (S.tut === 2 && out.length &&
         !confirm(`⚠️ 재고가 없는 재료가 있어요: ${out.map(i => ING[i].name).join(', ')}
 
-이대로 영업하면 ${blockedMenus().map(k => MENU[k].name).join(', ')}을(를) 못 만들어요.
+이대로 영업하면 ${josa(blockedMenus().map(k => MENU[k].name).join(', '), '을', '를')} 못 만들어요.
 그래도 영업을 시작할까요?`)) {
       nightTab = 'stock';
       renderNight();
