@@ -32,7 +32,7 @@
   #app { max-width: 560px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; }
   body.coaching #app { padding-bottom: 150px; }
   button { font: inherit; color: inherit; cursor: pointer; }
-  svg.ic { width: 1em; height: 1em; vertical-align: -0.15em; display: inline-block; overflow: visible; }
+  .ic { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; font-style: normal; line-height: 1; }
 
   /* HUD */
   #hud {
@@ -73,13 +73,13 @@
   .daybar { display: flex; gap: 8px; align-items: stretch; margin-bottom: 8px; }
   #quests { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: .75rem; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 5px 8px; }
   #quests .q { display: flex; justify-content: space-between; gap: 6px; align-items: center; }
-  #quests .q svg.ic { font-size: 1.2em; }
+  #quests .q .ic { font-size: 1.2em; }
   #quests .q.ok { color: var(--good); font-weight: 700; }
   #combo { min-width: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; font-size: .7rem; color: var(--muted); }
   #combo b { font-size: 1.3rem; color: var(--accent); line-height: 1.1; }
   #combo.hot { background: #fff0e0; border-color: var(--accent); }
   .info-list { font-size: .88rem; line-height: 1.8; }
-  .info-list svg.ic { font-size: 1.3em; vertical-align: -0.3em; }
+  .info-list .ic { font-size: 1.3em; vertical-align: -0.3em; }
   .sale-tag { background: var(--bad); color: #fff; font-size: .65rem; font-weight: 800; border-radius: 6px; padding: 1px 5px; margin-left: 4px; }
   .tab { position: relative; }
   .tab .dot { position: absolute; top: -6px; right: -4px; background: var(--bad); color: #fff; font-size: .65rem; border-radius: 9px; padding: 0 5px; line-height: 16px; }
@@ -118,7 +118,7 @@
   .build .part i { position: absolute; left: 50%; bottom: -12px; transform: translateX(-50%); font-size: .55rem; font-style: normal; white-space: nowrap; }
   .build.bad { background: #f6d3cc; }
   .build-status { font-size: .85rem; margin: 6px 0 2px; min-height: 1.2em; font-weight: 700; }
-  .build-status svg.ic { font-size: 1.3em; }
+  .build-status .ic { font-size: 1.3em; }
   .gauge-wrap { margin: 8px 0; }
   .gauge-wrap .lbl { font-size: .85rem; color: var(--wood-dark); margin-bottom: 4px; font-weight: 700; }
   .gauge { position: relative; height: 28px; background: #e6d6be; border-radius: 14px; overflow: hidden; border: 2px solid var(--wood); }
@@ -153,7 +153,7 @@
   .rec .r .op { font-size: .8rem; color: var(--muted); }
   #stockBar { display: flex; flex-wrap: wrap; gap: 6px; font-size: .85rem; }
   .stk { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 3px 7px; display: flex; align-items: center; gap: 4px; }
-  .stk svg.ic { font-size: 1.3rem; }
+  .stk .ic { font-size: 1.3rem; }
   .stk.low { border-color: var(--bad); color: var(--bad); font-weight: 700; }
 
   /* Night */
@@ -184,7 +184,7 @@
   }
   .big:active { transform: translateY(2px); box-shadow: 0 2px 0 #a9541f; }
   .warn-text { color: var(--bad); font-size: .85rem; font-weight: 700; display: flex; align-items: center; gap: 2px; }
-  .warn-text svg.ic { font-size: 1.3rem; }
+  .warn-text .ic { font-size: 1.3rem; }
   .links { text-align: center; margin-top: 18px; display: flex; justify-content: center; gap: 16px; }
   .reset { background: none; border: 0; color: var(--muted); text-decoration: underline; font-size: .8rem; }
 
@@ -198,7 +198,7 @@
   }
   #coach .who { font-size: 2.2rem; line-height: 1; }
   #coach .say { flex: 1; font-size: .92rem; line-height: 1.55; }
-  #coach .say svg.ic { font-size: 1.35em; vertical-align: -0.3em; }
+  #coach .say .ic { font-size: 1.35em; vertical-align: -0.3em; }
   #coach .step { font-size: .7rem; color: var(--muted); }
   #coach button { margin-top: 6px; border: 0; background: var(--accent); color: #fff; font-weight: 800; border-radius: 10px; padding: 7px 14px; }
   .tut-glow { position: relative; z-index: 2; animation: glow 1s ease-in-out infinite; }
@@ -215,10 +215,10 @@
     background: rgba(40,25,10,.92); color: #fff; padding: 8px 14px; border-radius: 20px; font-size: .9rem;
     opacity: 0; transition: opacity .2s; pointer-events: none; max-width: calc(100% - 32px); text-align: center;
   }
-  #toast svg.ic { font-size: 1.3em; vertical-align: -0.3em; }
+  #toast .ic { font-size: 1.3em; vertical-align: -0.3em; }
   #toast.show { opacity: 1; }
   .float { position: fixed; z-index: 25; font-weight: 800; pointer-events: none; animation: floatUp 1s forwards; text-shadow: 0 1px 2px #fff; white-space: nowrap; }
-  .float svg.ic { font-size: 1.4em; vertical-align: -0.3em; }
+  .float .ic { font-size: 1.4em; vertical-align: -0.3em; }
   @keyframes floatUp { to { transform: translateY(-40px); opacity: 0; } }
 </style>
 </head>
@@ -268,99 +268,20 @@
 'use strict';
 
 // ---------- 그림 ----------
-// 이모지는 기기(특히 윈도우 10)마다 안 보이거나 다르게 보여서, 음식·재료·도구는 직접 그린 SVG를 쓴다.
-const LINE = '#5e3a1f';
-const steam = `<path d="M17 9q3-3 0-6M24 9q3-3 0-6M31 9q3-3 0-6" stroke="#c4b09a" stroke-width="2" fill="none" stroke-linecap="round"/>`;
-const mug = (liquid, extra = '') => `
-  <path d="M34 19h3a6 6 0 0 1 0 12h-3" fill="none" stroke="${LINE}" stroke-width="3"/>
-  <path d="M9 13h26v21a9 9 0 0 1-9 9h-8a9 9 0 0 1-9-9z" fill="#fffaf2" stroke="${LINE}" stroke-width="3" stroke-linejoin="round"/>
-  ${liquid ? `<ellipse cx="22" cy="16.5" rx="11" ry="3" fill="${liquid}"/>${steam}` : ''}${extra}`;
-const iceCup = (liquid, extra = '') => `
-  ${liquid ? `<path d="M13.4 19h21.2l-2.2 22h-16.8z" fill="${liquid}"/>
-    <rect x="16" y="21" width="7" height="7" rx="1.5" fill="#fff" opacity=".75" transform="rotate(-12 19.5 24.5)"/>
-    <rect x="25" y="24" width="7" height="7" rx="1.5" fill="#fff" opacity=".75" transform="rotate(10 28.5 27.5)"/>` : ''}
-  <path d="M11 11h26l-3 32h-20z" fill="${liquid ? 'none' : '#eaf6fd'}" stroke="#4d7f9e" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M9 11h30" stroke="#4d7f9e" stroke-width="3" stroke-linecap="round"/>
-  <path d="M27 11l5-9" stroke="${liquid ? '#e0534a' : '#4d7f9e'}" stroke-width="3" stroke-linecap="round"/>${extra}`;
-const strawberry = (s = 1, x = 0, y = 0) => `<g transform="translate(${x} ${y}) scale(${s})">
-  <path d="M24 44C10 34 6 22 12 16c6-5 18-5 24 0 6 6 2 18-12 28z" fill="#e0453f" stroke="#a52a24" stroke-width="2"/>
-  <path d="M14 14l5 4 5-6 5 6 5-4-4-4-6-1-6 1z" fill="#4f9d4a"/>
-  <g fill="#ffe08a"><circle cx="18" cy="24" r="1.4"/><circle cx="24" cy="22" r="1.4"/><circle cx="30" cy="24" r="1.4"/><circle cx="21" cy="31" r="1.4"/><circle cx="27" cy="31" r="1.4"/><circle cx="24" cy="37" r="1.4"/></g></g>`;
-const cakeSlice = `
-  <path d="M8 20l22-10 12 6-22 10z" fill="#fff" stroke="#c98a8a" stroke-width="2" stroke-linejoin="round"/>
-  <path d="M8 20l12 6v14L8 34z" fill="#f4d6a0" stroke="#a8702e" stroke-width="2" stroke-linejoin="round"/>
-  <path d="M20 26l22-10v14L20 40z" fill="#f8e2b8" stroke="#a8702e" stroke-width="2" stroke-linejoin="round"/>
-  <path d="M8.5 27.5l11.5 6 21.5-10" fill="none" stroke="#fff" stroke-width="3"/>
-  <path d="M8.5 27.5l11.5 6 21.5-10" fill="none" stroke="#f08a9a" stroke-width="1.2"/>
-  <circle cx="27" cy="15" r="4" fill="#e0453f"/><path d="M24.5 11.5l2.5 2 2.5-2" stroke="#4f9d4a" stroke-width="2" fill="none"/>`;
-const cookie = `<circle cx="24" cy="24" r="17" fill="#d9a35b" stroke="#a8702e" stroke-width="2.5"/>
-  <g fill="#4a2a14"><circle cx="18" cy="17" r="2.6"/><circle cx="30" cy="19" r="2.6"/><circle cx="20" cy="30" r="2.6"/><circle cx="31" cy="30" r="2.6"/><circle cx="25" cy="24" r="2.2"/></g>`;
-const croissant = (c1 = '#d98f3a', c2 = '#e6a24b', c3 = '#f0b45a', st = '#9c6020') => `
-  <ellipse cx="10" cy="32" rx="5" ry="7" transform="rotate(-50 10 32)" fill="${c1}" stroke="${st}" stroke-width="2"/>
-  <ellipse cx="38" cy="32" rx="5" ry="7" transform="rotate(50 38 32)" fill="${c1}" stroke="${st}" stroke-width="2"/>
-  <ellipse cx="16" cy="25" rx="6" ry="9" transform="rotate(-30 16 25)" fill="${c2}" stroke="${st}" stroke-width="2"/>
-  <ellipse cx="32" cy="25" rx="6" ry="9" transform="rotate(30 32 25)" fill="${c2}" stroke="${st}" stroke-width="2"/>
-  <ellipse cx="24" cy="22" rx="7" ry="11" fill="${c3}" stroke="${st}" stroke-width="2"/>`;
-const leaf = `<path d="M8 40C8 18 22 8 42 6c-2 20-12 34-34 34z" fill="#5aa64a" stroke="#356b2b" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M8 40c10-10 18-18 28-28" fill="none" stroke="#356b2b" stroke-width="2"/>`;
-const cocoa = `<path d="M11 25c3-11 23-11 26 0z" fill="#7a4428"/>
-  <path d="M6 25h36a18 15 0 0 1-36 0z" fill="#e8d6c0" stroke="#8a7360" stroke-width="2.5" stroke-linejoin="round"/>`;
-const drop = (fill, stroke) => `<path d="M24 5C24 5 10 22 10 30a14 14 0 0 0 28 0C38 22 24 5 24 5z" fill="${fill}" stroke="${stroke}" stroke-width="2.5"/>
-  <path d="M17 30a7 7 0 0 0 5 7" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".8"/>`;
-const milkCarton = `<path d="M14 16L24 7l10 9v26H14z" fill="#fff" stroke="#4d7f9e" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M14 16h20" stroke="#4d7f9e" stroke-width="2.5"/><rect x="15" y="24" width="18" height="10" fill="#5ba3d6"/>
-  <path d="M20 4h8v5h-8z" fill="#fff" stroke="#4d7f9e" stroke-width="2"/>`;
-
+// 윈도우 10에서도 깨지지 않는 이모지(Emoji 12 이하, 최신 ZWJ 조합 제외)만 쓴다.
 const ICONS = {
-  coin: `<circle cx="24" cy="24" r="19" fill="#f4c542" stroke="#b8860b" stroke-width="3"/><circle cx="24" cy="24" r="12" fill="none" stroke="#d9a520" stroke-width="2.5"/>`,
+  coin: '💰',
   // 메뉴
-  americano: mug('#3b2312'),
-  latte: mug('#d2a679', `<path d="M22 16.8c-1.6-1.8-4-.3-2.4 1.3L22 20l2.4-1.9c1.6-1.6-.8-3.1-2.4-1.3z" fill="#fff"/>`),
-  choco: mug('#6b3a22', `<g fill="#fff" stroke="#e2cfb8" stroke-width="1.5"><circle cx="16" cy="13" r="4.5"/><circle cx="28" cy="13" r="4.5"/><circle cx="22" cy="10" r="5.5"/></g>`),
-  teaCup: mug('#c0602a', `<path d="M27 16l6-9" stroke="#999" stroke-width="1.5"/><rect x="31" y="2" width="7" height="7" rx="1" fill="#e8c35a" stroke="#a8862a" stroke-width="1.5"/>`),
-  iceame: iceCup('#4a2c17'),
-  icelatte: iceCup('#c79a6c'),
-  smoothie: iceCup('#f07a9a', strawberry(0.38, 4, 4)),
-  cookie,
-  cakeSlice,
-  croissant: croissant(),
+  americano: '☕', latte: '🥛', choco: '🍫', teaCup: '🍵', iceame: '🥤', icelatte: '🧊',
+  smoothie: '🍹', cookie: '🍪', cakeSlice: '🍰', croissant: '🥐',
   // 도구·재료 넣기
-  mug: mug(null),
-  icecup: iceCup(null),
-  plate: `<ellipse cx="24" cy="29" rx="20" ry="9" fill="#fff" stroke="#8a7360" stroke-width="2.5"/><ellipse cx="24" cy="28" rx="12" ry="5" fill="none" stroke="#d8c8b4" stroke-width="2"/>`,
-  shot: `<rect x="15" y="2" width="18" height="6" rx="1.5" fill="#666"/><path d="M24 8v12" stroke="#4a2a14" stroke-width="3"/>
-    <path d="M36 25h2a4 4 0 0 1 0 8h-2" fill="none" stroke="${LINE}" stroke-width="2.5"/>
-    <path d="M12 21h24v8a10 10 0 0 1-10 10h-4a10 10 0 0 1-10-10z" fill="#fff" stroke="${LINE}" stroke-width="2.5"/>
-    <ellipse cx="24" cy="22.5" rx="10.5" ry="2.5" fill="#b0743c"/>
-    <ellipse cx="24" cy="42" rx="16" ry="3.5" fill="#e8d6c0" stroke="${LINE}" stroke-width="2"/>`,
-  water: drop('#5bb6f0', '#2f7fb5'),
-  milk: milkCarton,
-  ice: `<path d="M24 6l16 8v18l-16 10-16-10V14z" fill="#d6f1fc" stroke="#6fb3d6" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M8 14l16 8 16-8M24 22v20" fill="none" stroke="#6fb3d6" stroke-width="2"/><path d="M13 18l5 2.5" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`,
-  leaf,
-  cocoa,
-  strawberry: strawberry(),
-  blender: `<path d="M12 7h24l-3 25H15z" fill="#eaf6fd" stroke="#4d7f9e" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="M14.5 19h19l-1.4 13H15.9z" fill="#f07a9a"/>
-    <path d="M18 27l12-3M18 24l12 3" stroke="#888" stroke-width="2"/>
-    <rect x="10" y="3" width="28" height="5" rx="2" fill="#4d7f9e"/>
-    <rect x="10" y="32" width="28" height="11" rx="3" fill="#555"/><circle cx="24" cy="37.5" r="2.5" fill="#e0a526"/>`,
-  oven: `<rect x="5" y="7" width="38" height="34" rx="4" fill="#a3a3a3" stroke="#555" stroke-width="2.5"/>
-    <rect x="10" y="16" width="28" height="19" rx="2" fill="#f59a3c" stroke="#555" stroke-width="2"/>
-    <g transform="translate(14 19) scale(.42)">${croissant('#f2d49a', '#f6dca8', '#f9e4b8', '#b8925a')}</g>
-    <circle cx="11" cy="11.5" r="2" fill="#333"/><circle cx="17" cy="11.5" r="2" fill="#333"/><rect x="26" y="10" width="12" height="3" rx="1.5" fill="#333"/>`,
+  mug: '☕', icecup: '🥤', plate: '🍽️', shot: '🟤', water: '💧', milk: '🍼', ice: '🧊',
+  leaf: '🌿', cocoa: '🥄', strawberry: '🍓', blender: '🌀', oven: '🔥',
   // 재료(재고)
-  bean: `<ellipse cx="24" cy="24" rx="12" ry="17" transform="rotate(30 24 24)" fill="#6b3b22" stroke="#3e2112" stroke-width="2"/>
-    <path d="M16 13c10 6 6 17 16 23" fill="none" stroke="#3e2112" stroke-width="2.5" stroke-linecap="round"/>`,
-  cakeWhole: `<path d="M7 18v16a17 6 0 0 0 34 0V18" fill="#f4d6a0" stroke="#a8702e" stroke-width="2"/>
-    <path d="M7 26a17 6 0 0 0 34 0" fill="none" stroke="#fff" stroke-width="3"/>
-    <ellipse cx="24" cy="18" rx="17" ry="6" fill="#fff" stroke="#c98a8a" stroke-width="2"/>
-    <g fill="#e0453f"><circle cx="15" cy="17.5" r="3"/><circle cx="24" cy="15" r="3"/><circle cx="33" cy="17.5" r="3"/><circle cx="24" cy="20.5" r="3"/></g>`,
-  dough: `<path d="M7 33c0-11 8-18 17-18s17 7 17 18c0 5-8 7-17 7S7 38 7 33z" fill="#f6e3bd" stroke="#b8925a" stroke-width="2.5"/>
-    <g fill="#fff"><circle cx="17" cy="26" r="1.6"/><circle cx="27" cy="22" r="1.6"/><circle cx="32" cy="29" r="1.6"/></g>`,
+  bean: '🌰', cakeWhole: '🎂', dough: '🥖',
 };
 
-const ic = key => `<svg class="ic" viewBox="0 0 48 48" aria-hidden="true">${ICONS[key] || ''}</svg>`;
+const ic = key => `<span class="ic">${ICONS[key] || ''}</span>`;
 
 // ---------- 데이터 ----------
 const ING = {
