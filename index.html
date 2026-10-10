@@ -336,10 +336,6 @@
     border: 0; background: var(--accent); color: #fff; font-weight: 700; border-radius: 10px; padding: 8px 10px; font-size: .8rem; white-space: nowrap;
   }
   .buy:disabled { background: #c9b8a6; }
-  .buy small { font-size: .62rem; font-weight: 600; opacity: .85; }
-  .buy.menu-on { background: var(--good); line-height: 1.25; }
-  .buy.menu-off { background: #9a8a7a; line-height: 1.25; }
-  .item.menu-paused .ico, .item.menu-paused .info { opacity: .45; }
   .big {
     width: 100%; border: 0; border-radius: 14px; padding: 14px; font-size: 1.1rem; font-weight: 800;
     background: var(--accent); color: #fff; box-shadow: 0 4px 0 #a9541f;
@@ -715,8 +711,6 @@ function newGame(m = 'story') {
     sale: null,       // 시장 특가 재료
     stock: { bean: 12, milk: 6, cookie: 6, tea: 0, cake: 0, dough: 0, fruit: 0, cocoa: 0 },
     unlocked: { americano: true, latte: true, cookie: true },
-    menuOff: {},      // 사장님이 판매를 꺼 둔 메뉴
-    freeMenu: {},     // 스토리 선물: 메뉴 탭에서 무료로 판매를 시작할 수 있는 메뉴
     up: { equip: 0, tray: 0, counter: 2, decor: 0, sign: 0, staff: 0, autoorder: 0 },
   };
 }
@@ -750,9 +744,7 @@ const coin = n => `${ic('coin')}${fmt(n)}`;
 const price = id => Math.round(MENU[id].price * SHOPS[S.shop].priceMult * (mode().price || 1));
 const rent = () => Math.round((8 + S.day * 2) * SHOPS[S.shop].rentMult * (mode().rent ?? 1));
 const trayCap = (l = S.up.tray) => 4 + l * 2;
-// ownedMenu: 산 메뉴 전부 · unlockedMenu: 그중 지금 판매 중인 메뉴(손님 주문·레시피 칠판·재료 계산에 쓴다)
-const ownedMenu = () => Object.keys(MENU).filter(k => S.unlocked[k]);
-const unlockedMenu = () => ownedMenu().filter(k => !(S.menuOff && S.menuOff[k]));
+const unlockedMenu = () => Object.keys(MENU).filter(k => S.unlocked[k]);
 const menuIngs = id => MENU[id].parts.map(p => PARTS[p].ing).filter(Boolean);
 const usedIngs = () => Object.keys(ING).filter(i => unlockedMenu().some(m => menuIngs(m).includes(i)));
 const usedParts = () => Object.keys(PARTS).filter(p => unlockedMenu().some(m => MENU[m].cup === p || MENU[m].parts.includes(p)));
@@ -844,16 +836,6 @@ function makeQuests() {
 const questVal = (q, st, ended) => Math.min(q.n, QUESTS[q.type].val(st, q, ended));
 const questText = q => QUESTS[q.type].text(q);
 
-// 메뉴 판매를 껐다 켜면, 내일 추천 메뉴·의뢰가 팔지 않는 메뉴를 가리키지 않게 고친다
-function fixPlanForMenus() {
-  const menu = unlockedMenu();
-  if (!menu.includes(S.special)) {
-    const pool = menu.filter(k => k !== 'cookie');
-    S.special = pool[Math.floor(Math.random() * pool.length)] || menu[0];
-  }
-  S.quests.forEach(q => { if (q.type === 'sell' && !menu.includes(q.item)) q.item = menu[Math.floor(Math.random() * menu.length)]; });
-}
-
 // 밤마다 다음 날의 추천 메뉴·특가·의뢰를 새로 정한다
 function prepareDay() {
   const menu = unlockedMenu();
@@ -882,8 +864,8 @@ const ACHS = [
   { id: 'deliv10',   name: '배달의 달인',     desc: '🛵 배달 10건 완료',     goal: 10,   val: () => S.stats.delivery,    reward: 250 },
   { id: 'rev200',    name: '대박 난 날',      desc: '하루 매출 200 달성',    goal: 200,  val: () => S.stats.bestRevenue, reward: 150 },
   { id: 'rev1000',   name: '초대박',          desc: '하루 매출 1000 달성',   goal: 1000, val: () => S.stats.bestRevenue, reward: 800 },
-  { id: 'menu5',     name: '메뉴 개발자',     desc: '메뉴 5개 판매',         goal: 5,    val: () => ownedMenu().length, reward: 150 },
-  { id: 'menuAll',   name: '없는 게 없어요',  desc: '메뉴 10개 전부 판매',   goal: 10,   val: () => ownedMenu().length, reward: 1000 },
+  { id: 'menu5',     name: '메뉴 개발자',     desc: '메뉴 5개 판매',         goal: 5,    val: () => unlockedMenu().length, reward: 150 },
+  { id: 'menuAll',   name: '없는 게 없어요',  desc: '메뉴 10개 전부 판매',   goal: 10,   val: () => unlockedMenu().length, reward: 1000 },
   { id: 'shop1',     name: '이사했어요',      desc: '동네 카페로 확장',      goal: 1,    val: () => S.shop,              reward: 200 },
   { id: 'shop2',     name: '2층까지!',        desc: '2층 카페로 확장',       goal: 2,    val: () => S.shop,              reward: 600 },
   { id: 'shop3',     name: '프랜차이즈 사장', desc: '프랜차이즈 본점 확장',  goal: 3,    val: () => S.shop,              reward: 3000 },
@@ -1915,13 +1897,10 @@ function renderNight() {
   } else if (nightTab === 'menu') {
     html += Object.entries(MENU).map(([k, m]) => {
       let btn;
-      if (S.unlocked[k]) btn = S.menuOff[k]
-        ? `<button class="buy menu-off" data-act="menuToggle" data-id="${k}">⏸ 판매 중지됨<br><small>눌러서 다시 판매</small></button>`
-        : `<button class="buy menu-on" data-act="menuToggle" data-id="${k}">✅ 판매 중<br><small>눌러서 중지</small></button>`;
+      if (S.unlocked[k]) btn = `<button class="buy" disabled>판매 중</button>`;
       else if (S.shop < m.shop) btn = `<button class="buy" disabled>${SHOPS[m.shop].name} 필요</button>`;
-      else if (S.freeMenu[k]) btn = `<button class="buy" data-act="unlock" data-id="${k}">🎁 무료로 판매 시작</button>`;
       else btn = `<button class="buy" data-act="unlock" data-id="${k}" ${S.money < m.cost ? 'disabled' : ''}>${coin(m.cost)}</button>`;
-      return `<div class="item ${S.unlocked[k] && S.menuOff[k] ? 'menu-paused' : ''}"><div class="ico">${ic(m.icon)}</div>
+      return `<div class="item"><div class="ico">${ic(m.icon)}</div>
         <div class="info"><b>${m.name} · ${coin(price(k))}${k === S.special ? '<span class="sale-tag">내일 추천</span>' : ''}</b>${recipeHtml(k)}</div>${btn}</div>`;
     }).join('');
   } else if (nightTab === 'game') {
@@ -2023,13 +2002,10 @@ const STORY = [
     ['narr', '🎯 목표: 돈을 모아 🏠 동네 카페로 확장하자!'],
   ] },
   { id: 'shop1', title: '4화. 첫 번째 가게', cond: () => S.shop >= 1,
-    reward: () => {
-      if (!S.unlocked.tea) { S.freeMenu.tea = true; S.stock.tea += 10; return '🍵 홍차 레시피 (📋 메뉴 탭에서 무료로 판매 시작) + 찻잎 10개'; }
-      S.money += 150; return '💰150';
-    }, lines: [
+    reward: () => { S.money += 150; return '💰150'; }, lines: [
     ['grandma', '어머나, 세상에! 우리 손주가 진짜 가게를 차렸구나!'],
     ['grandma', '수레 끌던 게 엊그제 같은데… 할머니 눈물 나려고 한다.'],
-    ['grandma', '자, 이건 할머니가 아끼던 비밀 레시피란다. 따뜻한 홍차 한 잔이면 누구든 마음이 녹지.'],
+    ['grandma', '자, 이건 개업 축하금이란다. 따뜻한 홍차도 한번 팔아 보렴. 홍차 한 잔이면 누구든 마음이 녹지.'],
     ['me', '할머니 레시피…! 소중히 쓸게요.'],
     ['narr', '🎯 다음 목표: 🏢 2층 카페로 확장하자!'],
   ] },
@@ -2094,10 +2070,7 @@ const STORY = [
     ['narr', '불이 다시 들어왔을 때, 아무도 일어나고 싶어 하지 않았다.'],
   ] },
   { id: 'rivalPast', title: '번외. 블랙빈 사장의 비밀', cond: () => S.story.seen.duelWin && S.day >= 20,
-    reward: () => {
-      if (!S.unlocked.choco) { S.freeMenu.choco = true; S.stock.cocoa += 10; return '☕ 핫초코 레시피 (📋 메뉴 탭에서 무료로 판매 시작) + 코코아 10개'; }
-      S.money += 400; return '💰400';
-    }, lines: [
+    reward: () => { S.money += 400; return '💰400'; }, lines: [
     ['rival', '…오늘은 손님으로 왔다. 아메리카노 하나.'],
     ['rival', '이 맛… 역시. 사실 말이야, 나도 어릴 때 이 거리에서 커피 수레를 본 적이 있어.'],
     ['rival', '하얀 앞치마를 두른 할머니가, 돈 없는 꼬맹이한테 코코아를 공짜로 주시더군. 그 꼬맹이가 나야.'],
@@ -2542,17 +2515,8 @@ document.addEventListener('click', e => {
     const c = upCost(id);
     if (S.money >= c && S.up[id] < UPS[id].max()) { S.money -= c; S.up[id]++; toast(`${UPS[id].icon} ${UPS[id].name} 완료!`); }
   } else if (act === 'unlock') {
-    const c = S.freeMenu[id] ? 0 : MENU[id].cost;
-    if (S.money >= c && S.shop >= MENU[id].shop) {
-      S.money -= c; S.unlocked[id] = true; delete S.freeMenu[id];
-      toast(`${ic(MENU[id].icon)} ${MENU[id].name} 판매 시작! 재료를 사두세요`);
-    }
-  } else if (act === 'menuToggle') {
-    if (!S.unlocked[id]) return;
-    if (!S.menuOff[id] && unlockedMenu().length <= 1) { toast('메뉴가 하나는 있어야 해요!'); return; }
-    if (S.menuOff[id]) delete S.menuOff[id]; else S.menuOff[id] = true;
-    fixPlanForMenus();
-    toast(S.menuOff[id] ? `⏸ ${MENU[id].name} 판매를 멈췄어요` : `✅ ${MENU[id].name} 다시 판매해요`);
+    const c = MENU[id].cost;
+    if (S.money >= c) { S.money -= c; S.unlocked[id] = true; toast(`${ic(MENU[id].icon)} ${MENU[id].name} 판매 시작! 재료를 사두세요`); }
   } else if (act === 'expand') {
     const nx = SHOPS[S.shop + 1];
     if (nx && S.money >= nx.cost) { S.money -= nx.cost; S.shop++; toast(`${nx.icon} ${josa(nx.name, '으로', '로')} 확장했어요!`); }
