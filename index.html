@@ -343,8 +343,12 @@
   .big:active { transform: translateY(2px); box-shadow: 0 2px 0 #a9541f; }
   .warn-text { color: var(--bad); font-size: .85rem; font-weight: 700; display: flex; align-items: center; gap: 2px; }
   .warn-text .ic { font-size: 1.3rem; }
-  .links { text-align: center; margin-top: 18px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; }
-  .reset { background: none; border: 0; color: var(--muted); text-decoration: underline; font-size: .8rem; white-space: nowrap; }
+  /* 어두운 바닥 위에서도 보이게 밝은 카드 위에 올린다 */
+  .links { text-align: center; margin-top: 12px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 16px;
+    background: rgba(255,250,242,.94); border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; box-shadow: 0 4px 10px rgba(40,20,5,.25); }
+  .links + .links { margin-top: 8px; }
+  .reset { background: none; border: 0; color: var(--wood-dark); text-decoration: underline; font-size: .82rem; font-weight: 600; white-space: nowrap; }
+  .links .who { color: var(--ink); font-weight: 600; }
 
   /* Tutorial */
   #coach {
@@ -2260,7 +2264,9 @@ $('story').addEventListener('click', e => {
   if (b && b.dataset.st === 'skip') return storyNext(true);
   if (b && b.dataset.st === 'close') { $('story').classList.add('hidden'); return; }
   if (b && b.dataset.st === 'replay') return playStory(STORY.find(c => c.id === b.dataset.id), false, null);
-  if (story) storyNext(false);
+  if (story) { storyNext(false); return; }
+  // 「지난 이야기」 목록: 목록 바깥 빈 곳을 누르면 닫힌다
+  if (!e.target.closest('.st-list')) $('story').classList.add('hidden');
 });
 
 // ---------- 뽑기 (게임 속 코인으로만) ----------
