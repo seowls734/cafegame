@@ -220,6 +220,14 @@
   .cb-hint { margin-top: 8px; padding-top: 6px; border-top: 2px solid rgba(255,255,255,.25); font-size: .9rem; color: #d7e0da; line-height: 1.4; }
   #bookToggle { display: none; position: fixed; left: 0; top: 42%; z-index: 16; writing-mode: vertical-rl; background: #2f3a33; color: #ffe08a;
     border: 3px solid #8b5a34; border-left: 0; border-radius: 0 12px 12px 0; padding: 12px 6px; font-weight: 800; font-family: "Gaegu", sans-serif; font-size: 1.05rem; letter-spacing: 2px; box-shadow: 2px 4px 10px rgba(0,0,0,.3); }
+  /* 넓은 화면: 가로로 두 칸씩 펼쳐서 스크롤을 줄인다 */
+  .day-col > h3:first-child { margin-top: 0; }
+  @media (min-width: 1100px) {
+    #layout { grid-template-columns: 270px minmax(0, 1180px); padding: 0 16px; }
+    .hud-inner { max-width: 1466px; }
+    .day-cols, .night-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+    .night-col > .card:last-child { margin-bottom: 0; }
+  }
   @media (max-width: 860px) {
     #layout { grid-template-columns: minmax(0, 1fr); max-width: 560px; margin: 0 auto; padding: 0; }
     #side { position: fixed; z-index: 17; left: 0; top: 0; bottom: 0; width: 86%; max-width: 320px; max-height: none; padding: 12px;
@@ -437,6 +445,7 @@
 
   <section id="dayView" class="hidden">
     <div class="shopname" id="shopName"></div>
+    <div class="day-cols"><div class="day-col">
     <div class="daybar"><div id="quests"></div><div id="combo"></div></div>
     <div class="scene">
       <div id="counter"></div>
@@ -444,6 +453,7 @@
     </div>
     <h3 class="row-title"><span>🍽️ 쟁반 <small id="trayCount"></small></span><button class="small-btn" data-act="clearTray">🗑 비우기</button></h3>
     <div id="tray"></div>
+    </div><div class="day-col">
     <h3>👨‍🍳 작업대</h3>
     <div id="bench">
       <div class="build" id="build"></div>
@@ -460,6 +470,7 @@
     </div>
     <h3>📦 재고</h3>
     <div id="stockBar"></div>
+    </div></div>
   </section>
 
   <section id="nightView" class="hidden"></section>
@@ -1648,7 +1659,7 @@ function renderNight() {
   renderHud();
   renderBg(true);
   renderBook();
-  let html = '';
+  let html = '<div class="night-cols"><div class="night-col">';
   if (lastSummary) {
     const s = lastSummary;
     html += `<div class="card"><h2>🌙 ${s.day}일차 영업 결과</h2><div class="sum">
@@ -1698,6 +1709,7 @@ function renderNight() {
     ${S.quests.map(q => `<div style="display:flex;justify-content:space-between;gap:8px"><span>📜 ${questText(q)}</span><b>${coin(q.reward)}</b></div>`).join('')}
   </div></div>`;
 
+  html += '</div><div class="night-col">';
   const ready = achReady().length;
   const tabs = [['stock', '📦 재료'], ['up', '🔧 업그레이드'], ['menu', '📋 메뉴'], ['shop', '🏪 확장'], ['ach', '🏆 업적'], ['game', '🎰 뽑기']];
   html += `<div class="tabs">${tabs.map(([k, n]) => `<button class="tab ${nightTab === k ? 'on' : ''}" data-act="tab" data-id="${k}">${n}${k === 'ach' && ready ? `<span class="dot">${ready}</span>` : ''}</button>`).join('')}</div>`;
@@ -1764,6 +1776,7 @@ function renderNight() {
   html += `<button class="big" data-act="start">☀️ ${S.day}일차 영업 시작</button>`;
   html += `<div class="links">${mode().noStory ? '' : '<button class="reset" data-act="storyList">📜 지난 이야기</button>'}${S.tut === 2 ? `<button class="reset" data-act="replayTut">📘 튜토리얼 다시 보기</button>` : ''}
     <button class="reset" data-act="reset">🎮 모드 바꿔서 새로 시작</button></div>`;
+  html += '</div></div>';
   $('nightView').innerHTML = html;
   applyHighlight();
 }
