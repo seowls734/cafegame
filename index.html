@@ -136,6 +136,12 @@
   .pbar > div { height: 100%; }
   .shake { animation: shake .3s; }
   @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  /* 이스터에그 연출 */
+  .parade { position: fixed; z-index: 25; left: -12vw; font-size: 2.6rem; pointer-events: none; animation: parade 7s linear forwards; }
+  @keyframes parade { 50% { transform: translateY(-14px); } to { left: 108vw; } }
+  .rain { position: fixed; z-index: 25; top: -10vh; font-size: 2rem; pointer-events: none; animation: rain 3s ease-in forwards; }
+  @keyframes rain { to { top: 110vh; transform: rotate(240deg); } }
+  @media (prefers-reduced-motion: reduce) { .parade, .rain { display: none; } }
 
   /* ===== 화면 전체 카페 배경 ===== */
   #bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; --sky: linear-gradient(#8fd0ff, #d8f0ff); background: #f1e2c8; }
@@ -668,6 +674,7 @@ function newGame(m = 'story') {
     ticket: null,     // 즉석 복권 { prize, cells, open }
     lastReels: ['☕', '🍰', '💰'],
     ach: {},          // 받은 업적
+    eggs: {},         // 찾은 이스터에그
     quests: [],       // 오늘의 의뢰
     special: null,    // 오늘의 추천 메뉴
     sale: null,       // 시장 특가 재료
@@ -692,7 +699,7 @@ function load() {
     // 예전 저장은 오늘 밤 이야기를 이미 본 것으로 친다 (다시 들어올 때마다 새 이야기가 나오던 문제)
     if (typeof d.storyDay !== 'number') d.storyDay = d.day || 0;
     return { ...base, ...d, tut, stock: { ...base.stock, ...d.stock }, up, unlocked: { ...base.unlocked, ...d.unlocked },
-             stats: { ...base.stats, ...d.stats }, ach: { ...d.ach }, quests: Array.isArray(d.quests) ? d.quests : [],
+             stats: { ...base.stats, ...d.stats }, ach: { ...d.ach }, eggs: { ...d.eggs }, quests: Array.isArray(d.quests) ? d.quests : [],
              story: { ...base.story, ...d.story, seen: { ...(d.story && d.story.seen) } } };
   } catch (e) { return null; }
 }
@@ -837,6 +844,16 @@ const ACHS = [
   { id: 'duel',      name: '라이벌을 이기다', desc: '⚔️ 블랙빈과의 매출 대결 승리', goal: 1, val: () => (S.story.seen.duelWin ? 1 : 0), reward: 300 },
   { id: 'ending',    name: '할머니의 꿈',     desc: '📜 스토리 엔딩 보기',    goal: 1,    val: () => (S.story.ending ? 1 : 0), reward: 500 },
   { id: 'jackpot',   name: '잭팟!',           desc: '🎰 슬롯머신 💰💰💰',     goal: 1,    val: () => S.stats.jackpot,     reward: 300 },
+  // ── 비밀 업적: 찾기 전에는 이름과 조건이 가려진다 ──
+  ...[
+    ['konami',  '전설의 커맨드',    '⬆️⬆️⬇️⬇️⬅️➡️⬅️➡️ B A 입력',          777],
+    ['stars',   '별 세는 사장님',   '⭐ 평판 별을 빠르게 10번 누르기',      100],
+    ['water',   '그냥 물',          '💧 머그컵에 물만 담아서 완성 누르기', 50],
+    ['meow',    '고양이 부르기',    '⌨️ 키보드로 meow 입력',               150],
+    ['coffee3', '커피 중독',        '🎰 슬롯머신 ☕☕☕',                    200],
+    ['owl',     '올빼미 사장님',    '🌙 새벽 2~4시에 카페 열기',           100],
+  ].map(([id, name, desc, reward]) => ({ id: 'egg_' + id, name: '🥚 ' + name, desc, goal: 1, secret: true,
+      val: () => (S.eggs[id] ? 1 : 0), reward })),
 ];
 const achReward = a => a.reward * (mode().achMult || 1);
 const achReady = () => ACHS.filter(a => !S.ach[a.id] && a.val() >= a.goal);
@@ -1388,7 +1405,12 @@ function afterAdd() {
 
 function completeBench() {
   const m = benchMatch();
-  if (!m) { toast('레시피와 달라요'); return; }
+  if (!m) {
+    const b = R.bench;
+    if (b.cup === 'mug' && b.parts.length && b.parts.every(p => p.id === 'water')) findEgg('water', '💧 맹물…? 할머니가 보시면 혼나요!');
+    else toast('레시피와 달라요');
+    return;
+  }
   if (R.tray.length >= trayCap()) { toast('쟁반이 가득 찼어요! 먼저 서빙하세요'); renderBench(); return; }
   const parts = R.bench.parts;
   const q = parts.reduce((s, p) => s + p.q, 0) / parts.length;
@@ -1679,6 +1701,8 @@ function endDay() {
 
 // ---------- 밤(준비) ----------
 function showNight() {
+  const h = new Date().getHours();
+  if (h >= 2 && h < 4) setTimeout(() => findEgg('owl', '🦉 이 시간까지 장사를…? 사장님 좀 주무세요 😴'), 800);
   $('dayView').classList.add('hidden');
   $('nightView').classList.remove('hidden');
   window.scrollTo(0, 0);
@@ -1798,8 +1822,10 @@ function renderNight() {
       const btn = done ? `<button class="buy" disabled>받음</button>`
         : `<button class="buy" data-act="claim" data-id="${a.id}" ${can ? '' : 'disabled'}>${coin(achReward(a))}</button>`;
       return `<div class="item ${done ? 'ach-done' : ''}"><div class="ico">${done ? '🏅' : can ? '🎁' : '🏆'}</div>
-        <div class="info"><b>${a.name}</b><span>${a.desc} (${fmt(v)}/${fmt(a.goal)})</span>
-        <div class="prog"><div style="width:${v / a.goal * 100}%"></div></div></div>${btn}</div>`;
+        ${a.secret && v < a.goal
+          ? `<div class="info"><b>🔒 비밀 업적</b><span>어딘가에 숨겨진 이스터에그를 찾아보세요</span></div>${btn}</div>`
+          : `<div class="info"><b>${a.name}</b><span>${a.desc} (${fmt(v)}/${fmt(a.goal)})</span>
+        <div class="prog"><div style="width:${v / a.goal * 100}%"></div></div></div>${btn}</div>`}`;
     }).join('');
   } else {
     const cur = SHOPS[S.shop], nx = SHOPS[S.shop + 1];
@@ -2028,6 +2054,7 @@ function spinSlot() {
       S.money += win;
       S.lastReels = result;
       if (result.every(x => x === '💰')) S.stats.jackpot++;
+      if (result.every(x => x === '☕')) setTimeout(() => findEgg('coffee3', '☕☕☕ 커피 향이 가게에 가득해요!', '☕'), 600);
       slotMsg = win > bet ? `🎉 ${win} 획득! (+${win - bet})` : win === bet ? '본전이에요 😌' : '꽝… 😢';
       spinning = false;
       save();
@@ -2157,6 +2184,49 @@ function challengeEnd() {
   $('overlay').classList.remove('hidden');
   try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
 }
+
+// ---------- 이스터에그 ----------
+// 찾으면 비밀 업적이 열리고, 업적 탭에서 보상을 받을 수 있다
+function findEgg(id, msg, fx) {
+  if (!S || !$('auth').classList.contains('hidden')) return;
+  const first = !S.eggs[id];
+  S.eggs[id] = true;
+  save();
+  if (fx) eggFx(fx);
+  toast(first ? `🥚 이스터에그 발견!<br>${msg}<br><small>🏆 업적 탭에서 비밀 업적 보상을 받으세요</small>` : msg);
+  if (first && !R) renderNight();
+}
+
+function eggFx(kind) {
+  const add = (cls, html, style, ms) => {
+    const el = document.createElement('div');
+    el.className = cls; el.innerHTML = html;
+    Object.assign(el.style, style);
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), ms);
+  };
+  if (kind === 'cat') ['🐈', '🐈‍⬛', '🐱', '🐈', '🐾'].forEach((c, i) =>
+    add('parade', c, { bottom: (8 + (i % 2) * 6) + 'vh', animationDelay: i * 0.5 + 's' }, 7000 + i * 500));
+  else ['☕', '🍰', '🥐', '🍪', '💰', '🧁', '🍩'].concat(kind === '☕' ? ['☕', '☕', '☕'] : ['⭐', '🎉', '💰'])
+    .forEach((c, i) => add('rain', c, { left: (5 + i * 9) % 95 + 'vw', animationDelay: (i % 5) * 0.25 + 's' }, 4500));
+}
+
+const KONAMI = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
+let keyLog = [];
+document.addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('input, textarea')) return;
+  const k = (e.key || '').toLowerCase();
+  keyLog = keyLog.concat(k).slice(-10);
+  if (KONAMI.every((x, i) => keyLog[i] === x)) { keyLog = []; findEgg('konami', '🎮 전설의 커맨드! 하늘에서 선물이 쏟아져요', 'rain'); }
+  else if (keyLog.slice(-4).join('') === 'meow') { keyLog = []; findEgg('meow', '🐈 냐아~ 동네 고양이들이 놀러 왔어요!', 'cat'); }
+});
+
+let starTaps = [];
+$('hudRep').addEventListener('click', () => {
+  const now = Date.now();
+  starTaps = starTaps.filter(t => now - t < 3000).concat(now);
+  if (starTaps.length >= 10) { starTaps = []; findEgg('stars', '⭐ 반짝반짝… 별을 너무 세서 눈이 빙글빙글해요!', 'rain'); }
+});
 
 // ---------- 입력 ----------
 // 영업 중에는 화면이 계속 다시 그려져서 click이 씹힐 수 있으니 pointerdown으로 받는다.
