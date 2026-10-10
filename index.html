@@ -620,6 +620,7 @@ function newGame(m = 'story') {
     tut: 0, // 0: 첫 영업 튜토리얼 전, 1: 첫 밤 안내 전, 2: 튜토리얼 끝
     stats: { served: 0, perfect: 0, vip: 0, delivery: 0, maxCombo: 0, bestRevenue: 0, jackpot: 0 },
     story: { seen: {}, ending: false },
+    storyDay: 0,      // 새 이야기를 마지막으로 본 날 (하룻밤에 하나만)
     cat: false,       // 가게 고양이 (스토리 5화)
     duel: null,       // 블랙빈과의 매출 대결 { target }
     duelResult: null, // 'win' | 'lose'
@@ -649,6 +650,8 @@ function load() {
     if (d.up && d.up.robot > 0) d.money = (d.money || 0) + 1500; // 없어진 서빙 로봇 환불
     // 튜토리얼이 생기기 전 저장이면 이미 해본 사람으로 본다
     const tut = typeof d.tut === 'number' ? d.tut : (d.day > 1 ? 2 : 0);
+    // 예전 저장은 오늘 밤 이야기를 이미 본 것으로 친다 (다시 들어올 때마다 새 이야기가 나오던 문제)
+    if (typeof d.storyDay !== 'number') d.storyDay = d.day || 0;
     return { ...base, ...d, tut, stock: { ...base.stock, ...d.stock }, up, unlocked: { ...base.unlocked, ...d.unlocked },
              stats: { ...base.stats, ...d.stats }, ach: { ...d.ach }, quests: Array.isArray(d.quests) ? d.quests : [],
              story: { ...base.story, ...d.story, seen: { ...(d.story && d.story.seen) } } };
@@ -1875,14 +1878,15 @@ const STORY = [
   ] },
 ];
 
-const nextStory = () => !mode().noStory && STORY.find(c => (c.repeat || !S.story.seen[c.id]) && c.cond());
+// 새 이야기는 하룻밤에 하나만 나온다. 게임을 껐다 켜도 같은 밤에는 다음 이야기가 나오지 않는다.
+const nextStory = () => !mode().noStory && STORY.find(c => (c.repeat || (!S.story.seen[c.id] && S.storyDay !== S.day)) && c.cond());
 
 let story = null; // { ch, i, lines, done }
 function playStory(ch, first, done) {
   const got = first && ch.reward ? ch.reward() : null;
   const lines = ch.lines.map(([who, text]) => [who, typeof text === 'function' ? text() : text]);
   if (got) lines.push(['narr', `🎁 보상: ${got}`]);
-  if (first && !ch.repeat) S.story.seen[ch.id] = true;
+  if (first && !ch.repeat) { S.story.seen[ch.id] = true; S.storyDay = S.day; }
   if (first) save();
   story = { ch, i: 0, lines, done };
   renderStory();
