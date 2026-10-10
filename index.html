@@ -2274,7 +2274,8 @@ const KONAMI = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'ar
 let keyLog = [];
 document.addEventListener('keydown', e => {
   if (e.target.closest && e.target.closest('input, textarea')) return;
-  const k = (e.key || '').toLowerCase();
+  // 한/영 상태와 상관없이 키 위치로 읽는다 (한글 상태면 e.key가 'ㅠ', 'ㅁ'처럼 들어온다)
+  const k = /^Key[A-Z]$/.test(e.code || '') ? e.code.slice(3).toLowerCase() : (e.key || '').toLowerCase();
   keyLog = keyLog.concat(k).slice(-10);
   if (KONAMI.every((x, i) => keyLog[i] === x)) { keyLog = []; findEgg('konami', '🎮 전설의 커맨드! 하늘에서 선물이 쏟아져요', 'rain'); }
   else if (keyLog.slice(-4).join('') === 'meow') { keyLog = []; findEgg('meow', '🐈 냐아~ 동네 고양이들이 놀러 왔어요!', 'cat'); }
