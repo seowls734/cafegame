@@ -37,6 +37,7 @@
   body.coaching #app { padding-bottom: 150px; }
   button { font: inherit; color: inherit; cursor: pointer; }
   .ic { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; font-style: normal; line-height: 1; }
+  .ic svg { width: 1.1em; height: 1.1em; vertical-align: -0.15em; }
 
   /* HUD */
   #hud {
@@ -531,16 +532,25 @@
 
 // ---------- 그림 ----------
 // 윈도우 10에서도 깨지지 않는 이모지(Emoji 12 이하, 최신 ZWJ 조합 제외)만 쓴다.
+// 카페라떼 이모지는 따로 없어서(🥛는 그냥 우유로 보인다) 하트 라떼아트 잔을 직접 그린다
+const LATTE_SVG = '<svg viewBox="0 0 36 36" aria-hidden="true">'
+  + '<ellipse cx="18" cy="31" rx="15" ry="3.5" fill="#e8e1d6" stroke="#3b2614" stroke-width="1.8"/>'
+  + '<path d="M28 15a4.5 4.5 0 0 1 0 9" fill="none" stroke="#3b2614" stroke-width="3"/>'
+  + '<path d="M6 13h22v7a11 9 0 0 1-22 0z" fill="#fffaf2" stroke="#3b2614" stroke-width="2"/>'
+  + '<ellipse cx="17" cy="13" rx="11" ry="3.4" fill="#c8915c" stroke="#3b2614" stroke-width="2"/>'
+  + '<path d="M17 15.4c-2.6-1.5-3.7-2.5-3.7-3.6a1.7 1.7 0 0 1 3.7-.5a1.7 1.7 0 0 1 3.7.5c0 1.1-1.1 2.1-3.7 3.6z" fill="#fff3e0"/>'
+  + '</svg>';
+
 const ICONS = {
   coin: '💰',
   // 메뉴
-  americano: '☕', latte: '🥛', choco: '🍫', teaCup: '🍵', iceame: '🥤', icelatte: '🧊',
+  americano: '☕', latte: LATTE_SVG, choco: '🍫', teaCup: '🍵', iceame: '🥤', icelatte: '🧊',
   smoothie: '🍹', cookie: '🍪', cakeSlice: '🍰', croissant: '🥐',
   // 도구·재료 넣기
   mug: '☕', icecup: '🥤', plate: '🍽️', shot: '🟤', water: '💧', milk: '🍼', ice: '🧊',
   leaf: '🌿', cocoa: '🟫', strawberry: '🍓', blender: '🌀', oven: '🔥',
   // 재료(재고)
-  bean: '🌰', cakeWhole: '🎂', dough: '🥖',
+  bean: '🌰', dough: '🥖',
 };
 
 const ic = key => `<span class="ic">${ICONS[key] || ''}</span>`;
@@ -551,7 +561,7 @@ const ING = {
   milk:   { name: '우유',   icon: 'milk',       cost: 1 },
   cookie: { name: '쿠키',   icon: 'cookie',     cost: 1 },
   tea:    { name: '찻잎',   icon: 'leaf',       cost: 2 },
-  cake:   { name: '케이크', icon: 'cakeWhole',  cost: 4 },
+  cake:   { name: '케이크', icon: 'cakeSlice',  cost: 4 },
   dough:  { name: '생지',   icon: 'dough',      cost: 2 },
   fruit:  { name: '딸기',   icon: 'strawberry', cost: 3 },
   cocoa:  { name: '코코아', icon: 'cocoa',      cost: 3 },
