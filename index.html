@@ -144,15 +144,22 @@
   #bg.s1 .wallp { background: repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 18px, transparent 18px 36px), #f1e2c8; }
   #bg.s2 .wallp { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='40'%3E%3Crect width='48' height='40' fill='%23b4603f'/%3E%3Cpath d='M0 19h48M0 39h48M24 0v19M1 20v19M47 20v19' stroke='%23e2cdb6' stroke-width='2'/%3E%3C/svg%3E"); }
   #bg.s3 .wallp { background: repeating-linear-gradient(90deg, #2f5c4a 0 46px, #2a5343 46px 48px); }
+  #bg.s4 .wallp { background: repeating-linear-gradient(90deg, #2d2f4a 0 46px, #26283f 46px 48px); }
+  #bg.s5 .wallp { background: repeating-linear-gradient(90deg, #bfe8ec 0 30px, #fdf6e3 30px 60px); }
+  #bg.s6 .wallp { background: linear-gradient(135deg, rgba(255,255,255,.25) 25%, transparent 25% 50%, rgba(255,255,255,.25) 50% 75%, transparent 75%) 0 0 / 56px 56px, #e9e4f2; }
   #bg .wainscot { position: absolute; left: 0; right: 0; bottom: 24%; height: 15%; border-top: 7px solid #6b4226;
     background: repeating-linear-gradient(90deg, #9a6a42 0 54px, #8c5e38 54px 58px); }
   #bg.s2 .wainscot { background: repeating-linear-gradient(90deg, #6b4226 0 54px, #5e391f 54px 58px); border-top-color: #4a2c17; }
   #bg.s3 .wainscot { background: repeating-linear-gradient(90deg, #3d2a1c 0 64px, #33231a 64px 68px); border-top-color: #c9a24a; }
+  #bg.s4 .wainscot { background: repeating-linear-gradient(90deg, #4a3a2a 0 64px, #3e3022 64px 68px); border-top-color: #e0b04a; }
+  #bg.s5 .wainscot { background: repeating-linear-gradient(90deg, #d9b98c 0 40px, #cfae80 40px 44px); border-top-color: #fff; }
+  #bg.s6 .wainscot { background: repeating-linear-gradient(90deg, #2b2440 0 64px, #241e36 64px 68px); border-top-color: #d6b65a; }
   #bg .floor { position: absolute; left: 0; right: 0; bottom: 0; height: 24%;
     background: linear-gradient(rgba(40,20,5,.35), transparent 40%),
       repeating-linear-gradient(90deg, #c99d6e 0 90px, #b48659 90px 92px, #c4976a 92px 180px, #b0835a 180px 182px); }
   #bg.s0 .floor { background: linear-gradient(rgba(0,0,0,.15), transparent 30%), repeating-linear-gradient(90deg, #b9b9b9 0 70px, #a5a5a5 70px 72px); border-top: 7px solid #d4d4d4; }
-  #bg.s3 .floor { background: linear-gradient(rgba(0,0,0,.25), transparent 40%), conic-gradient(#ece6dc 25%, #cbbfae 0 50%, #ece6dc 0 75%, #cbbfae 0) 0 0 / 64px 64px; }
+  #bg.s5 .floor { background: linear-gradient(rgba(0,0,0,.12), transparent 30%), #ecd7a6; }
+  #bg.s3 .floor, #bg.s4 .floor, #bg.s6 .floor { background: linear-gradient(rgba(0,0,0,.25), transparent 40%), conic-gradient(#ece6dc 25%, #cbbfae 0 50%, #ece6dc 0 75%, #cbbfae 0) 0 0 / 64px 64px; }
   #bg .awning-top { position: absolute; top: 0; left: 0; right: 0; height: 64px; background: repeating-linear-gradient(90deg, #d24b3e 0 40px, #fff6ea 40px 80px); box-shadow: 0 4px 6px rgba(0,0,0,.2); }
   #bg .awning-top::after { content: ''; position: absolute; left: 0; right: 0; bottom: -16px; height: 16px;
     background: radial-gradient(circle at 20px 0, #d24b3e 19px, transparent 20px) 0 0 / 80px 16px,
@@ -162,7 +169,7 @@
   #bg .lamp { width: 3px; height: 70px; background: #3b2614; position: relative; }
   #bg .lamp::after { content: ''; position: absolute; left: -16px; top: 66px; width: 34px; height: 20px; border-radius: 18px 18px 3px 3px; background: #3b2614;
     box-shadow: 0 16px 40px 18px rgba(255,214,120,.5); }
-  #bg.s3 .lamp::after { background: #c9a24a; }
+  #bg.s3 .lamp::after, #bg.s4 .lamp::after, #bg.s6 .lamp::after { background: #c9a24a; }
   #bg .win { position: absolute; top: 15%; width: 10vw; min-width: 110px; height: 26vh; border: 9px solid #f8f1e4; outline: 4px solid #6b4226; border-radius: 4px; overflow: hidden; background: var(--sky); }
   #bg .win.l { left: 1.5vw; } #bg .win.r { right: 3vw; }
   #bg .win::before, #bg .win::after { content: ''; position: absolute; background: #f8f1e4; z-index: 2; }
@@ -176,10 +183,10 @@
   #bg .shelf { position: absolute; top: calc(15% + 26vh + 34px); width: 10vw; min-width: 110px; display: flex; flex-direction: column; gap: 3vh; }
   #bg .shelf.l { left: 1.5vw; }
   #bg .shelf div { border-bottom: 8px solid #6b4226; text-align: center; font-size: clamp(1.3rem, 2.2vw, 2.4rem); line-height: 1; white-space: nowrap; overflow: hidden; box-shadow: 0 6px 6px -4px rgba(0,0,0,.3); }
-  #bg.s3 .shelf div { border-bottom-color: #c9a24a; }
+  #bg.s3 .shelf div, #bg.s4 .shelf div, #bg.s6 .shelf div { border-bottom-color: #c9a24a; }
   #bg .frame { position: absolute; top: calc(15% + 26vh + 40px); right: 5vw; width: 11vw; height: 9vw; min-width: 80px; min-height: 64px; background: #fffaf2;
     border: 10px solid #8b5a34; box-shadow: inset 0 0 0 3px #c9a24a, 0 6px 10px rgba(0,0,0,.25); display: flex; align-items: center; justify-content: center; font-size: clamp(2rem, 5vw, 4.5rem); }
-  #bg.s3 .frame { border-color: #c9a24a; }
+  #bg.s3 .frame, #bg.s4 .frame, #bg.s6 .frame { border-color: #c9a24a; }
   #bg .clock { position: absolute; top: 7%; right: 22vw; font-size: clamp(1.8rem, 3vw, 3rem); }
   #bg .plant { position: absolute; bottom: 14%; display: flex; flex-direction: column; align-items: center; }
   #bg .plant.l { left: 1.5vw; } #bg .plant.r { right: 1.5vw; }
@@ -386,6 +393,13 @@
   /* Overlay, toast, floats */
   #overlay { position: fixed; inset: 0; background: rgba(40,25,10,.7); display: flex; align-items: center; justify-content: center; z-index: 20; padding: 16px; }
   #overlay .card { max-width: 380px; width: 100%; text-align: center; }
+  #overlay .mode-card { max-width: 440px; max-height: 90vh; overflow-y: auto; }
+  .mode-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+  .mode-btn { display: flex; align-items: center; gap: 10px; text-align: left; border: 2px solid var(--wood); background: var(--panel); border-radius: 12px; padding: 10px 12px; font: inherit; color: inherit; cursor: pointer; }
+  .mode-btn:hover { background: #fff3df; }
+  .mode-btn .mi { font-size: 2rem; line-height: 1; }
+  .mode-btn b { display: block; }
+  .mode-btn small { color: var(--muted); font-size: .76rem; line-height: 1.4; }
   #toast {
     position: fixed; left: 50%; top: 70px; transform: translateX(-50%); z-index: 30;
     background: rgba(40,25,10,.92); color: #fff; padding: 8px 14px; border-radius: 20px; font-size: .9rem;
@@ -529,26 +543,53 @@ const SHOPS = [
   { name: '동네 카페',       icon: '🏠', cost: 300,  priceMult: 1.2, rentMult: 1.6 },
   { name: '2층 카페',        icon: '🏢', cost: 1000, priceMult: 1.4, rentMult: 2.5 },
   { name: '프랜차이즈 본점', icon: '🏙️', cost: 3500, priceMult: 1.7, rentMult: 4.0 },
+  { name: '루프탑 카페',     icon: '🌇', cost: 9000,  priceMult: 2.0, rentMult: 6.0 },
+  { name: '해변 리조트 카페', icon: '🏖️', cost: 22000, priceMult: 2.4, rentMult: 9.0 },
+  { name: '글로벌 체인 본사', icon: '🌍', cost: 55000, priceMult: 2.9, rentMult: 13.0 },
 ];
+const TOP_SHOP = SHOPS.length - 1;
+
+// 고급 장비: 7레벨까지는 크게, 그 뒤로는 조금씩 넓어진다
+const equipWiden = (l = S.up.equip) => 0.025 * Math.min(l, 7) + 0.01 * Math.max(0, l - 7);
+// 알바생이 일하는 간격(초)
+const STAFF_GAP = [0, 10, 7, 4, 3.3, 2.7, 2.2];
+const autoOrderN = (lv = S.up.autoorder) => (lv >= 3 ? 10 : RUSH_N);
 
 const UPS = {
   equip:   { name: '고급 장비',   icon: '⚙️', desc: l => `성공 구간이 넓어져요 (Lv.${l + 1})`,
-             max: () => 1 + S.shop * 2, cost: l => 60 * Math.pow(1.9, l) },
+             max: () => 2 + S.shop * 2, cost: l => 60 * Math.pow(1.9, l) },
   tray:    { name: '큰 쟁반',     icon: '🍽️', desc: l => `쟁반 칸 ${trayCap(l)} → ${trayCap(l + 1)}`,
-             max: () => 1 + S.shop, cost: l => 50 * Math.pow(2, l) },
+             max: () => 2 + S.shop, cost: l => 50 * Math.pow(2, l) },
   counter: { name: '카운터 확장', icon: '🛋️', desc: l => `손님 자리 ${l} → ${l + 1}`,
              max: () => 3 + S.shop, cost: l => 60 * Math.pow(2, l - 2) },
   decor:   { name: '인테리어',    icon: '🖼️', desc: l => `손님 인내심·팁 증가 (Lv.${l + 1})`,
-             max: () => 1 + S.shop * 2, cost: l => 70 * Math.pow(1.9, l) },
+             max: () => 2 + S.shop * 2, cost: l => 70 * Math.pow(1.9, l) },
   sign:    { name: '홍보 간판',   icon: '📣', desc: l => `손님이 조금 더 자주 와요 (약 +${(l + 1) * 4}%)`,
-             max: () => 1 + S.shop * 2, cost: l => 60 * Math.pow(1.8, l) },
-  staff:   { name: '알바생',      icon: '👨‍🍳', desc: l => `가끔 메뉴를 대신 만들어줘요 (Lv.${l + 1})`,
-             max: () => Math.min(3, S.shop), cost: l => 200 * Math.pow(2.5, l) },
+             max: () => 2 + S.shop * 2, cost: l => 60 * Math.pow(1.8, l) },
+  staff:   { name: '알바생',      icon: '👨‍🍳', desc: l => `${STAFF_GAP[l + 1]}초마다 메뉴를 대신 만들어줘요 (Lv.${l + 1})`,
+             max: () => S.shop, cost: l => 200 * Math.pow(2.5, l) },
   autoorder: { name: '자동 발주 시스템', icon: '📦',
              desc: l => l === 0 ? '영업 중 재료가 다 떨어지면 알아서 5개 주문해요 (1.5배 가격)'
-                               : '재료가 2개 남으면 미리, 평소 가격으로 주문해요',
-             max: () => (S.shop >= 3 ? 2 : S.shop >= 2 ? 1 : 0), cost: l => (l === 0 ? 900 : 2000) },
+                      : l === 1 ? '재료가 2개 남으면 미리, 평소 가격으로 주문해요'
+                               : '재료가 4개 남으면 미리 10개씩 주문해요',
+             max: () => (S.shop >= 5 ? 3 : S.shop >= 3 ? 2 : S.shop >= 2 ? 1 : 0), cost: l => [900, 2000, 6000][l] },
 };
+
+// ---------- 게임 모드 ----------
+const MODES = {
+  story:     { name: '스토리 모드', icon: '📖', desc: '할머니의 카페를 키우는 기본 모드. 이야기와 라이벌 대결이 있어요.' },
+  free:      { name: '자유 모드',   icon: '🌈', desc: '월세도 파산도 없어요. 시작 자금 500으로 느긋하게 즐겨요.',
+               rent: 0, money: 500, noStory: true },
+  hard:      { name: '하드 모드',   icon: '🔥', desc: '손님이 금방 지치고 월세가 1.5배. 대신 판매가 1.2배, 업적 보상 2배!',
+               rent: 1.5, patience: 0.75, price: 1.2, achMult: 2 },
+  rush:      { name: '러시 모드',   icon: '⚡', desc: '영업 시간이 짧은 대신 손님이 2배로 몰려와요. 콤보 보너스 최대 +100%.',
+               dayLen: 80, spawn: 2, comboCap: 20 },
+  challenge: { name: '30일 챌린지', icon: '⏱️', desc: '딱 30일! 누적 수입으로 최고 기록에 도전해요. 이야기는 나오지 않아요.',
+               days: 30, noStory: true },
+};
+const BEST_KEY = 'cafeSim_challengeBest';
+const mode = () => MODES[S.mode] || MODES.story;
+const dayLen = () => mode().dayLen || DAY_LEN;
 
 // 윈도우 10에서도 한 글자로 보이는 이모지만 쓴다
 const FACES = ['👩', '👨', '👵', '👴', '👧', '👦', '👱', '👱‍♀️', '👩‍🎓', '👨‍🎓', '👩‍💼', '👨‍💼', '👩‍💻', '👨‍🎨', '👩‍🔧', '👮'];
@@ -561,9 +602,10 @@ let R = null;   // 영업 중에만 쓰는 상태
 let nightTab = 'stock';
 let lastSummary = null;
 
-function newGame() {
+function newGame(m = 'story') {
   return {
-    day: 1, money: 80, rep: 50, shop: 0, totalEarned: 0, bestDay: 0,
+    mode: m,
+    day: 1, money: (MODES[m] && MODES[m].money) || 80, rep: 50, shop: 0, totalEarned: 0, bestDay: 0,
     tut: 0, // 0: 첫 영업 튜토리얼 전, 1: 첫 밤 안내 전, 2: 튜토리얼 끝
     stats: { served: 0, perfect: 0, vip: 0, delivery: 0, maxCombo: 0, bestRevenue: 0, jackpot: 0 },
     story: { seen: {}, ending: false },
@@ -606,8 +648,8 @@ function load() {
 const $ = id => document.getElementById(id);
 const fmt = n => Math.floor(n).toLocaleString('ko-KR');
 const coin = n => `${ic('coin')}${fmt(n)}`;
-const price = id => Math.round(MENU[id].price * SHOPS[S.shop].priceMult);
-const rent = () => Math.round((8 + S.day * 2) * SHOPS[S.shop].rentMult);
+const price = id => Math.round(MENU[id].price * SHOPS[S.shop].priceMult * (mode().price || 1));
+const rent = () => Math.round((8 + S.day * 2) * SHOPS[S.shop].rentMult * (mode().rent ?? 1));
 const trayCap = (l = S.up.tray) => 4 + l * 2;
 const unlockedMenu = () => Object.keys(MENU).filter(k => S.unlocked[k]);
 const menuIngs = id => MENU[id].parts.map(p => PARTS[p].ing).filter(Boolean);
@@ -623,8 +665,10 @@ function josa(word, withFinal, noFinal) {
   return word + (fin ? withFinal : noFinal);
 }
 // ---------- 카페 장면 ----------
-const SHELVES = [null, ['☕🍵🥛', '🌿📚'], ['☕🍵🍯🥛', '🌵📚🕯️'], ['☕🍷🍵🍯', '🌿📚🕯️🎻']];
-const VIEWS = ['', '🌳🏡🌳', '🏢🌳🏢', '🏙️🌉🏙️'];
+const SHELVES = [null, ['☕🍵🥛', '🌿📚'], ['☕🍵🍯🥛', '🌵📚🕯️'], ['☕🍷🍵🍯', '🌿📚🕯️🎻'],
+  ['☕🍸🍵🍯', '🪴📚🕯️'], ['🥥🍹☕🍵', '🐚🌺📚'], ['☕🍷🍵🍯', '🏆🌐📚🎻']];
+const VIEWS = ['', '🌳🏡🌳', '🏢🌳🏢', '🏙️🌉🏙️', '🌆🌃🌆', '🌊⛵🌴', '🗼🌍🗽'];
+const FRAMES = ['', '🌄', '🌅', '🎨', '🌃', '🏝️', '🗺️'];
 
 // 영업 시간에 따라 창밖 하늘이 아침 → 한낮 → 노을로 바뀐다
 function skyAt(p) {
@@ -644,10 +688,10 @@ function renderBg(night) {
     ${sh === 0 ? `<div class="awning-top"></div><div class="city">🏪 🏠 🌳 🏬 🏢 🌳 🏠 🏪 🏬 🌳 🏠 🏢</div>
       ${night ? '<div class="stars sky-stars">✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧</div><div class="closed-sign street">CLOSED</div>' : ''}`
     : `<div class="wainscot"></div>
-      <div class="lamps">${'<span class="lamp"></span>'.repeat(4 + sh * 2)}</div>
+      <div class="lamps">${'<span class="lamp"></span>'.repeat(Math.min(12, 4 + sh * 2))}</div>
       ${win('l')}${win('r')}
       <div class="shelf l">${SHELVES[sh].map(r => `<div>${r}</div>`).join('')}</div>
-      <div class="frame">${['', '🌄', '🌅', '🎨'][sh]}</div>
+      <div class="frame">${FRAMES[sh]}</div>
       <div class="clock">🕰️</div>`}
     <div class="floor"></div>
     <div class="plant l"><span>🌿</span><i></i></div>
@@ -657,7 +701,7 @@ function renderBg(night) {
 }
 
 function updateSky() {
-  $('bg').style.setProperty('--sky', R ? skyAt(Math.min(1, R.t / DAY_LEN)) : 'linear-gradient(#141a33, #2e3560)');
+  $('bg').style.setProperty('--sky', R ? skyAt(Math.min(1, R.t / dayLen())) : 'linear-gradient(#141a33, #2e3560)');
 }
 
 // 왼쪽 칠판 레시피
@@ -732,12 +776,16 @@ const ACHS = [
   { id: 'shop1',     name: '이사했어요',      desc: '동네 카페로 확장',      goal: 1,    val: () => S.shop,              reward: 200 },
   { id: 'shop2',     name: '2층까지!',        desc: '2층 카페로 확장',       goal: 2,    val: () => S.shop,              reward: 600 },
   { id: 'shop3',     name: '프랜차이즈 사장', desc: '프랜차이즈 본점 확장',  goal: 3,    val: () => S.shop,              reward: 3000 },
+  { id: 'shop4',     name: '도시의 야경',     desc: '루프탑 카페로 확장',    goal: 4,    val: () => S.shop,              reward: 6000 },
+  { id: 'shop5',     name: '바다가 보여요',   desc: '해변 리조트 카페로 확장', goal: 5,  val: () => S.shop,              reward: 12000 },
+  { id: 'shop6',     name: '세계 정복',       desc: '글로벌 체인 본사로 확장', goal: 6,  val: () => S.shop,              reward: 30000 },
   { id: 'day7',      name: '일주일 버티기',   desc: '7일차 도달',            goal: 7,    val: () => S.day,               reward: 100 },
   { id: 'day30',     name: '한 달 장사',      desc: '30일차 도달',           goal: 30,   val: () => S.day,               reward: 1000 },
   { id: 'duel',      name: '라이벌을 이기다', desc: '⚔️ 블랙빈과의 매출 대결 승리', goal: 1, val: () => (S.story.seen.duelWin ? 1 : 0), reward: 300 },
   { id: 'ending',    name: '할머니의 꿈',     desc: '📜 스토리 엔딩 보기',    goal: 1,    val: () => (S.story.ending ? 1 : 0), reward: 500 },
   { id: 'jackpot',   name: '잭팟!',           desc: '🎰 슬롯머신 💰💰💰',     goal: 1,    val: () => S.stats.jackpot,     reward: 300 },
 ];
+const achReward = a => a.reward * (mode().achMult || 1);
 const achReady = () => ACHS.filter(a => !S.ach[a.id] && a.val() >= a.goal);
 
 const recipeHtml = id =>`<span class="r">${[MENU[id].cup, ...MENU[id].parts].map(p => ic(PARTS[p].icon)).join('<span class="op">+</span>')}</span>`;
@@ -772,10 +820,10 @@ function stars(rep) {
 function qualityMark(q) { return q >= 0.95 ? '⭐' : q >= 0.6 ? '' : '💦'; }
 
 function renderHud() {
-  $('hudDay').textContent = `${S.day}일차 ${R ? '☀️' : '🌙'}`;
+  $('hudDay').textContent = `${mode().icon} ${S.day}${mode().days ? '/' + mode().days : ''}일차 ${R ? '☀️' : '🌙'}`;
   $('hudRep').textContent = `${stars(S.rep)} ${Math.round(S.rep)}`;
   $('hudMoney').innerHTML = coin(S.money);
-  const p = R ? Math.min(1, R.t / DAY_LEN) : 0;
+  const p = R ? Math.min(1, R.t / dayLen()) : 0;
   $('hudClock').style.width = (p * 100) + '%';
 }
 
@@ -943,7 +991,7 @@ function startDay() {
 }
 
 function nextSpawn() {
-  const rate = (0.6 + S.rep / 100 + S.up.sign * 0.05 + Math.min(S.day, 30) * 0.02 + S.shop * 0.25) * (isWeekend() ? 1.4 : 1);
+  const rate = (0.6 + S.rep / 100 + S.up.sign * 0.05 + Math.min(S.day, 30) * 0.02 + S.shop * 0.25) * (isWeekend() ? 1.4 : 1) * (mode().spawn || 1);
   return (11 / rate) * (0.6 + Math.random() * 0.8);
 }
 
@@ -1112,7 +1160,7 @@ function spawn() {
   const order = [];
   for (let i = 0; i < size; i++) order.push(randomMenu());
   const vip = Math.random() < 0.08 + S.up.decor * 0.01;
-  const max = (26 + 14 * size) * (1 + S.up.decor * 0.12) * (vip ? 0.75 : 1) * (S.cat ? 1.05 : 1);
+  const max = (26 + 14 * size) * (1 + S.up.decor * 0.12) * (vip ? 0.75 : 1) * (S.cat ? 1.05 : 1) * (mode().patience || 1);
   R.counter[idx] = { face: vip ? '😎' : FACES[Math.floor(Math.random() * FACES.length)], order, pat: max, max, vip };
 }
 
@@ -1121,7 +1169,7 @@ function spawnDelivery() {
   const size = 2 + (Math.random() < 0.4 + S.shop * 0.1 ? 1 : 0);
   const order = [];
   for (let i = 0; i < size; i++) order.push(randomMenu());
-  const max = (45 + 15 * size) * (1 + S.up.decor * 0.08);
+  const max = (45 + 15 * size) * (1 + S.up.decor * 0.08) * (mode().patience || 1);
   R.delivery = { face: '🛵', order, pat: max, max, deliv: true };
   toast('🛵 배달 주문이 들어왔어요! 배달비 보너스!');
   renderDay(true);
@@ -1172,8 +1220,8 @@ function serve(i) {
   } else {
     R.combo++;
     R.stats.maxCombo = Math.max(R.stats.maxCombo, R.combo);
-    // 콤보 1당 5%, 최대 +50%
-    const comboMult = 1 + Math.min(10, R.combo - 1) * 0.05;
+    // 콤보 1당 5%, 최대 +50% (러시 모드는 +100%)
+    const comboMult = 1 + Math.min(mode().comboCap || 10, R.combo - 1) * 0.05;
     pay = Math.round(pay * comboMult);
     if (speed > 0.4) tip = Math.ceil(pay * (0.1 + 0.03 * S.up.decor) * q * (0.5 + S.rep / 100) * (q >= 0.95 ? 1.5 : 1) * (isWeekend() ? 1.2 : 1));
     S.rep = Math.min(100, S.rep + (q >= 0.95 ? 2 : 1) * (speed > 0.4 ? 1 : 0.5) + (c.vip ? 1.5 : 0));
@@ -1244,7 +1292,7 @@ function pressPart(id) {
   if (P.ing && S.stock[P.ing] < 1) { toast(`${ic(ING[P.ing].icon)} ${josa(ING[P.ing].name, '이', '가')} 다 떨어졌어요!`); return; }
   if (P.ing) { useStock(P.ing); renderStock(); }
   if (P.gauge) {
-    const w = S.up.equip * 0.025;
+    const w = equipWiden();
     R.gauge = { part: id, mode: P.gauge.mode, speed: P.gauge.speed || 0, v: P.gauge.mode === 'mash' ? 0.12 : 0,
                 zone: P.gauge.zone ? [Math.max(0.05, P.gauge.zone[0] - w), Math.min(0.97, P.gauge.zone[1] + w)] : null,
                 holding: P.gauge.mode === 'hold' };
@@ -1421,7 +1469,7 @@ function update(dt) {
   if (R.tutorial) { tutTick(); return; }
 
   R.t += dt;
-  if (!R.closing && R.t >= DAY_LEN) {
+  if (!R.closing && R.t >= dayLen()) {
     R.closing = true;
     toast('🔔 마감 시간! 남은 손님만 응대하세요');
   }
@@ -1447,7 +1495,7 @@ function update(dt) {
   });
   if (S.up.staff > 0) {
     R.staffT += dt;
-    if (R.staffT >= 13 - S.up.staff * 3) { R.staffT = 0; staffWork(); }
+    if (R.staffT >= STAFF_GAP[Math.min(S.up.staff, STAFF_GAP.length - 1)]) { R.staffT = 0; staffWork(); }
   }
   updateRush(dt);
   if (R.panel !== null && !getCust(R.panel)) closeSoldPanel();
@@ -1484,15 +1532,16 @@ function useStock(i) {
   autoOrder(i);
 }
 
-// 자동 발주 시스템: Lv.1은 다 떨어지면 1.5배 가격, Lv.2는 2개 남으면 평소 가격으로 5개 주문
+// 자동 발주 시스템: Lv.1은 다 떨어지면 1.5배 가격, Lv.2는 2개 남으면 평소 가격으로 5개, Lv.3은 4개 남으면 10개 주문
 function autoOrder(i) {
   const lv = S.up.autoorder;
-  if (!lv || !R || rushPending(i) || S.stock[i] > (lv >= 2 ? 2 : 0)) return;
-  const cost = Math.ceil(ING[i].cost * RUSH_N * (lv >= 2 ? 1 : 1.5));
+  if (!lv || !R || rushPending(i) || S.stock[i] > (lv >= 3 ? 4 : lv >= 2 ? 2 : 0)) return;
+  const n = autoOrderN(lv);
+  const cost = Math.ceil(ING[i].cost * n * (lv >= 2 ? 1 : 1.5));
   if (S.money < cost) return;
   S.money -= cost;
-  R.rush.push({ ing: i, n: RUSH_N, t: RUSH_TIME });
-  toast(`📦 자동 발주: ${ic(ING[i].icon)} ${ING[i].name} ${RUSH_N}개 (${coin(cost)})`);
+  R.rush.push({ ing: i, n, t: RUSH_TIME });
+  toast(`📦 자동 발주: ${ic(ING[i].icon)} ${ING[i].name} ${n}개 (${coin(cost)})`);
   renderStockWarn();
 }
 
@@ -1568,6 +1617,7 @@ function endDay() {
   S.bestDay = Math.max(S.bestDay, S.day);
   R = null;
   if (S.money < 0) { gameOver(); return; }
+  if (mode().days && S.day >= mode().days) { challengeEnd(); return; }
   S.day++;
   prepareDay();
   save();
@@ -1612,7 +1662,7 @@ function renderNight() {
       ${s.delivery ? `<span>🛵 배달 완료</span><span class="v">${s.delivery}건</span>` : ''}
       ${s.subst ? `<span>🔄 대체 메뉴 수락</span><span class="v">${s.subst}명</span>` : ''}
       ${s.sorry ? `<span>🙇 사과하고 보낸 손님</span><span class="v">${s.sorry}명</span>` : ''}
-      <span>월세</span><span class="v minus">-${fmt(s.rent)}</span>
+      ${s.rent ? `<span>월세</span><span class="v minus">-${fmt(s.rent)}</span>` : ''}
       ${s.wasted ? `<span>버린 음식</span><span class="v minus">${s.wasted}개</span>` : ''}
       ${s.duel ? `<span>⚔️ 블랙빈과 대결</span><span class="v ${s.duel.win ? 'plus' : 'minus'}">${fmt(s.duel.got)}/${fmt(s.duel.target)} ${s.duel.win ? '승리!' : '패배'}</span>` : ''}
     </div>
@@ -1620,7 +1670,7 @@ function renderNight() {
       ${s.quests.map(q => `<div style="display:flex;justify-content:space-between;gap:8px"><span>${q.ok ? '✅' : '❌'} ${q.text}</span><b class="${q.ok ? 'plus' : ''}">${q.ok ? '+' : ''}${fmt(q.reward)}</b></div>`).join('')}</div>` : ''}
     </div>`;
   } else {
-    html += `<div class="card"><h2>☕ 나의 작은 카페</h2>
+    html += `<div class="card"><h2>☕ 나의 작은 카페 <small style="font-size:.75rem;color:var(--muted)">${mode().icon} ${mode().name}</small></h2>
       <div style="font-size:.9rem;line-height:1.7">손님의 주문을 보고 직접 음료와 디저트를 만들어 파는 카페 경영 게임이에요.
       낮에는 장사를 하고, 밤에는 재료를 사고 가게를 키워요.</div></div>`;
   }
@@ -1635,7 +1685,7 @@ function renderNight() {
       <div class="info-list">아래에서 꼭 사두세요!</div></div>`;
   }
   html += `<div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-    <span>내일 월세 <b>${coin(rent())}</b></span>
+    <span>${mode().rent === 0 ? '🌈 자유 모드: 월세 없음' : `내일 월세 <b>${coin(rent())}</b>`}</span>
     ${lowIngs.length ? `<span class="warn-text">재료 부족 ${lowIngs.map(i => ic(ING[i].icon)).join('')}</span>` : ''}
   </div>`;
   html += `<div class="card"><h2>📰 내일 소식 (${S.day}일차)</h2><div class="info-list">
@@ -1671,7 +1721,7 @@ function renderNight() {
       const atMax = lv >= max;
       const cost = upCost(k);
       let btn;
-      if (atMax) btn = `<button class="buy" disabled>${S.shop < 3 ? '확장 필요' : 'MAX'}</button>`;
+      if (atMax) btn = `<button class="buy" disabled>${S.shop < TOP_SHOP ? '확장 필요' : 'MAX'}</button>`;
       else btn = `<button class="buy" data-act="up" data-id="${k}" ${S.money < cost ? 'disabled' : ''}>${coin(cost)}</button>`;
       return `<div class="item"><div class="ico">${u.icon}</div>
         <div class="info"><b>${u.name} <small>(${lv}/${max})</small></b><span>${atMax ? '현재 최대' : u.desc(lv)}</span></div>${btn}</div>`;
@@ -1692,7 +1742,7 @@ function renderNight() {
     html += list.map(a => {
       const v = Math.min(a.goal, a.val()), done = S.ach[a.id], can = !done && v >= a.goal;
       const btn = done ? `<button class="buy" disabled>받음</button>`
-        : `<button class="buy" data-act="claim" data-id="${a.id}" ${can ? '' : 'disabled'}>${coin(a.reward)}</button>`;
+        : `<button class="buy" data-act="claim" data-id="${a.id}" ${can ? '' : 'disabled'}>${coin(achReward(a))}</button>`;
       return `<div class="item ${done ? 'ach-done' : ''}"><div class="ico">${done ? '🏅' : can ? '🎁' : '🏆'}</div>
         <div class="info"><b>${a.name}</b><span>${a.desc} (${fmt(v)}/${fmt(a.goal)})</span>
         <div class="prog"><div style="width:${v / a.goal * 100}%"></div></div></div>${btn}</div>`;
@@ -1703,7 +1753,7 @@ function renderNight() {
       <span>판매가 ×${cur.priceMult} · 월세 ×${cur.rentMult}</span></div></div>`;
     if (nx) {
       html += `<div class="item"><div class="ico">${nx.icon}</div><div class="info"><b>다음: ${nx.name}</b>
-        <span>판매가 ×${nx.priceMult} · 손님 증가 · 업그레이드 한도 증가 · 새 메뉴/알바${S.shop + 1 >= 2 ? '/자동 발주' : ''} · 월세 ×${nx.rentMult}</span></div>
+        <span>판매가 ×${nx.priceMult} · 손님 증가 · 업그레이드 한도 증가 · ${Object.values(MENU).some(m => m.shop === S.shop + 1) ? '새 메뉴/' : ''}알바${S.shop + 1 >= 2 ? '/자동 발주' : ''} · 월세 ×${nx.rentMult}</span></div>
         <button class="buy" data-act="expand" ${S.money < nx.cost ? 'disabled' : ''}>${coin(nx.cost)}</button></div>`;
     } else {
       html += `<div style="text-align:center;padding:10px">🎉 최고 단계에 도달했어요!</div>`;
@@ -1712,8 +1762,8 @@ function renderNight() {
   }
   html += `</div>`;
   html += `<button class="big" data-act="start">☀️ ${S.day}일차 영업 시작</button>`;
-  html += `<div class="links"><button class="reset" data-act="storyList">📜 지난 이야기</button>${S.tut === 2 ? `<button class="reset" data-act="replayTut">📘 튜토리얼 다시 보기</button>` : ''}
-    <button class="reset" data-act="reset">처음부터 다시하기</button></div>`;
+  html += `<div class="links">${mode().noStory ? '' : '<button class="reset" data-act="storyList">📜 지난 이야기</button>'}${S.tut === 2 ? `<button class="reset" data-act="replayTut">📘 튜토리얼 다시 보기</button>` : ''}
+    <button class="reset" data-act="reset">🎮 모드 바꿔서 새로 시작</button></div>`;
   $('nightView').innerHTML = html;
   applyHighlight();
 }
@@ -1812,7 +1862,7 @@ const STORY = [
   ] },
 ];
 
-const nextStory = () => STORY.find(c => (c.repeat || !S.story.seen[c.id]) && c.cond());
+const nextStory = () => !mode().noStory && STORY.find(c => (c.repeat || !S.story.seen[c.id]) && c.cond());
 
 let story = null; // { ch, i, lines, done }
 function playStory(ch, first, done) {
@@ -1997,6 +2047,42 @@ function gameOver() {
   try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
 }
 
+// 모드 고르기 (새 게임을 시작할 때)
+function showModeSelect(canClose) {
+  const best = loadBest();
+  $('overlay').innerHTML = `<div class="card mode-card"><h2>🎮 어떤 모드로 할까요?</h2>
+    <div class="mode-list">${Object.entries(MODES).map(([k, m]) => `<button class="mode-btn" data-act="mode" data-id="${k}">
+      <span class="mi">${m.icon}</span><span><b>${m.name}</b><small>${m.desc}${k === 'challenge' && best ? `<br>🏆 최고 기록 ${coin(best)}` : ''}</small></span></button>`).join('')}</div>
+    ${canClose ? `<button class="reset" data-act="modeClose">취소</button>` : ''}</div>`;
+  $('overlay').classList.remove('hidden');
+}
+
+function startNewGame(m) {
+  const learned = S && S.tut === 2;   // 튜토리얼을 이미 끝낸 사람은 다시 안 보여준다
+  $('overlay').classList.add('hidden');
+  S = newGame(m);
+  if (learned) S.tut = 2;
+  lastSummary = null;
+  prepareDay();
+  save();
+  showNight();
+}
+
+function loadBest() { try { return +localStorage.getItem(BEST_KEY) || 0; } catch (e) { return 0; } }
+
+function challengeEnd() {
+  $('dayView').classList.add('hidden');
+  const s = lastSummary, score = S.totalEarned, best = loadBest(), isBest = score > best;
+  if (isBest) try { localStorage.setItem(BEST_KEY, score); } catch (e) {}
+  $('overlay').innerHTML = `<div class="card"><h2>⏱️ ${mode().days}일 챌린지 끝!</h2>
+    <p>마지막 날 매출 ${coin(s.revenue + s.tips)}</p>
+    <p style="font-size:1.3rem"><b>누적 수입 ${coin(score)}</b></p>
+    <p>${isBest ? '🎉 <b>새 최고 기록!</b>' : `🏆 최고 기록 ${coin(best)}`}<br>${SHOPS[S.shop].icon} ${SHOPS[S.shop].name}까지 키웠어요</p>
+    <button class="big" data-act="restart">다시 도전</button></div>`;
+  $('overlay').classList.remove('hidden');
+  try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+}
+
 // ---------- 입력 ----------
 // 영업 중에는 화면이 계속 다시 그려져서 click이 씹힐 수 있으니 pointerdown으로 받는다.
 document.addEventListener('pointerdown', e => {
@@ -2040,9 +2126,9 @@ document.addEventListener('click', e => {
     const a = ACHS.find(x => x.id === id);
     if (a && !S.ach[id] && a.val() >= a.goal) {
       S.ach[id] = true;
-      S.money += a.reward;
-      S.totalEarned += a.reward;
-      toast(`🏆 ${a.name} 달성! +${a.reward}`);
+      S.money += achReward(a);
+      S.totalEarned += achReward(a);
+      toast(`🏆 ${a.name} 달성! +${achReward(a)}`);
     }
   } else if (act === 'up') {
     const c = upCost(id);
@@ -2078,13 +2164,16 @@ document.addEventListener('click', e => {
     return;
   } else if (act === 'reset') {
     if (!confirm('정말 처음부터 다시 할까요? 저장된 진행이 사라져요.')) return;
-    S = newGame(); lastSummary = null; prepareDay(); save();
-    showNight();
+    showModeSelect(true);
     return;
   } else if (act === 'restart') {
+    showModeSelect(false);
+    return;
+  } else if (act === 'mode') {
+    startNewGame(id);
+    return;
+  } else if (act === 'modeClose') {
     $('overlay').classList.add('hidden');
-    S = newGame(); lastSummary = null; prepareDay(); save();
-    showNight();
     return;
   } else return;
   save();
@@ -2110,9 +2199,16 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 
-S = load() || newGame();
-if (!S.quests.length) prepareDay();
-showNight();
+S = load();
+if (S) {
+  if (!S.quests.length) prepareDay();
+  showNight();
+} else {
+  S = newGame();   // 모드를 고르기 전 화면이 비지 않게
+  renderHud();
+  renderBg(true);
+  showModeSelect(false);
+}
 requestAnimationFrame(loop);
 </script>
 </body>
