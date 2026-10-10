@@ -6,7 +6,7 @@
 <title>나의 작은 카페</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f6ead8;
@@ -211,21 +211,21 @@
   #side { position: sticky; top: 84px; align-self: start; padding-top: 12px; max-height: calc(100vh - 92px); overflow-y: auto; }
   .chalkboard { background: #2f3a33; border: 10px solid #8b5a34; border-radius: 8px; padding: 10px 12px;
     box-shadow: inset 0 0 26px rgba(0,0,0,.55), 0 8px 18px rgba(40,20,5,.35);
-    color: #f4f1e6; font-family: "Gaegu", "Malgun Gothic", sans-serif; }
+    color: #f4f1e6; font-family: "Jua", "Malgun Gothic", sans-serif; }
   .cb-head { display: flex; align-items: center; justify-content: center; position: relative; }
-  .cb-title { text-align: center; color: #ffe08a; font-size: 1.35rem; letter-spacing: 2px; }
+  .cb-title { text-align: center; color: #ffe08a; font-size: 1.4rem; letter-spacing: 1px; }
   .cb-close { display: none; position: absolute; right: 0; top: 0; background: none; border: 0; color: #fff; font-size: 1.2rem; }
   .cb-row { padding: 7px 0 6px; border-bottom: 1px dashed rgba(255,255,255,.22); }
   .cb-row:last-child { border-bottom: 0; }
-  .cb-row .top { display: flex; justify-content: space-between; align-items: center; font-size: 1.08rem; gap: 6px; }
+  .cb-row .top { display: flex; justify-content: space-between; align-items: center; font-size: 1.12rem; gap: 6px; letter-spacing: .3px; }
   .cb-row .top .ic { font-size: 1.3rem; }
   .cb-row .top b { color: #ffd0d0; font-size: 1.05rem; }
   .cb-row .r { font-size: 1.2rem; display: flex; align-items: center; gap: 2px; flex-wrap: wrap; margin-top: 2px; }
   .cb-row .r .op { font-size: .8rem; color: #b9c4bd; }
   .cb-row.hot .top > span:first-child::after { content: ' 추천'; color: #ffb36b; font-size: .8rem; }
-  .cb-hint { margin-top: 8px; padding-top: 6px; border-top: 2px solid rgba(255,255,255,.25); font-size: .9rem; color: #d7e0da; line-height: 1.4; }
+  .cb-hint { margin-top: 8px; padding-top: 6px; border-top: 2px solid rgba(255,255,255,.25); font-family: "Pretendard", "Malgun Gothic", sans-serif; font-size: .82rem; color: #e3ebe5; line-height: 1.55; }
   #bookToggle { display: none; position: fixed; left: 0; top: 42%; z-index: 16; writing-mode: vertical-rl; background: #2f3a33; color: #ffe08a;
-    border: 3px solid #8b5a34; border-left: 0; border-radius: 0 12px 12px 0; padding: 12px 6px; font-weight: 800; font-family: "Gaegu", sans-serif; font-size: 1.05rem; letter-spacing: 2px; box-shadow: 2px 4px 10px rgba(0,0,0,.3); }
+    border: 3px solid #8b5a34; border-left: 0; border-radius: 0 12px 12px 0; padding: 12px 6px; font-weight: 800; font-family: "Jua", "Malgun Gothic", sans-serif; font-size: 1.05rem; letter-spacing: 2px; box-shadow: 2px 4px 10px rgba(0,0,0,.3); }
   /* 넓은 화면: 가로로 두 칸씩 펼쳐서 스크롤을 줄인다 */
   .day-col > h3:first-child { margin-top: 0; }
   @media (min-width: 1100px) {
@@ -342,8 +342,8 @@
   .big:active { transform: translateY(2px); box-shadow: 0 2px 0 #a9541f; }
   .warn-text { color: var(--bad); font-size: .85rem; font-weight: 700; display: flex; align-items: center; gap: 2px; }
   .warn-text .ic { font-size: 1.3rem; }
-  .links { text-align: center; margin-top: 18px; display: flex; justify-content: center; gap: 16px; }
-  .reset { background: none; border: 0; color: var(--muted); text-decoration: underline; font-size: .8rem; }
+  .links { text-align: center; margin-top: 18px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; }
+  .reset { background: none; border: 0; color: var(--muted); text-decoration: underline; font-size: .8rem; white-space: nowrap; }
 
   /* Tutorial */
   #coach {
