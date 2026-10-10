@@ -357,6 +357,7 @@
   #coach .say { flex: 1; font-size: .92rem; line-height: 1.55; }
   #coach .say .ic { font-size: 1.35em; vertical-align: -0.3em; }
   #coach .step { font-size: .7rem; color: var(--muted); }
+  #coach .tut-stop { margin-top: 0; flex: none; background: none; color: var(--muted); border: 1px solid var(--line); font-weight: 700; font-size: .75rem; padding: 4px 8px; }
   #coach button { margin-top: 6px; border: 0; background: var(--accent); color: #fff; font-weight: 800; border-radius: 10px; padding: 7px 14px; }
   .tut-glow { position: relative; z-index: 2; animation: glow 1s ease-in-out infinite; }
   @keyframes glow {
@@ -684,7 +685,9 @@ function newGame(m = 'story') {
   };
 }
 
-function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} }
+// 튜토리얼 연습 중이면 진짜 진행을 JSON으로 보관해 두고, 연습 카페는 저장하지 않는다
+let sandbox = null;
+function save() { if (sandbox) return; try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} }
 function load() {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
@@ -890,7 +893,8 @@ function stars(rep) {
 function qualityMark(q) { return q >= 0.95 ? '⭐' : q >= 0.6 ? '' : '💦'; }
 
 function renderHud() {
-  $('hudDay').textContent = `${mode().icon} ${S.day}${mode().days ? '/' + mode().days : ''}일차 ${R ? '☀️' : '🌙'}`;
+  $('hudDay').textContent = sandbox ? `📘 튜토리얼 연습 ${R ? '☀️' : '🌙'}`
+    : `${mode().icon} ${S.day}${mode().days ? '/' + mode().days : ''}일차 ${R ? '☀️' : '🌙'}`;
   $('hudRep').textContent = `${stars(S.rep)} ${Math.round(S.rep)}`;
   $('hudMoney').innerHTML = coin(S.money);
   const p = R ? Math.min(1, R.t / dayLen()) : 0;
@@ -999,7 +1003,8 @@ function renderCoach() {
   c.classList.remove('hidden');
   c.innerHTML = `<div class="who">👩‍🍳</div><div class="say">${st.say}
     ${st.next ? `<div><button data-act="tutNext">${st.next}</button></div>` : ''}
-    <div class="step">${tut.i + 1} / ${tut.steps.length}</div></div>`;
+    <div class="step">${tut.i + 1} / ${tut.steps.length}</div></div>
+    <button class="tut-stop" data-act="tutStop" title="튜토리얼 그만하기">✕ 그만하기</button>`;
 }
 
 function applyHighlight() {
@@ -1013,6 +1018,57 @@ function applyHighlight() {
   if (sel !== lastTarget) {
     lastTarget = sel;
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+// ---------- 튜토리얼 연습 카페 ----------
+// "튜토리얼 다시 보기"는 진짜 카페가 아니라 새 길거리 노점에서 연습한다.
+// 연습이 끝나거나 그만두면 보관해 둔 진짜 진행으로 그대로 돌아간다.
+function startSandbox() {
+  save();
+  sandbox = JSON.stringify(S);
+  S = newGame('story');
+  lastSummary = null;
+  nightTab = 'stock';
+  prepareDay();
+  showNight();
+  toast('📘 튜토리얼 연습 카페예요. 진짜 진행은 그대로 있어요!');
+}
+
+function endSandbox(done) {
+  if (!sandbox) return;
+  R = null;
+  tut = null; renderCoach(); applyHighlight();
+  story = null; renderStory();
+  $('soldPanel').classList.add('hidden');
+  $('overlay').classList.add('hidden');
+  S = JSON.parse(sandbox);
+  sandbox = null;
+  lastSummary = null;
+  nightTab = 'stock';
+  $('dayView').classList.add('hidden');
+  $('nightView').classList.remove('hidden');
+  window.scrollTo(0, 0);
+  renderStockWarn();
+  renderNight();
+  toast(done ? '🎓 튜토리얼 끝! 원래 카페로 돌아왔어요' : '원래 카페로 돌아왔어요');
+}
+
+// 튜토리얼 그만하기: 연습 중이면 원래 카페로, 처음 하는 튜토리얼이면 건너뛰고 바로 게임을 이어간다
+function stopTutorial() {
+  if (sandbox) { endSandbox(false); return; }
+  const inDay = R && R.tutorial;
+  tut = null; renderCoach(); applyHighlight();
+  S.tut = 2;
+  save();
+  if (inDay) {
+    R.tutorial = false;
+    R.t = 0;
+    R.spawnT = 1;
+    toast('☀️ 튜토리얼을 건너뛰고 영업을 시작해요!');
+  } else if (!R) {
+    renderNight();
+    toast('튜토리얼을 건너뛰었어요. 📘 튜토리얼 다시 보기로 언제든 볼 수 있어요');
   }
 }
 
@@ -1051,6 +1107,7 @@ function startDay() {
     S.stock.cookie = Math.max(S.stock.cookie, 3);
     renderStock();
     tutStart(DAY_TUT, () => {
+      if (sandbox) { S.tut = 1; toast('🌙 연습 영업 끝! 이제 밤 준비를 배워요'); endDay(); return; }
       R.tutorial = false;
       R.t = 0;
       R.spawnT = 1;
@@ -1842,7 +1899,8 @@ function renderNight() {
   }
   html += `</div>`;
   html += `<button class="big" data-act="start">☀️ ${S.day}일차 영업 시작</button>`;
-  html += `<div class="links">${mode().noStory ? '' : '<button class="reset" data-act="storyList">📜 지난 이야기</button>'}${S.tut === 2 ? `<button class="reset" data-act="replayTut">📘 튜토리얼 다시 보기</button>` : ''}
+  if (sandbox) html += `<div class="links"><span class="who">📘 연습 중이에요. 여기서 한 일은 저장되지 않아요.</span></div>`;
+  else html += `<div class="links">${mode().noStory ? '' : '<button class="reset" data-act="storyList">📜 지난 이야기</button>'}${S.tut === 2 ? `<button class="reset" data-act="replayTut">📘 튜토리얼 다시 보기</button>` : ''}
     <button class="reset" data-act="reset">🎮 모드 바꿔서 새로 시작</button>
     <button class="reset" data-act="wipe">🗑️ 전체 초기화</button></div>
     <div class="links"><span class="who">👤 ${curUser ? curUser : '게스트'}</span>
@@ -1947,7 +2005,7 @@ const STORY = [
 ];
 
 // 새 이야기는 하룻밤에 하나만 나온다. 게임을 껐다 켜도 같은 밤에는 다음 이야기가 나오지 않는다.
-const nextStory = () => !mode().noStory && STORY.find(c => (c.repeat || (!S.story.seen[c.id] && S.storyDay !== S.day)) && c.cond());
+const nextStory = () => !sandbox && !mode().noStory && STORY.find(c => (c.repeat || (!S.story.seen[c.id] && S.storyDay !== S.day)) && c.cond());
 
 let story = null; // { ch, i, lines, done }
 function playStory(ch, first, done) {
@@ -2123,6 +2181,7 @@ function buy(i, n) {
 }
 
 function gameOver() {
+  if (sandbox) { endSandbox(false); return; }
   $('dayView').classList.add('hidden');
   const s = lastSummary;
   $('overlay').innerHTML = `<div class="card"><h2>💸 파산했어요…</h2>
@@ -2235,6 +2294,7 @@ document.addEventListener('pointerdown', e => {
   if (!el || !R) return;
   const act = el.dataset.act;
   if (act === 'tutNext') tutAdvance();
+  else if (act === 'tutStop') stopTutorial();
   else if (act === 'serve') serve(el.dataset.slot === 'd' ? 'd' : +el.dataset.slot);
   else if (act === 'part') { e.preventDefault(); pressPart(el.dataset.id); }
   else if (act === 'done') completeBench();
@@ -2259,6 +2319,7 @@ document.addEventListener('click', e => {
   const act = el.dataset.act, id = el.dataset.id;
   lastAct = act;
   if (act === 'tutNext') { tutAdvance(); return; }
+  if (act === 'tutStop') { stopTutorial(); return; }
   if (act === 'tab') nightTab = id;
   else if (act === 'buy') buy(id, +el.dataset.n);
   else if (act === 'fill') usedIngs().forEach(i => {
@@ -2285,6 +2346,8 @@ document.addEventListener('click', e => {
     const nx = SHOPS[S.shop + 1];
     if (nx && S.money >= nx.cost) { S.money -= nx.cost; S.shop++; toast(`${nx.icon} ${josa(nx.name, '으로', '로')} 확장했어요!`); }
   } else if (act === 'start') {
+    // 연습 카페의 마지막 단계는 "영업 시작" 버튼을 가리킨다: 누르면 연습을 마친다
+    if (sandbox && S.tut === 1) { endSandbox(true); return; }
     const out = emptyIngs();
     if (S.tut === 2 && out.length &&
         !confirm(`⚠️ 재고가 없는 재료가 있어요: ${out.map(i => ING[i].name).join(', ')}
@@ -2304,8 +2367,7 @@ document.addEventListener('click', e => {
   else if (act === 'scratch') scratch(+el.dataset.n);
   else if (act === 'storyList') { showStoryList(); return; }
   else if (act === 'replayTut') {
-    S.tut = 0; save();
-    tutStart(NIGHT0_TUT);
+    startSandbox();
     return;
   } else if (act === 'reset') {
     if (!confirm('정말 처음부터 다시 할까요? 저장된 진행이 사라져요.')) return;
@@ -2443,6 +2505,7 @@ function enterGame(user) {
 
 // 계정이 바뀔 때 이전 사람의 화면 상태가 남지 않게 모두 처음으로 돌린다
 function startGame() {
+  sandbox = null;
   tut = null; renderCoach();
   story = null; renderStory();
   $('overlay').classList.add('hidden');
