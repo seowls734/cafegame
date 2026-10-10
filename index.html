@@ -550,10 +550,21 @@ const COCOA_SVG = '<svg viewBox="0 0 36 36" aria-hidden="true">'
   + '<ellipse cx="18" cy="15.5" rx="3.2" ry="1.9" fill="#7b4a2a"/>'
   + '</svg>';
 
+// 핫초코: 빨간 머그 + 휘핑크림 + 초코 드리즐 (🍫 초콜릿 바는 음료로 안 보였다)
+const CHOCO_SVG = '<svg viewBox="0 0 36 36" aria-hidden="true">'
+  + '<ellipse cx="18" cy="31" rx="15" ry="3.5" fill="#e8e1d6" stroke="#3b2614" stroke-width="1.8"/>'
+  + '<path d="M28 17a4.5 4.5 0 0 1 0 9" fill="none" stroke="#3b2614" stroke-width="3"/>'
+  + '<path d="M6 15h22v6a11 9 0 0 1-22 0z" fill="#d24b3e" stroke="#3b2614" stroke-width="2"/>'
+  + '<ellipse cx="17" cy="15" rx="11" ry="3.4" fill="#5a2f17" stroke="#3b2614" stroke-width="2"/>'
+  + '<g stroke="#3b2614" stroke-width="2" fill="#fffaf2"><circle cx="11.5" cy="12" r="4.3"/><circle cx="22.5" cy="12" r="4.3"/><circle cx="17" cy="9.5" r="5.2"/><circle cx="17" cy="4.6" r="2.4"/></g>'
+  + '<g fill="#fffaf2"><circle cx="11.5" cy="12" r="3.3"/><circle cx="22.5" cy="12" r="3.3"/><circle cx="17" cy="9.5" r="4.2"/></g>'
+  + '<path d="M10.5 11.5q3.2 2.2 6.5 0t6.5 0" fill="none" stroke="#5a2f17" stroke-width="1.7" stroke-linecap="round"/>'
+  + '</svg>';
+
 const ICONS = {
   coin: '💰',
   // 메뉴
-  americano: '☕', latte: LATTE_SVG, choco: '🍫', teaCup: '🍵', iceame: '🥤', icelatte: '🧊',
+  americano: '☕', latte: LATTE_SVG, choco: CHOCO_SVG, teaCup: '🍵', iceame: '🥤', icelatte: '🧊',
   smoothie: '🍹', cookie: '🍪', cakeSlice: '🍰', croissant: '🥐',
   // 도구·재료 넣기
   mug: '☕', icecup: '🥤', plate: '🍽️', shot: '🟤', water: '💧', milk: '🍼', ice: '🧊',
