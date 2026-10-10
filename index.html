@@ -1739,6 +1739,7 @@ function endDay() {
   L.served += st.served; L.perfect += st.perfect; L.vip += st.vip; L.delivery += st.delivery;
   L.maxCombo = Math.max(L.maxCombo, st.maxCombo);
   L.bestRevenue = Math.max(L.bestRevenue, st.revenue + st.tips);
+  S.recent = (S.recent || []).concat(st.revenue + st.tips).slice(-5); // 최근 5일 매출 (블랙빈 대결 목표용)
   const r = rent();
   S.money -= r;
   lastSummary = { ...st, rent: r, day: S.day, quests, questReward };
@@ -1920,7 +1921,14 @@ const CAST = {
   narr:    { name: '',            face: '📜' },
 };
 
-const duelTarget = () => Math.max(250, Math.round((S.stats.bestRevenue || 200) * 1.1 / 10) * 10);
+// 블랙빈 대결 목표: 최근 5일 평균 매출(팁 포함)보다 5% 더.
+// 최고 기록 기준이면 주말 하루 대박 때문에 평일에는 이기기가 거의 불가능했다.
+const DUEL_MIN = 200;
+function duelTarget() {
+  const r = S.recent || [];
+  const base = r.length ? r.reduce((a, b) => a + b, 0) / r.length : (S.stats.bestRevenue || 200) * 0.8;
+  return Math.max(DUEL_MIN, Math.round(base * 1.05 / 10) * 10);
+}
 
 // cond를 만족하는 첫 이야기가 밤이 시작될 때 나온다 (repeat이 아니면 한 번만)
 const STORY = [
@@ -1939,7 +1947,7 @@ const STORY = [
     ['me', '언제든 커피 한 잔 하러 오세요, 사장님!'],
   ] },
   { id: 'duelLose', title: '대결… 패배', repeat: true, cond: () => S.duelResult === 'lose',
-    reward: () => { S.duelResult = null; S.duel.target = Math.max(250, Math.round(S.duel.target * 0.95 / 10) * 10); return null; }, lines: [
+    reward: () => { S.duelResult = null; S.duel.target = Math.max(DUEL_MIN, Math.round(S.duel.target * 0.9 / 10) * 10); return null; }, lines: [
     ['rival', '흥, 그 정도인가? 역시 운이 좋았던 거였군.'],
     ['rival', () => `좋아, 한 번 더 기회를 주지. 내일 매출 ${fmt(S.duel.target)} 정도는 넘겨 보라고.`],
     ['me', '다음엔 꼭 이길 거예요!'],
@@ -2514,6 +2522,8 @@ function startGame() {
   S = load();
   if (S) {
     if (!S.quests.length) prepareDay();
+    // 예전 기준(최고 기록 × 1.1)으로 잡힌 대결 목표는 새 기준으로 낮춰 준다
+    if (S.duel && !S.duelResult) S.duel.target = Math.min(S.duel.target, duelTarget());
     showNight();
   } else {
     S = newGame();   // 모드를 고르기 전 화면이 비지 않게
