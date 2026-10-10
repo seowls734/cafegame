@@ -401,6 +401,26 @@
   /* Overlay, toast, floats */
   #overlay { position: fixed; inset: 0; background: rgba(40,25,10,.7); display: flex; align-items: center; justify-content: center; z-index: 20; padding: 16px; }
   #overlay .card { max-width: 380px; width: 100%; text-align: center; }
+  /* 로그인 화면 */
+  #auth { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 16px;
+    background: linear-gradient(#5e3a1f, #3b2614); overflow-y: auto; user-select: text; -webkit-user-select: text; }
+  .auth-card { width: 100%; max-width: 360px; background: var(--panel); border: 4px solid var(--wood); border-radius: 18px; padding: 20px 18px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+  .auth-logo { font-size: 3rem; line-height: 1; }
+  .auth-card h2 { margin: 6px 0 4px; color: var(--wood-dark); }
+  .auth-sub { font-size: .8rem; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
+  .auth-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+  .auth-tabs .atab { flex: 1; border: 2px solid var(--wood); background: var(--panel); border-radius: 10px; padding: 8px 0; font-weight: 700; }
+  .auth-tabs .atab.on { background: var(--wood); color: #fff; }
+  .auth-card label { display: block; text-align: left; font-size: .82rem; font-weight: 700; color: var(--wood-dark); margin-bottom: 8px; }
+  .auth-card input { display: block; width: 100%; margin-top: 4px; padding: 10px; border: 2px solid var(--line); border-radius: 10px; font: inherit; background: #fff; color: var(--ink); }
+  .auth-card input:focus { outline: none; border-color: var(--accent); }
+  #authMsg { min-height: 1.3em; font-size: .82rem; margin: 2px 0 8px; }
+  #authMsg.bad { color: var(--bad); font-weight: 700; }
+  .auth-guest { margin-top: 10px; width: 100%; border: 2px dashed var(--line); background: none; border-radius: 12px; padding: 10px; color: var(--muted); font-size: .85rem; }
+  #authUsers:empty { display: none; }
+  #authUsers { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: .78rem; color: var(--muted); }
+  #authUsers .u { display: inline-block; margin: 4px 3px 0; padding: 4px 10px; border-radius: 999px; background: #f3e4cc; color: var(--ink); cursor: pointer; }
+  .who { font-size: .8rem; color: var(--muted); }
   #overlay .mode-card { max-width: 440px; max-height: 90vh; overflow-y: auto; }
   .mode-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
   .mode-btn { display: flex; align-items: center; gap: 10px; text-align: left; border: 2px solid var(--wood); background: var(--panel); border-radius: 12px; padding: 10px 12px; font: inherit; color: inherit; cursor: pointer; }
@@ -482,6 +502,21 @@
 <div id="soldPanel" class="hidden"></div>
 <div id="story" class="hidden"></div>
 <div id="overlay" class="hidden"></div>
+<div id="auth" class="hidden">
+  <div class="auth-card">
+    <div class="auth-logo">☕</div>
+    <h2>나의 작은 카페</h2>
+    <div class="auth-sub" id="authSub"></div>
+    <div class="auth-tabs"><button class="atab on" data-mode="login">로그인</button><button class="atab" data-mode="signup">회원가입</button></div>
+    <label>아이디<input id="authId" maxlength="16" autocomplete="username" placeholder="2~16자"></label>
+    <label>비밀번호<input id="authPw" type="password" maxlength="32" autocomplete="current-password" placeholder="4자 이상"></label>
+    <label id="authPw2Wrap" class="hidden">비밀번호 확인<input id="authPw2" type="password" maxlength="32" autocomplete="new-password"></label>
+    <div id="authMsg"></div>
+    <button class="big" id="authGo">로그인</button>
+    <button class="auth-guest" id="authGuest">게스트로 하기 (로그인 없이)</button>
+    <div id="authUsers"></div>
+  </div>
+</div>
 <div id="toast"></div>
 
 <script>
@@ -598,14 +633,18 @@ const MODES = {
   challenge: { name: '30일 챌린지', icon: '⏱️', desc: '딱 30일! 누적 수입으로 최고 기록에 도전해요. 이야기는 나오지 않아요.',
                days: 30, noStory: true },
 };
-const BEST_KEY = 'cafeSim_challengeBest';
+const BASE_BEST_KEY = 'cafeSim_challengeBest';
+let BEST_KEY = BASE_BEST_KEY;   // 로그인한 계정에 따라 바뀐다
 const mode = () => MODES[S.mode] || MODES.story;
 const dayLen = () => mode().dayLen || DAY_LEN;
 
 // 윈도우 10에서도 한 글자로 보이는 이모지만 쓴다
 const FACES = ['👩', '👨', '👵', '👴', '👧', '👦', '👱', '👱‍♀️', '👩‍🎓', '👨‍🎓', '👩‍💼', '👨‍💼', '👩‍💻', '👨‍🎨', '👩‍🔧', '👮'];
 const DAY_LEN = 120;   // 영업 시간(초)
-const SAVE_KEY = 'cafeSim_v1';
+const BASE_SAVE_KEY = 'cafeSim_v1';   // 계정 기능 이전의 세이브 = 게스트 슬롯
+let SAVE_KEY = BASE_SAVE_KEY;         // 로그인한 계정에 따라 바뀐다
+const ACCOUNTS_KEY = 'cafeSim_accounts_v1';
+const SESSION_KEY = 'cafeSim_session_v1';
 
 // ---------- 상태 ----------
 let S;          // 저장되는 상태
@@ -1779,7 +1818,9 @@ function renderNight() {
   html += `<button class="big" data-act="start">☀️ ${S.day}일차 영업 시작</button>`;
   html += `<div class="links">${mode().noStory ? '' : '<button class="reset" data-act="storyList">📜 지난 이야기</button>'}${S.tut === 2 ? `<button class="reset" data-act="replayTut">📘 튜토리얼 다시 보기</button>` : ''}
     <button class="reset" data-act="reset">🎮 모드 바꿔서 새로 시작</button>
-    <button class="reset" data-act="wipe">🗑️ 전체 초기화</button></div>`;
+    <button class="reset" data-act="wipe">🗑️ 전체 초기화</button></div>
+    <div class="links"><span class="who">👤 ${curUser ? curUser : '게스트'}</span>
+    <button class="reset" data-act="logout">${curUser ? '🚪 로그아웃' : '🔑 로그인 / 회원가입'}</button></div>`;
   html += '</div></div>';
   $('nightView').innerHTML = html;
   applyHighlight();
@@ -2200,10 +2241,13 @@ document.addEventListener('click', e => {
     if (!confirm('정말 처음부터 다시 할까요? 저장된 진행이 사라져요.')) return;
     showModeSelect(true);
     return;
+  } else if (act === 'logout') {
+    logout();
+    return;
   } else if (act === 'wipe') {
     if (!confirm(`⚠️ 전체 초기화
 
-저장된 진행, 🏆 30일 챌린지 최고 기록, 튜토리얼 기록이 모두 지워져요.
+${curUser ? `👤 ${curUser} 계정의 ` : ''}저장된 진행, 🏆 30일 챌린지 최고 기록, 튜토리얼 기록이 모두 지워져요.
 되돌릴 수 없어요. 계속할까요?`)) return;
     if (!confirm('정말로 모두 지울까요? 마지막 확인이에요.')) return;
     wipeAll();
@@ -2241,16 +2285,138 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 
-S = load();
-if (S) {
-  if (!S.quests.length) prepareDay();
-  showNight();
-} else {
-  S = newGame();   // 모드를 고르기 전 화면이 비지 않게
-  renderHud();
-  renderBg(true);
-  showModeSelect(false);
+// ---------- 계정 (로그인 / 로그아웃) ----------
+// 서버가 없는 게임이라 계정은 이 브라우저의 localStorage에만 저장된다.
+// 비밀번호는 솔트를 섞은 해시로만 보관하지만, 한 기기에서 세이브를 나눠 쓰기 위한 용도이지 강한 보안은 아니다.
+let curUser = null;   // null이면 게스트
+let authMode = 'login';
+
+function loadAccounts() {
+  try { const d = JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || '{}'); return d && d.users ? d : { users: {}, legacyClaimed: false }; }
+  catch (e) { return { users: {}, legacyClaimed: false }; }
 }
+function saveAccounts(a) { try { localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(a)); } catch (e) {} }
+function hashPw(pw, salt) {
+  // FNV-1a 기반 반복 해시 (외부 라이브러리 없이 동작)
+  let str = salt + '|' + pw, out = '';
+  for (let round = 0; round < 4; round++) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    out += h.toString(36);
+    str = out + '|' + salt + '|' + pw;
+  }
+  return out;
+}
+const newSalt = () => Math.floor(Math.random() * 1e9).toString(36) + Date.now().toString(36);
+const keyFor = (base, user) => (user ? base + '::' + user : base);
+
+function authMsg(t, cls) { $('authMsg').textContent = t || ''; $('authMsg').className = cls || ''; }
+function renderAuth() {
+  const acc = loadAccounts(), names = Object.keys(acc.users);
+  document.querySelectorAll('#auth .atab').forEach(t => t.classList.toggle('on', t.dataset.mode === authMode));
+  $('authPw2Wrap').classList.toggle('hidden', authMode !== 'signup');
+  $('authGo').textContent = authMode === 'signup' ? '가입하고 시작' : '로그인';
+  $('authPw').setAttribute('autocomplete', authMode === 'signup' ? 'new-password' : 'current-password');
+  let hasLegacy = false;
+  try { hasLegacy = !!localStorage.getItem(BASE_SAVE_KEY); } catch (e) {}
+  $('authSub').innerHTML = authMode === 'signup' && hasLegacy && !acc.legacyClaimed
+    ? '지금까지 하던 카페를 이 계정으로 그대로 가져와요.'
+    : '계정마다 카페가 따로 저장돼요.<br>이 브라우저(기기)에만 저장돼요.';
+  // 아이디에는 < > & " 를 못 쓰게 막아 두어서 그대로 넣어도 안전하다
+  $('authUsers').innerHTML = names.length && authMode === 'login'
+    ? '저장된 계정<br>' + names.map(n => `<span class="u" data-user="${n}">👤 ${n}</span>`).join('')
+    : '';
+  authMsg('');
+}
+function showAuth() {
+  $('auth').classList.remove('hidden');
+  $('authPw').value = ''; $('authPw2').value = '';
+  renderAuth();
+  setTimeout(() => (!$('authId').value ? $('authId') : $('authPw')).focus(), 50);
+}
+function submitAuth() {
+  const id = $('authId').value.trim(), pw = $('authPw').value;
+  if (id.length < 2 || id.length > 16) return authMsg('아이디는 2~16자로 입력해 주세요.', 'bad');
+  if (/[\s<>&"']/.test(id)) return authMsg('아이디에 공백이나 < > & " \' 는 쓸 수 없어요.', 'bad');
+  if (pw.length < 4) return authMsg('비밀번호는 4자 이상이어야 해요.', 'bad');
+  const acc = loadAccounts(), u = acc.users[id];
+  if (authMode === 'signup') {
+    if (u) return authMsg('이미 있는 아이디예요. 로그인 탭을 이용해 주세요.', 'bad');
+    if ($('authPw2').value !== pw) return authMsg('비밀번호 확인이 일치하지 않아요.', 'bad');
+    const salt = newSalt();
+    acc.users[id] = { s: salt, h: hashPw(pw, salt), at: Date.now() };
+    // 계정 기능 이전의 세이브가 있다면 첫 계정이 이어받는다
+    if (!acc.legacyClaimed) {
+      try {
+        const legacy = localStorage.getItem(BASE_SAVE_KEY), best = localStorage.getItem(BASE_BEST_KEY);
+        if (legacy) { localStorage.setItem(keyFor(BASE_SAVE_KEY, id), legacy); acc.legacyClaimed = true; }
+        if (legacy && best) localStorage.setItem(keyFor(BASE_BEST_KEY, id), best);
+      } catch (e) {}
+    }
+    saveAccounts(acc);
+  } else {
+    if (!u) return authMsg('없는 아이디예요. 회원가입 탭에서 만들어 주세요.', 'bad');
+    if (hashPw(pw, u.s) !== u.h) return authMsg('비밀번호가 맞지 않아요.', 'bad');
+  }
+  enterGame(id);
+}
+
+function enterGame(user) {
+  curUser = user || null;
+  SAVE_KEY = keyFor(BASE_SAVE_KEY, curUser);
+  BEST_KEY = keyFor(BASE_BEST_KEY, curUser);
+  try { curUser ? localStorage.setItem(SESSION_KEY, curUser) : localStorage.removeItem(SESSION_KEY); } catch (e) {}
+  $('auth').classList.add('hidden');
+  startGame();
+  if (curUser) toast(`👋 ${curUser}님, 어서 오세요!`);
+}
+
+// 계정이 바뀔 때 이전 사람의 화면 상태가 남지 않게 모두 처음으로 돌린다
+function startGame() {
+  tut = null; renderCoach();
+  story = null; renderStory();
+  $('overlay').classList.add('hidden');
+  lastSummary = null; nightTab = 'stock'; slotMsg = '';
+  S = load();
+  if (S) {
+    if (!S.quests.length) prepareDay();
+    showNight();
+  } else {
+    S = newGame();   // 모드를 고르기 전 화면이 비지 않게
+    $('nightView').innerHTML = '';
+    renderHud();
+    renderBg(true);
+    showModeSelect(false);
+  }
+}
+
+// 로그아웃은 밤(준비 화면)에서만 할 수 있다. 밤에는 진행이 항상 저장된 상태다.
+function logout() {
+  if (R) return;
+  save();
+  tut = null; renderCoach();
+  story = null; renderStory();
+  $('overlay').classList.add('hidden');
+  try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+  $('authId').value = curUser || '';
+  curUser = null;
+  authMode = 'login';
+  showAuth();
+}
+
+document.querySelectorAll('#auth .atab').forEach(t => t.addEventListener('click', () => { authMode = t.dataset.mode; renderAuth(); }));
+$('authGo').addEventListener('click', submitAuth);
+$('authGuest').addEventListener('click', () => enterGame(null));
+$('authUsers').addEventListener('click', e => {
+  const u = e.target.closest('[data-user]');
+  if (u) { $('authId').value = u.dataset.user; $('authPw').focus(); }
+});
+['authId', 'authPw', 'authPw2'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') submitAuth(); }));
+
+let sess = null;
+try { sess = localStorage.getItem(SESSION_KEY); } catch (e) {}
+if (sess && loadAccounts().users[sess]) enterGame(sess);   // 지난 로그인 유지
+else showAuth();
 requestAnimationFrame(loop);
 </script>
 </body>
