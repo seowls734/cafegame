@@ -1778,7 +1778,8 @@ function renderNight() {
   html += `</div>`;
   html += `<button class="big" data-act="start">☀️ ${S.day}일차 영업 시작</button>`;
   html += `<div class="links">${mode().noStory ? '' : '<button class="reset" data-act="storyList">📜 지난 이야기</button>'}${S.tut === 2 ? `<button class="reset" data-act="replayTut">📘 튜토리얼 다시 보기</button>` : ''}
-    <button class="reset" data-act="reset">🎮 모드 바꿔서 새로 시작</button></div>`;
+    <button class="reset" data-act="reset">🎮 모드 바꿔서 새로 시작</button>
+    <button class="reset" data-act="wipe">🗑️ 전체 초기화</button></div>`;
   html += '</div></div>';
   $('nightView').innerHTML = html;
   applyHighlight();
@@ -2085,6 +2086,22 @@ function startNewGame(m) {
   showNight();
 }
 
+// 계정 초기화: 이 게임이 저장한 모든 것을 지우고 처음 상태로 돌아간다
+function wipeAll() {
+  try { localStorage.removeItem(SAVE_KEY); localStorage.removeItem(BEST_KEY); } catch (e) {}
+  tut = null; renderCoach();
+  story = null; renderStory();
+  S = newGame();   // 튜토리얼도 처음부터
+  lastSummary = null;
+  nightTab = 'stock';
+  slotMsg = '';
+  renderHud();
+  renderBg(true);
+  $('nightView').innerHTML = '';
+  showModeSelect(false);
+  toast('🗑️ 모든 기록을 지웠어요');
+}
+
 function loadBest() { try { return +localStorage.getItem(BEST_KEY) || 0; } catch (e) { return 0; } }
 
 function challengeEnd() {
@@ -2182,6 +2199,14 @@ document.addEventListener('click', e => {
   } else if (act === 'reset') {
     if (!confirm('정말 처음부터 다시 할까요? 저장된 진행이 사라져요.')) return;
     showModeSelect(true);
+    return;
+  } else if (act === 'wipe') {
+    if (!confirm(`⚠️ 전체 초기화
+
+저장된 진행, 🏆 30일 챌린지 최고 기록, 튜토리얼 기록이 모두 지워져요.
+되돌릴 수 없어요. 계속할까요?`)) return;
+    if (!confirm('정말로 모두 지울까요? 마지막 확인이에요.')) return;
+    wipeAll();
     return;
   } else if (act === 'restart') {
     showModeSelect(false);
