@@ -205,6 +205,13 @@
   #bg.night .win .view { filter: brightness(.6); }
   #bg .cat { position: absolute; bottom: 9%; left: 13vw; font-size: clamp(2rem, 3.5vw, 3.2rem); animation: catNap 4s ease-in-out infinite; }
   @keyframes catNap { 50% { transform: scale(1.06, .94); } }
+  /* 날씨: 창밖(노점은 하늘 전체)에 비나 눈이 내린다 */
+  #bg .wx { position: absolute; left: 0; right: 0; top: 0; bottom: 0; overflow: hidden; z-index: 1; }
+  #bg .wx.street { bottom: 24%; }
+  #bg .wx i { position: absolute; top: -10%; }
+  #bg .wx.rain i { width: 2px; height: 16px; background: rgba(90,130,200,.65); animation: wxFall .8s linear infinite; animation-delay: calc(var(--d) * -.8s); }
+  #bg .wx.snow i { width: 7px; height: 7px; border-radius: 50%; background: #fff; box-shadow: 0 0 3px rgba(0,0,0,.2); animation: wxFall 5s linear infinite; animation-delay: calc(var(--d) * -5s); }
+  @keyframes wxFall { to { top: 110%; transform: translateX(-24px); } }
 
   /* ===== 레이아웃: 왼쪽 레시피 칠판 + 가운데 게임 ===== */
   #layout { display: grid; grid-template-columns: 270px minmax(0, 560px); gap: 18px; justify-content: center; padding: 0 212px 0 12px; }
@@ -336,6 +343,24 @@
     border: 0; background: var(--accent); color: #fff; font-weight: 700; border-radius: 10px; padding: 8px 10px; font-size: .8rem; white-space: nowrap;
   }
   .buy:disabled { background: #c9b8a6; }
+  /* 손님 리뷰 */
+  .rv { padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: .85rem; line-height: 1.5; }
+  .rv:last-child { border-bottom: 0; }
+  .rv .who { color: var(--muted); font-size: .75rem; }
+  .rv .st { color: #e0a526; letter-spacing: 1px; }
+  /* 레시피 개발실 */
+  .lab { border: 2px dashed var(--accent); border-radius: 12px; padding: 10px; margin-bottom: 10px; background: #fff7ec; }
+  .lab h3 { margin: 0 0 6px; font-size: 1rem; }
+  .lab .grp-label { font-size: .72rem; color: var(--muted); margin: 6px 0 3px; }
+  .lab-btns { display: flex; flex-wrap: wrap; gap: 4px; }
+  .lab-btns button { border: 1px solid var(--line); background: #fff; border-radius: 9px; padding: 4px 7px; font-size: .75rem; display: flex; align-items: center; gap: 3px; }
+  .lab-btns button .ic { font-size: 1.2rem; }
+  .lab-btns button.on { border: 2px solid var(--accent); background: #ffe9cf; font-weight: 700; }
+  .lab-mix { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 8px 0 4px; min-height: 32px; font-size: 1.4rem; }
+  .lab-mix .r { display: flex; align-items: center; gap: 2px; }
+  .lab-mix .op { font-size: .7rem; }
+  .lab-msg { font-size: .8rem; font-weight: 700; margin-bottom: 6px; }
+  .lab input { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; font-size: .9rem; font-family: inherit; }
   .big {
     width: 100%; border: 0; border-radius: 14px; padding: 14px; font-size: 1.1rem; font-weight: 800;
     background: var(--accent); color: #fff; box-shadow: 0 4px 0 #a9541f;
@@ -710,7 +735,7 @@ function newGame(m = 'story') {
     mode: m,
     day: 1, money: (MODES[m] && MODES[m].money) || 80, rep: 50, shop: 0, totalEarned: 0, bestDay: 0,
     tut: 0, // 0: 첫 영업 튜토리얼 전, 1: 첫 밤 안내 전, 2: 튜토리얼 끝
-    stats: { served: 0, perfect: 0, vip: 0, delivery: 0, maxCombo: 0, bestRevenue: 0, jackpot: 0 },
+    stats: { served: 0, perfect: 0, vip: 0, delivery: 0, maxCombo: 0, bestRevenue: 0, jackpot: 0, invented: 0 },
     story: { seen: {}, ending: false, ending2: false },
     storyDay: 0,      // 새 이야기를 마지막으로 본 날 (하룻밤에 하나만)
     cat: false,       // 가게 고양이 (스토리 5화)
@@ -725,6 +750,13 @@ function newGame(m = 'story') {
     quests: [],       // 오늘의 의뢰
     special: null,    // 오늘의 추천 메뉴
     sale: null,       // 시장 특가 재료
+    weather: 'sunny', // 내일(영업하는 날)의 날씨
+    rating: 4,        // 손님 리뷰 별점 (최근 리뷰일수록 크게 반영)
+    reviewN: 0,
+    reviews: [],      // 밤에 보여줄 최근 리뷰
+    custom: [],       // 나만의 레시피 { id, name, emoji, cup, parts }
+    customSeq: 0,
+    labIdea: null,    // 영업 중 작업대에서 발견한 조합 { cup, parts }
     stock: { bean: 12, milk: 6, cookie: 6, tea: 0, cake: 0, dough: 0, fruit: 0, cocoa: 0 },
     unlocked: { americano: true, latte: true, cookie: true },
     up: { equip: 0, tray: 0, counter: 2, decor: 0, sign: 0, staff: 0, autoorder: 0 },
@@ -749,6 +781,8 @@ function load() {
     if (typeof d.storyDay !== 'number') d.storyDay = d.day || 0;
     return { ...base, ...d, tut, stock: { ...base.stock, ...d.stock }, up, unlocked: { ...base.unlocked, ...d.unlocked },
              stats: { ...base.stats, ...d.stats }, ach: { ...d.ach }, eggs: { ...d.eggs }, quests: Array.isArray(d.quests) ? d.quests : [],
+             weather: WEATHER[d.weather] ? d.weather : base.weather,
+             custom: Array.isArray(d.custom) ? d.custom : [], reviews: Array.isArray(d.reviews) ? d.reviews : [],
              story: { ...base.story, ...d.story, seen: { ...(d.story && d.story.seen) } } };
   } catch (e) { return null; }
 }
@@ -780,22 +814,31 @@ const VIEWS = ['', '🌳🏡🌳', '🏢🌳🏢', '🏙️🌉🏙️', '🌆�
 const FRAMES = ['', '🌄', '🌅', '🎨', '🌃', '🏝️', '🗺️'];
 
 // 영업 시간에 따라 창밖 하늘이 아침 → 한낮 → 노을로 바뀐다
+// 흐리거나 비·눈이 오는 날은 잿빛 하늘
+const SKY = ['linear-gradient(#9fd8ff, #e6f6ff)', 'linear-gradient(#5fb8f5, #c4e9ff)', 'linear-gradient(#ff9a62, #ffd8a0)', 'linear-gradient(#5b4e8a, #f08a6a)'];
+const GREY_SKY = ['linear-gradient(#b3bfcb, #e2e8ee)', 'linear-gradient(#97a5b5, #d3dbe3)', 'linear-gradient(#a99a96, #d9cfc8)', 'linear-gradient(#4d4a66, #9c8c94)'];
 function skyAt(p) {
-  if (p < 0.3) return 'linear-gradient(#9fd8ff, #e6f6ff)';
-  if (p < 0.7) return 'linear-gradient(#5fb8f5, #c4e9ff)';
-  if (p < 0.92) return 'linear-gradient(#ff9a62, #ffd8a0)';
-  return 'linear-gradient(#5b4e8a, #f08a6a)';
+  const sky = wx().grey ? GREY_SKY : SKY;
+  return sky[p < 0.3 ? 0 : p < 0.7 ? 1 : p < 0.92 ? 2 : 3];
+}
+// 비·눈 알갱이. --d로 떨어지는 시점을 흩어 놓는다
+function wxFx(cls) {
+  const w = S.weather;
+  if (w !== 'rain' && w !== 'snow') return '';
+  const n = cls ? 40 : 14;
+  return `<div class="wx ${w} ${cls || ''}">${Array.from({ length: n }, (_, i) =>
+    `<i style="left:${(i * 37 + 11) % 100}%;--d:${((i * 0.618) % 1).toFixed(2)}"></i>`).join('')}</div>`;
 }
 
 // 화면 전체 배경: 가게 단계마다 인테리어가 다르고, 밤에는 불이 꺼진다
 function renderBg(night) {
   const sh = S.shop, bg = $('bg');
   bg.className = `s${sh}${night ? ' night' : ''}`;
-  const win = side => `<div class="win ${side}">${night ? '<div class="stars">✦ · ✧ · ✦ · ✧ · ✦</div>' : '<span class="cloud">☁️</span>'}
+  const win = side => `<div class="win ${side}">${night ? '<div class="stars">✦ · ✧ · ✦ · ✧ · ✦</div>' : `<span class="cloud">☁️</span>${wxFx()}`}
     <div class="view">${VIEWS[sh]}</div>${night && side === 'r' ? '<div class="closed-sign">CLOSED</div>' : ''}</div>`;
   bg.innerHTML = `<div class="wallp"></div>
     ${sh === 0 ? `<div class="awning-top"></div><div class="city">🏪 🏠 🌳 🏬 🏢 🌳 🏠 🏪 🏬 🌳 🏠 🏢</div>
-      ${night ? '<div class="stars sky-stars">✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧</div><div class="closed-sign street">CLOSED</div>' : ''}`
+      ${night ? '<div class="stars sky-stars">✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧ · ✦ · ✧</div><div class="closed-sign street">CLOSED</div>' : wxFx('street')}`
     : `<div class="wainscot"></div>
       <div class="lamps">${'<span class="lamp"></span>'.repeat(Math.min(12, 4 + sh * 2))}</div>
       ${win('l')}${win('r')}
@@ -826,6 +869,34 @@ const ingList = list => list.map(i => `${ic(ING[i].icon)}${ING[i].name}`).join('
 const isWeekend = (d = S.day) => d % 7 === 6 || d % 7 === 0;
 const ingCost = (i, n) => Math.ceil(ING[i].cost * n * (S.sale === i ? 0.5 : 1));
 const menuPrice = id => Math.round(price(id) * (id === S.special ? 1.5 : 1));
+
+// ---------- 날씨 · 계절 ----------
+// 밤마다 다음 날 날씨를 정한다. pref: 컵 종류별 주문 배율
+const WEATHER = {
+  sunny:  { name: '맑음', icon: '☀️', spawn: 1.1, desc: '손님이 조금 더 많이 와요' },
+  cloudy: { name: '흐림', icon: '☁️', grey: true, desc: '평범한 하루예요' },
+  hot:    { name: '폭염', icon: '🌞', spawn: 1.05, pref: { icecup: 2.5, mug: 0.5 }, desc: '🥤 아이스 음료 주문이 확 늘어요' },
+  rain:   { name: '비',   icon: '🌧️', grey: true, spawn: 0.85, patience: 1.2, tip: 1.1, pref: { mug: 1.8, icecup: 0.6 },
+            desc: '손님은 적지만 오래 기다려 줘요 · ☕ 따뜻한 음료 인기' },
+  snow:   { name: '눈',   icon: '❄️', grey: true, spawn: 0.8, patience: 1.15, tip: 1.3, pref: { mug: 2.5, icecup: 0.4 },
+            desc: '손님은 적지만 팁이 후해요 · ☕ 따뜻한 음료 인기' },
+};
+const SEASON_LEN = 14;   // 계절 하나가 이어지는 날 수
+const SEASONS = [
+  { name: '봄',   icon: '🌸', wx: { sunny: 4, cloudy: 3, rain: 2 } },
+  { name: '여름', icon: '🌻', wx: { hot: 4, sunny: 2, rain: 3 } },
+  { name: '가을', icon: '🍁', wx: { sunny: 4, cloudy: 3, rain: 1 } },
+  { name: '겨울', icon: '⛄', wx: { snow: 4, cloudy: 3, sunny: 1 } },
+];
+const season = (d = S.day) => SEASONS[Math.floor((d - 1) / SEASON_LEN) % SEASONS.length];
+const wx = () => WEATHER[S.weather] || WEATHER.sunny;
+const wxPref = k => (wx().pref && wx().pref[MENU[k].cup]) || 1;
+function pickWeather() {
+  if (S.day <= 1) return 'sunny';   // 첫날(튜토리얼)은 늘 맑음
+  const w = Object.entries(season().wx);
+  let r = Math.random() * w.reduce((s, [, n]) => s + n, 0);
+  return (w.find(([, n]) => (r -= n) < 0) || w[0])[0];
+}
 
 // ---------- 일일 의뢰 ----------
 // 하루가 끝날 때 R.stats로 판정해서 보상을 준다.
@@ -860,6 +931,7 @@ function prepareDay() {
   const ings = usedIngs();
   S.sale = ings[Math.floor(Math.random() * ings.length)];
   S.quests = makeQuests();
+  S.weather = pickWeather();
   S.spins = 5;
   S.ticketUsed = false;
   S.ticket = null;
@@ -881,7 +953,10 @@ const ACHS = [
   { id: 'rev200',    name: '대박 난 날',      desc: '하루 매출 200 달성',    goal: 200,  val: () => S.stats.bestRevenue, reward: 150 },
   { id: 'rev1000',   name: '초대박',          desc: '하루 매출 1000 달성',   goal: 1000, val: () => S.stats.bestRevenue, reward: 800 },
   { id: 'menu5',     name: '메뉴 개발자',     desc: '메뉴 5개 판매',         goal: 5,    val: () => unlockedMenu().length, reward: 150 },
-  { id: 'menuAll',   name: '없는 게 없어요',  desc: '메뉴 10개 전부 판매',   goal: 10,   val: () => unlockedMenu().length, reward: 1000 },
+  { id: 'menuAll',   name: '없는 게 없어요',  desc: '메뉴 10개 전부 판매',   goal: 10,   val: () => unlockedMenu().filter(k => !MENU[k].custom).length, reward: 1000 },
+  { id: 'recipe1',   name: '나만의 레시피',   desc: '🧪 신메뉴 1개 개발',    goal: 1,    val: () => S.stats.invented,    reward: 100 },
+  { id: 'recipe3',   name: '레시피 연구가',   desc: '🧪 신메뉴 3개 개발',    goal: 3,    val: () => S.stats.invented,    reward: 400 },
+  { id: 'rating',    name: '별점 맛집',       desc: '💬 리뷰 30개 이상 받고 별점 4.8 달성', goal: 48, val: () => (S.reviewN >= 30 ? Math.floor(S.rating * 10 + 1e-9) : 0), reward: 600 },
   { id: 'shop1',     name: '이사했어요',      desc: '동네 카페로 확장',      goal: 1,    val: () => S.shop,              reward: 200 },
   { id: 'shop2',     name: '2층까지!',        desc: '2층 카페로 확장',       goal: 2,    val: () => S.shop,              reward: 600 },
   { id: 'shop3',     name: '프랜차이즈 사장', desc: '프랜차이즈 본점 확장',  goal: 3,    val: () => S.shop,              reward: 3000 },
@@ -908,6 +983,147 @@ const ACHS = [
 ];
 const achReward = a => a.reward * (mode().achMult || 1);
 const achReady = () => ACHS.filter(a => !S.ach[a.id] && a.val() >= a.goal);
+
+// ---------- 손님 리뷰 ----------
+// 손님마다 별점을 남긴다. 별점이 높을수록 손님이 더 자주 온다 (4점이 기준).
+const NICKS = ['커피러버', '빵순이', '출근길 직장인', '동네 주민', '카공족', '디저트 탐험가', '산책하던 강아지 주인',
+  '여행객', '대학생', '야근러', '라떼 장인 지망생', '단골 할머니', '배고픈 고등학생', '프리랜서'];
+const REVIEW_TEXT = {
+  5: [m => `${m} 진짜 맛있어요! 또 올게요 😍`, m => `${m} 인생 메뉴 등극… 사장님 손맛 최고`, m => `주문하자마자 나왔어요. ${m} 완벽!`, m => `${m} 먹으러 내일 또 옵니다`],
+  4: [m => `${m} 맛있었어요 👍`, m => `분위기 좋고 ${m}도 괜찮아요`, m => `${m} 무난하게 좋아요. 다음엔 다른 메뉴도!`],
+  3: [m => `${m}, 그럭저럭이었어요`, () => `맛은 괜찮은데 좀 기다렸어요`, m => `${m} 맛이 살짝 아쉬워요`],
+  2: [m => `${m} 맛이 이상했어요… 😖`, m => `${m}, 이건 좀… 다시 연습해 주세요`],
+  1: [() => `너무 오래 기다리다 그냥 나왔어요 😠`, () => `주문한 게 안 나와서 나왔어요. 실망이에요`],
+};
+const WX_REVIEW = {
+  rain: m => `비 오는 날 ${m} 한 잔, 행복 그 자체 ☔`,
+  snow: m => `눈 오는 날 따뜻한 카페에서 ${m}… 최고예요 ⛄`,
+  hot:  m => `더위가 싹 가셨어요! ${m} 최고 🌞`,
+};
+const pickOne = arr => arr[Math.floor(Math.random() * arr.length)];
+const ratingMult = () => 1 + (S.rating - 4) * 0.08;
+const starStr = n => '★'.repeat(n) + '☆'.repeat(5 - n);
+
+// kind: 'served' | 'lost' | 'sorry'
+function addReview(c, star, kind, q) {
+  S.rating = S.rating * 0.98 + star * 0.02;
+  S.reviewN++;
+  R.stats.revSum += star;
+  R.stats.revN++;
+  const k = c.order[Math.floor(Math.random() * c.order.length)];
+  const m = MENU[k] ? MENU[k].name : '메뉴';
+  let text, special = false;
+  if (kind === 'sorry') text = '품절이었지만 사장님이 친절하게 사과해 주셨어요 🙇';
+  else if (kind === 'lost') text = c.deliv ? '배달이 끝내 안 왔어요… 취소했어요 😠' : pickOne(REVIEW_TEXT[1])(m);
+  else if (star >= 4 && MENU[k].custom && Math.random() < 0.5) { text = `${m}? 여기서만 파는 메뉴래요! 신기하고 맛있어요 🧪`; special = true; }
+  else if (star >= 4 && WX_REVIEW[S.weather] && wxPref(k) > 1 && Math.random() < 0.4) { text = WX_REVIEW[S.weather](m); special = true; }
+  else if (star >= 4 && c.deliv && Math.random() < 0.5) text = `배달 빨리 왔어요 🛵 ${m} 맛있게 먹었어요`;
+  else text = pickOne(REVIEW_TEXT[star])(m);
+  R.reviews.push({ face: c.face, nick: c.vip ? 'VIP 손님' : c.deliv ? '배달 손님' : pickOne(NICKS), star, text, day: S.day, special });
+}
+
+// 하루 리뷰 중 가장 좋은 것, 가장 나쁜 것, 아무거나 하나를 골라 밤에 보여준다
+function pickReviews(list) {
+  if (!list.length) return [];
+  const sorted = list.slice().sort((a, b) => (b.star - a.star) || (b.special - a.special));
+  const out = [sorted[0]];
+  if (sorted.length > 1) out.push(sorted[sorted.length - 1]);
+  const rest = sorted.filter(r => !out.includes(r));
+  if (rest.length) out.push(pickOne(rest));
+  return out.sort((a, b) => b.star - a.star);
+}
+
+// ---------- 나만의 레시피 ----------
+// 밤에 개발실에서 컵 + 재료를 골라 신메뉴로 등록한다. 등록한 메뉴는 MENU에 섞여서 손님이 주문한다.
+const PART_VALUE = { shot: 2, water: 0.5, milk: 2, ice: 0.5, tea: 2, cocoa: 3, fruit: 3, blend: 2, cookie: 2, cake: 6, bake: 4 };
+const CUSTOM_MAX = 5, LAB_PARTS = 4;
+const LAB_EMOJI = ['🍮', '🍨', '🍧', '🍩', '🍫', '🍯', '🥛', '🍡', '🥧', '🧁', '🥞', '🍭'];
+const customPrice = r => Math.max(3, Math.round(1.5 * r.parts.reduce((s, p) => s + (PART_VALUE[p] || 1), 0) + 1.5));
+const labCost = () => 120 * (S.custom.length + 1);
+const cleanName = s => String(s || '').replace(/[<>&"'`]/g, '').trim().slice(0, 10);
+let lab = { cup: null, parts: [], name: '', emoji: LAB_EMOJI[0] };
+
+// 지금 S의 레시피를 MENU에 반영한다 (계정·게임이 바뀔 때마다)
+function syncCustom(keepLab) {
+  for (const k in MENU) if (MENU[k].custom) { delete MENU[k]; delete ICONS['my_' + k]; }
+  S.custom.forEach(r => {
+    ICONS['my_' + r.id] = r.emoji;
+    MENU[r.id] = { name: r.name, icon: 'my_' + r.id, cup: r.cup, parts: r.parts, price: customPrice(r), cost: 0, shop: 0, custom: true };
+  });
+  if (!keepLab) lab = { cup: null, parts: [], name: '', emoji: LAB_EMOJI[0] };
+}
+
+function labCheck(cup, parts) {
+  if (!cup) return { msg: '먼저 컵이나 접시를 골라주세요' };
+  if (!parts.length) return { msg: '재료를 하나 이상 넣어주세요' };
+  if (parts.length > LAB_PARTS) return { msg: `재료는 ${LAB_PARTS}개까지만 넣을 수 있어요` };
+  if (!parts.some(p => PARTS[p].ing)) return { msg: '물·얼음만으로는 메뉴가 될 수 없어요' };
+  const dup = Object.keys(MENU).find(k => MENU[k].cup === cup && sameParts(MENU[k].parts, parts));
+  if (dup) return { msg: `이미 있는 레시피예요: ${MENU[dup].name}` };
+  return { ok: true };
+}
+
+// 재료 이름으로 메뉴 이름을 지어 준다: 머그컵 + 샷 + 딸기 → 따뜻한 커피딸기
+const FLAVOR = { shot: '커피', milk: '밀크', tea: '티', cocoa: '초코', fruit: '딸기', cookie: '쿠키', cake: '케이크', bake: '빵' };
+function autoName(cup, parts) {
+  const fl = [...new Set(parts.map(p => FLAVOR[p]).filter(Boolean))].join('');
+  if (!fl) return '사장님 특제';
+  const name = cup === 'plate' ? `${fl} 플레이트` : cup === 'icecup' ? `아이스 ${fl}` : `따뜻한 ${fl}`;
+  return cleanName(name.length > 10 ? `특제 ${fl}` : name);
+}
+
+function labMake() {
+  const chk = labCheck(lab.cup, lab.parts);
+  if (!chk.ok) { toast(chk.msg); return; }
+  if (S.custom.length >= CUSTOM_MAX) { toast(`레시피는 ${CUSTOM_MAX}개까지 만들 수 있어요`); return; }
+  const cost = labCost();
+  if (S.money < cost) { toast('돈이 부족해요'); return; }
+  S.money -= cost;
+  S.customSeq = (S.customSeq || 0) + 1;
+  const r = { id: 'my' + S.customSeq, name: cleanName(lab.name) || autoName(lab.cup, lab.parts), emoji: lab.emoji, cup: lab.cup, parts: lab.parts.slice() };
+  S.custom.push(r);
+  S.unlocked[r.id] = true;
+  S.stats.invented = (S.stats.invented || 0) + 1;
+  syncCustom();
+  toast(`🧪 신메뉴 ${r.emoji} ${josa(r.name, '이', '가')} 완성됐어요! 내일부터 손님이 주문해요`);
+}
+
+function labDel(id) {
+  const r = S.custom.find(x => x.id === id);
+  if (!r || !confirm(`${r.name} 레시피를 없앨까요? 개발비는 돌려받지 못해요.`)) return;
+  S.custom = S.custom.filter(x => x !== r);
+  delete S.unlocked[id];
+  if (S.special === id) S.special = null;
+  S.quests = S.quests.map(q => (q.item === id ? { ...q, item: 'americano' } : q));
+  syncCustom(true);
+  toast(`🗑️ ${r.name} 레시피를 없앴어요`);
+}
+
+function labHtml() {
+  const parts = usedParts();
+  const cups = parts.filter(p => PARTS[p].cup), rest = parts.filter(p => !PARTS[p].cup);
+  const chk = labCheck(lab.cup, lab.parts);
+  const full = S.custom.length >= CUSTOM_MAX, cost = labCost();
+  const mix = lab.cup ? `<span class="r">${[lab.cup, ...lab.parts].map(p => ic(PARTS[p].icon)).join('<span class="op">+</span>')}</span>` : '<small style="font-size:.8rem;color:var(--muted)">아래에서 컵부터 골라 보세요</small>';
+  const preview = chk.ok ? customPrice({ parts: lab.parts }) : 0;
+  let html = `<div class="lab"><h3>🧪 나만의 레시피 개발실 <small style="font-weight:400;color:var(--muted)">(${S.custom.length}/${CUSTOM_MAX})</small></h3>
+    <div style="font-size:.78rem;color:var(--muted)">컵과 재료를 마음대로 섞어 신메뉴를 만들어요. 영업 중 작업대에서 ✅를 눌러 새 조합을 메모해 둘 수도 있어요.</div>
+    <div class="grp-label">컵 / 접시</div>
+    <div class="lab-btns">${cups.map(p => `<button class="${lab.cup === p ? 'on' : ''}" data-act="labCup" data-id="${p}">${ic(PARTS[p].icon)}${PARTS[p].name}</button>`).join('')}</div>
+    <div class="grp-label">재료 넣기 (${lab.parts.length}/${LAB_PARTS})</div>
+    <div class="lab-btns">${rest.map(p => `<button data-act="labPart" data-id="${p}" ${!lab.cup || lab.parts.length >= LAB_PARTS ? 'disabled' : ''}>${ic(PARTS[p].icon)}${PARTS[p].name}</button>`).join('')}</div>
+    <div class="lab-mix">${mix}${lab.parts.length ? '<span class="lab-btns"><button data-act="labUndo">↩ 하나 빼기</button></span>' : ''}${lab.cup ? '<span class="lab-btns"><button data-act="labClear">처음부터</button></span>' : ''}</div>
+    <div class="lab-msg" style="color:${chk.ok ? 'var(--good)' : 'var(--muted)'}">${chk.ok ? `✨ 새로운 조합이에요! 판매가 ${coin(Math.round(preview * SHOPS[S.shop].priceMult * (mode().price || 1)))}` : chk.msg}</div>`;
+  if (chk.ok) html += `<div class="grp-label">이름 (10자까지)</div>
+    <input id="labName" maxlength="10" value="${cleanName(lab.name)}" placeholder="${autoName(lab.cup, lab.parts)}">
+    <div class="grp-label">아이콘</div>
+    <div class="lab-btns">${LAB_EMOJI.map(e => `<button class="${lab.emoji === e ? 'on' : ''}" data-act="labEmoji" data-id="${e}"><span class="ic">${e}</span></button>`).join('')}</div>`;
+  html += `<button class="buy" style="width:100%;margin-top:8px" data-act="labMake" ${!chk.ok || full || S.money < cost ? 'disabled' : ''}>${full ? '레시피 칸이 가득 찼어요' : `🧪 신메뉴 개발하기 (${coin(cost)})`}</button>`;
+  html += S.custom.map(r => `<div class="item"><div class="ico">${r.emoji}</div>
+    <div class="info"><b>${r.name} · ${coin(price(r.id))}${r.id === S.special ? '<span class="sale-tag">내일 추천</span>' : ''}</b>${recipeHtml(r.id)}</div>
+    <button class="buy" style="background:#b9a48e" data-act="labDel" data-id="${r.id}">없애기</button></div>`).join('');
+  return html + '</div>';
+}
 
 const recipeHtml = id =>`<span class="r">${[MENU[id].cup, ...MENU[id].parts].map(p => ic(PARTS[p].icon)).join('<span class="op">+</span>')}</span>`;
 
@@ -1076,6 +1292,7 @@ function startSandbox() {
   save();
   sandbox = JSON.stringify(S);
   S = newGame('story');
+  syncCustom();
   lastSummary = null;
   nightTab = 'stock';
   prepareDay();
@@ -1092,6 +1309,7 @@ function endSandbox(done) {
   $('overlay').classList.add('hidden');
   S = JSON.parse(sandbox);
   sandbox = null;
+  syncCustom();
   lastSummary = null;
   nightTab = 'stock';
   $('dayView').classList.add('hidden');
@@ -1136,11 +1354,12 @@ function startDay() {
     rush: [],        // 긴급 발주: { ing, n, t }
     panel: null,     // 품절 대응 창을 연 손님 자리
     combo: 0,
-    stats: { served: 0, lost: 0, revenue: 0, tips: 0, wasted: 0, perfect: 0, sold: {}, maxCombo: 0, vip: 0, delivery: 0, sorry: 0, subst: 0 },
+    reviews: [],     // 오늘 손님들이 남긴 리뷰
+    stats: { served: 0, lost: 0, revenue: 0, tips: 0, wasted: 0, perfect: 0, sold: {}, maxCombo: 0, vip: 0, delivery: 0, sorry: 0, subst: 0, revSum: 0, revN: 0 },
   };
   $('nightView').classList.add('hidden');
   $('dayView').classList.remove('hidden');
-  $('shopName').innerHTML = `${SHOPS[S.shop].icon} ${SHOPS[S.shop].name} — 영업 중${isWeekend() ? ' · 🎉 주말 손님 폭주!' : ''}`;
+  $('shopName').innerHTML = `${SHOPS[S.shop].icon} ${SHOPS[S.shop].name} — 영업 중 · ${wx().icon} ${wx().name}${isWeekend() ? ' · 🎉 주말 손님 폭주!' : ''}`;
   renderBg(false);
   renderBook();
   window.scrollTo(0, 0);
@@ -1166,19 +1385,24 @@ function startDay() {
 }
 
 function nextSpawn() {
-  const rate = (0.6 + S.rep / 100 + S.up.sign * 0.05 + Math.min(S.day, 30) * 0.02 + S.shop * 0.25) * (isWeekend() ? 1.4 : 1) * (mode().spawn || 1);
+  const rate = (0.6 + S.rep / 100 + S.up.sign * 0.05 + Math.min(S.day, 30) * 0.02 + S.shop * 0.25) * (isWeekend() ? 1.4 : 1) * (mode().spawn || 1)
+    * (wx().spawn || 1) * ratingMult();
   return (11 / rate) * (0.6 + Math.random() * 0.8);
 }
 
-// 추천 메뉴는 더 자주 주문된다
+// 추천 메뉴는 3배, 날씨에 맞는 메뉴(비 오면 따뜻한 음료 등)도 더 자주 주문된다
 function randomMenu() {
+  const w = k => (k === S.special ? 3 : 1) * wxPref(k);
+  const pick = list => {
+    let r = Math.random() * list.reduce((s, k) => s + w(k), 0);
+    return list.find(k => (r -= w(k)) < 0) || list[list.length - 1];
+  };
   const menu = unlockedMenu();
-  const bag = menu.concat(menu.includes(S.special) ? [S.special, S.special] : []);
-  let k = bag[Math.floor(Math.random() * bag.length)];
+  let k = pick(menu);
   // 품절 안내를 보고 대부분은 다른 메뉴를 고른다
   if (isSoldOut(k) && Math.random() < 0.85) {
-    const ok = bag.filter(m => !isSoldOut(m));
-    if (ok.length) k = ok[Math.floor(Math.random() * ok.length)];
+    const ok = menu.filter(m => !isSoldOut(m));
+    if (ok.length) k = pick(ok);
   }
   return k;
 }
@@ -1305,6 +1529,7 @@ function sendSorry() {
     floatAt(document.querySelector(`[data-slot="${i}"]`), '🙇 다음에 올게요', '#8a7360');
     clearCust(i);
     R.stats.sorry++;
+    addReview(c, 3, 'sorry');
   }
   closeSoldPanel();
   renderDay(true);
@@ -1335,7 +1560,7 @@ function spawn() {
   const order = [];
   for (let i = 0; i < size; i++) order.push(randomMenu());
   const vip = Math.random() < 0.08 + S.up.decor * 0.01;
-  const max = (26 + 14 * size) * (1 + S.up.decor * 0.12) * (vip ? 0.75 : 1) * (S.cat ? 1.05 : 1) * (mode().patience || 1);
+  const max = (26 + 14 * size) * (1 + S.up.decor * 0.12) * (vip ? 0.75 : 1) * (S.cat ? 1.05 : 1) * (mode().patience || 1) * (wx().patience || 1);
   R.counter[idx] = { face: vip ? '😎' : FACES[Math.floor(Math.random() * FACES.length)], order, pat: max, max, vip };
 }
 
@@ -1344,7 +1569,7 @@ function spawnDelivery() {
   const size = 2 + (Math.random() < 0.4 + S.shop * 0.1 ? 1 : 0);
   const order = [];
   for (let i = 0; i < size; i++) order.push(randomMenu());
-  const max = (45 + 15 * size) * (1 + S.up.decor * 0.08) * (mode().patience || 1);
+  const max = (45 + 15 * size) * (1 + S.up.decor * 0.08) * (mode().patience || 1) * (wx().patience || 1);
   R.delivery = { face: '🛵', order, pat: max, max, deliv: true };
   toast('🛵 배달 주문이 들어왔어요! 배달비 보너스!');
   renderDay(true);
@@ -1398,13 +1623,14 @@ function serve(i) {
     // 콤보 1당 5%, 최대 +50% (러시 모드는 +100%)
     const comboMult = 1 + Math.min(mode().comboCap || 10, R.combo - 1) * 0.05;
     pay = Math.round(pay * comboMult);
-    if (speed > 0.4) tip = Math.ceil(pay * (0.1 + 0.03 * S.up.decor) * q * (0.5 + S.rep / 100) * (q >= 0.95 ? 1.5 : 1) * (isWeekend() ? 1.2 : 1));
+    if (speed > 0.4) tip = Math.ceil(pay * (0.1 + 0.03 * S.up.decor) * q * (0.5 + S.rep / 100) * (q >= 0.95 ? 1.5 : 1) * (isWeekend() ? 1.2 : 1) * (wx().tip || 1));
     S.rep = Math.min(100, S.rep + (q >= 0.95 ? 2 : 1) * (speed > 0.4 ? 1 : 0.5) + (c.vip ? 1.5 : 0));
     msg = `${c.deliv ? '🛵 ' : q >= 0.95 ? '😍 ' : ''}+${pay + tip}${tip ? ' 💕' : ''}${R.combo >= 2 ? ` 🔥${R.combo}` : ''}`;
     if (c.vip) R.stats.vip++;
     if (c.deliv) R.stats.delivery++;
   }
   c.order.forEach(k => R.stats.sold[k] = (R.stats.sold[k] || 0) + 1);
+  addReview(c, q < 0.45 ? (speed > 0.4 ? 2 : 1) : q >= 0.95 ? (speed > 0.4 ? 5 : 4) : q >= 0.6 ? (speed > 0.4 ? 4 : 3) : 3, 'served', q);
   S.money += pay + tip;
   S.totalEarned += pay + tip;
   R.stats.served++;
@@ -1512,8 +1738,14 @@ function completeBench() {
   const m = benchMatch();
   if (!m) {
     const b = R.bench;
-    if (b.cup === 'mug' && b.parts.length && b.parts.every(p => p.id === 'water')) findEgg('water', '💧 맹물…? 할머니가 보시면 혼나요!');
-    else toast('레시피와 달라요');
+    if (b.cup === 'mug' && b.parts.length && b.parts.every(p => p.id === 'water')) { findEgg('water', '💧 맹물…? 할머니가 보시면 혼나요!'); return; }
+    const ids = b.parts.map(p => p.id);
+    // 처음 보는 조합이면 개발실에 메모해 둔다 (작업대는 그대로 둔다)
+    if (!R.tutorial && !sandbox && labCheck(b.cup, ids).ok) {
+      const same = S.labIdea && S.labIdea.cup === b.cup && sameParts(S.labIdea.parts, ids);
+      S.labIdea = { cup: b.cup, parts: ids };
+      toast(same ? '🧪 이미 메모해 둔 조합이에요' : '🧪 새로운 조합 발견! 밤에 📋 메뉴 탭 개발실에서 신메뉴로 만들 수 있어요');
+    } else toast('레시피와 달라요');
     return;
   }
   if (R.tray.length >= trayCap()) { toast('쟁반이 가득 찼어요! 먼저 서빙하세요'); renderBench(); return; }
@@ -1550,7 +1782,7 @@ function renderBench() {
     buildEl.innerHTML = items.join('<span class="plus-sign">+</span>');
   }
   const st = $('buildStatus');
-  if (bad) { st.textContent = '❌ 레시피에 없는 조합이에요 — 버리고 다시!'; st.style.color = 'var(--bad)'; }
+  if (bad) { st.textContent = '❌ 레시피에 없는 조합이에요 — 버리고 다시! (✅로 신메뉴 아이디어 메모)'; st.style.color = 'var(--bad)'; }
   else if (match) { st.innerHTML = `✅ ${ic(MENU[match].icon)} ${MENU[match].name} 완성 가능`; st.style.color = 'var(--good)'; }
   else if (b.cup) {
     const ids = b.parts.map(p => p.id);
@@ -1558,7 +1790,8 @@ function renderBench() {
     st.innerHTML = cands.length ? `만들 수 있는 것: ${cands.join(' ')}` : '';
     st.style.color = 'var(--muted)';
   } else st.textContent = '';
-  $('doneBtn').disabled = !match || !!g;
+  // 레시피가 아니어도 재료가 들어 있으면 눌러서 신메뉴 아이디어로 메모할 수 있다
+  $('doneBtn').disabled = !!g || !b.cup || (!match && !b.parts.length);
 
   $('gaugeWrap').classList.toggle('hidden', !g);
   if (g) {
@@ -1668,6 +1901,7 @@ function update(dt) {
       floatAt(document.querySelector(`[data-slot="${i}"]`), c.deliv ? '🛵 배달 취소' : '😠 떠남', '#d24b3e');
       clearCust(i);
       R.stats.lost++;
+      addReview(c, 1, 'lost');
       if (R.combo >= 3) toast(`💔 콤보 ${R.combo} 끊김!`);
       R.combo = 0;
       S.rep = Math.max(0, S.rep - (c.vip ? 5 : c.deliv ? 2 : 3));
@@ -1790,7 +2024,9 @@ function endDay() {
   S.recent = (S.recent || []).concat(st.revenue + st.tips).slice(-5); // 최근 5일 매출 (블랙빈 대결 목표용)
   const r = rent();
   S.money -= r;
-  lastSummary = { ...st, rent: r, day: S.day, quests, questReward };
+  const picked = pickReviews(R.reviews);
+  S.reviews = picked;
+  lastSummary = { ...st, rent: r, day: S.day, quests, questReward, weather: S.weather };
   if (S.duel && !S.duelResult) {
     S.duelResult = st.revenue + st.tips >= S.duel.target ? 'win' : 'lose';
     lastSummary.duel = { target: S.duel.target, got: st.revenue + st.tips, win: S.duelResult === 'win' };
@@ -1813,6 +2049,11 @@ function showNight() {
   $('nightView').classList.remove('hidden');
   window.scrollTo(0, 0);
   lastAct = null;
+  if (S.labIdea) {
+    lab = { ...lab, cup: S.labIdea.cup, parts: S.labIdea.parts.slice(), name: '' };
+    S.labIdea = null;
+    setTimeout(() => toast('🧪 낮에 메모한 조합을 📋 메뉴 탭 개발실에 담아 뒀어요'), 600);
+  }
   renderStockWarn();
   const after = () => {
     if (S.tut === 0) tutStart(NIGHT0_TUT);
@@ -1834,13 +2075,14 @@ function renderNight() {
   let html = '<div class="night-cols"><div class="night-col">';
   if (lastSummary) {
     const s = lastSummary;
-    html += `<div class="card"><h2>🌙 ${s.day}일차 영업 결과</h2><div class="sum">
+    html += `<div class="card"><h2>🌙 ${s.day}일차 영업 결과 <small style="font-size:.75rem;color:var(--muted)">${WEATHER[s.weather] ? `${WEATHER[s.weather].icon} ${WEATHER[s.weather].name}` : ''}</small></h2><div class="sum">
       <span>서빙한 손님</span><span class="v">${s.served}명</span>
       <span>놓친 손님</span><span class="v ${s.lost ? 'minus' : ''}">${s.lost}명</span>
       <span>⭐ 완벽한 메뉴</span><span class="v">${s.perfect}개</span>
       <span>매출</span><span class="v plus">+${fmt(s.revenue)}</span>
       <span>팁</span><span class="v plus">+${fmt(s.tips)}</span>
       ${s.questReward ? `<span>📜 의뢰 보상</span><span class="v plus">+${fmt(s.questReward)}</span>` : ''}
+      ${s.revN ? `<span>💬 오늘 리뷰 별점</span><span class="v">★${(s.revSum / s.revN).toFixed(1)} (${s.revN}개)</span>` : ''}
       ${s.maxCombo >= 2 ? `<span>🔥 최고 콤보</span><span class="v">${s.maxCombo}</span>` : ''}
       ${s.delivery ? `<span>🛵 배달 완료</span><span class="v">${s.delivery}건</span>` : ''}
       ${s.subst ? `<span>🔄 대체 메뉴 수락</span><span class="v">${s.subst}명</span>` : ''}
@@ -1867,16 +2109,21 @@ function renderNight() {
     html += `<div class="card warn-card"><h2>⚠️ 재고 없음: ${ingList(outIngs)}</h2>
       <div class="info-list">아래에서 꼭 사두세요!</div></div>`;
   }
+  html += `<div class="card"><h2>💬 손님 리뷰 <small style="font-size:.8rem;color:#e0a526">★${S.rating.toFixed(1)}</small>
+    <small style="font-size:.72rem;color:var(--muted);font-weight:400">${S.reviewN ? `리뷰 ${fmt(S.reviewN)}개 · 별점이 높을수록 손님이 많이 와요` : '영업하면 손님들이 리뷰를 남겨요'}</small></h2>
+    ${S.reviews.map(r => `<div class="rv"><span class="st">${starStr(r.star)}</span> ${r.text}<div class="who">${r.face} ${r.nick} · ${r.day}일차</div></div>`).join('')}</div>`;
   html += `<div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:8px">
     <span>${mode().rent === 0 ? '🌈 자유 모드: 월세 없음' : `내일 월세 <b>${coin(rent())}</b>`}</span>
     ${lowIngs.length ? `<span class="warn-text">재료 부족 ${lowIngs.map(i => ic(ING[i].icon)).join('')}</span>` : ''}
   </div>`;
   html += `<div class="card"><h2>📰 내일 소식 (${S.day}일차)</h2><div class="info-list">
+    <div>${wx().icon} 날씨 예보: <b>${wx().name}</b> <small style="color:var(--muted)">(${season().icon} ${season().name}${(S.day - 1) % SEASON_LEN === 0 && S.day > 1 ? ' 시작!' : ''})</small> — ${wx().desc}</div>
     ${isWeekend() ? `<div>🎉 <b>주말!</b> 손님이 1.4배 몰리고 팁도 1.2배예요</div>` : ''}
     ${S.special ? `<div>⭐ 추천 메뉴: ${ic(MENU[S.special].icon)} <b>${MENU[S.special].name}</b> — 1.5배 가격, 주문 많음</div>` : ''}
     ${S.sale ? `<div>🏷️ 시장 특가: ${ic(ING[S.sale].icon)} <b>${ING[S.sale].name}</b> 오늘 밤 반값!</div>` : ''}
     ${S.day >= 2 ? `<div>🛵 가끔 <b>배달 주문</b>이 들어와요 (1.3배 + 배달비)</div>` : ''}
     ${S.duel ? `<div class="duel-line">⚔️ 블랙빈과 매출 대결: 내일 매출+팁 ${coin(S.duel.target)} 넘기기!</div>` : ''}
+    ${S.custom.some(r => S.unlocked[r.id]) ? `<div>🧪 나만의 메뉴: ${S.custom.map(r => `${r.emoji} ${r.name}`).join(', ')}</div>` : ''}
     ${S.cat ? `<div>🐈 가게 고양이 덕분에 손님들이 5% 더 오래 기다려 줘요</div>` : ''}
     ${S.quests.map(q => `<div style="display:flex;justify-content:space-between;gap:8px"><span>📜 ${questText(q)}</span><b>${coin(q.reward)}</b></div>`).join('')}
   </div></div>`;
@@ -1911,7 +2158,8 @@ function renderNight() {
         <div class="info"><b>${u.name} <small>(${lv}/${max})</small></b><span>${atMax ? '현재 최대' : u.desc(lv)}</span></div>${btn}</div>`;
     }).join('');
   } else if (nightTab === 'menu') {
-    html += Object.entries(MENU).map(([k, m]) => {
+    html += labHtml();
+    html += Object.entries(MENU).filter(([, m]) => !m.custom).map(([k, m]) => {
       let btn;
       if (S.unlocked[k]) btn = `<button class="buy" disabled>판매 중</button>`;
       else if (S.shop < m.shop) btn = `<button class="buy" disabled>${SHOPS[m.shop].name} 필요</button>`;
@@ -2418,6 +2666,7 @@ function startNewGame(m) {
   const learned = S && S.tut === 2;   // 튜토리얼을 이미 끝낸 사람은 다시 안 보여준다
   $('overlay').classList.add('hidden');
   S = newGame(m);
+  syncCustom();
   if (learned) S.tut = 2;
   lastSummary = null;
   prepareDay();
@@ -2431,6 +2680,7 @@ function wipeAll() {
   tut = null; renderCoach();
   story = null; renderStory();
   S = newGame();   // 튜토리얼도 처음부터
+  syncCustom();
   lastSummary = null;
   nightTab = 'stock';
   slotMsg = '';
@@ -2574,6 +2824,13 @@ document.addEventListener('click', e => {
     startDay();
     return;
   }
+  else if (act === 'labCup') { if (lab.cup !== id) lab.parts = []; lab.cup = id; }
+  else if (act === 'labPart') { if (lab.cup && lab.parts.length < LAB_PARTS) lab.parts.push(id); }
+  else if (act === 'labUndo') lab.parts.pop();
+  else if (act === 'labClear') lab = { ...lab, cup: null, parts: [] };
+  else if (act === 'labEmoji') lab.emoji = id;
+  else if (act === 'labMake') labMake();
+  else if (act === 'labDel') labDel(id);
   else if (act === 'bet') slotBet = +el.dataset.n;
   else if (act === 'spin') { spinSlot(); return; }
   else if (act === 'ticket') buyTicket();
@@ -2610,6 +2867,10 @@ ${curUser ? `👤 ${curUser} 계정의 ` : ''}저장된 진행, 🏆 30일 챌�
   save();
   renderNight();
   tutTick();
+});
+
+document.addEventListener('input', e => {
+  if (e.target.id === 'labName') lab.name = e.target.value;
 });
 
 document.addEventListener('click', e => {
@@ -2724,6 +2985,7 @@ function startGame() {
   $('overlay').classList.add('hidden');
   lastSummary = null; nightTab = 'stock'; slotMsg = '';
   S = load();
+  if (S) syncCustom();
   if (S) {
     if (!S.quests.length) prepareDay();
     // 예전 기준(최고 기록 × 1.1)으로 잡힌 대결 목표는 새 기준으로 낮춰 준다
@@ -2731,6 +2993,7 @@ function startGame() {
     showNight();
   } else {
     S = newGame();   // 모드를 고르기 전 화면이 비지 않게
+    syncCustom();
     $('nightView').innerHTML = '';
     renderHud();
     renderBg(true);
