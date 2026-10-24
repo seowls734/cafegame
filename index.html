@@ -346,8 +346,13 @@
   /* 손님 리뷰 */
   .rv { padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: .85rem; line-height: 1.5; }
   .rv:last-child { border-bottom: 0; }
-  .rv .who { color: var(--muted); font-size: .75rem; }
-  .rv .st { color: #e0a526; letter-spacing: 1px; }
+  .rv .rv-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .rv .who { color: var(--muted); font-size: .78rem; }
+  .rv .who b { color: var(--ink); }
+  .rv .st { color: #e0a526; letter-spacing: 1px; white-space: nowrap; }
+  .rv .rv-menu { font-size: .72rem; color: var(--muted); display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
+  .rv .rv-menu .ic { font-size: 1rem; }
+  .rv .rv-text { margin-top: 2px; }
   /* 레시피 개발실 */
   .lab { border: 2px dashed var(--accent); border-radius: 12px; padding: 10px; margin-bottom: 10px; background: #fff7ec; }
   .lab h3 { margin: 0 0 6px; font-size: 1rem; }
@@ -986,40 +991,127 @@ const achReady = () => ACHS.filter(a => !S.ach[a.id] && a.val() >= a.goal);
 
 // ---------- 손님 리뷰 ----------
 // 손님마다 별점을 남긴다. 별점이 높을수록 손님이 더 자주 온다 (4점이 기준).
-const NICKS = ['커피러버', '빵순이', '출근길 직장인', '동네 주민', '카공족', '디저트 탐험가', '산책하던 강아지 주인',
-  '여행객', '대학생', '야근러', '라떼 장인 지망생', '단골 할머니', '배고픈 고등학생', '프리랜서'];
-const REVIEW_TEXT = {
-  5: [m => `${m} 진짜 맛있어요! 또 올게요 😍`, m => `${m} 인생 메뉴 등극… 사장님 손맛 최고`, m => `주문하자마자 나왔어요. ${m} 완벽!`, m => `${m} 먹으러 내일 또 옵니다`],
-  4: [m => `${m} 맛있었어요 👍`, m => `분위기 좋고 ${m}도 괜찮아요`, m => `${m} 무난하게 좋아요. 다음엔 다른 메뉴도!`],
-  3: [m => `${m}, 그럭저럭이었어요`, () => `맛은 괜찮은데 좀 기다렸어요`, m => `${m} 맛이 살짝 아쉬워요`],
-  2: [m => `${m} 맛이 이상했어요… 😖`, m => `${m}, 이건 좀… 다시 연습해 주세요`],
-  1: [() => `너무 오래 기다리다 그냥 나왔어요 😠`, () => `주문한 게 안 나와서 나왔어요. 실망이에요`],
+// 손님마다 말투와 사연이 있다: [닉네임, 들른 이유, 어울리는 얼굴(없으면 누구나)]
+const PERSONAS = [
+  ['출근길 직장인', ['출근 전에 급하게 들렀어요.', '아침 회의 들어가기 전에 한 잔 하러 왔어요.'], ['👩', '👨', '👱', '👱‍♀️', '👩‍💼', '👨‍💼', '👩‍💻']],
+  ['카공족', ['노트북 들고 와서 과제하다 갔어요.', '조용히 공부할 데 찾다가 들어왔어요.']],
+  ['동네 주민', ['산책하다 간판 보고 들어왔어요.', '집 앞이라 지나다니기만 했는데 처음 와 봤어요.']],
+  ['디저트 탐험가', ['동네 디저트 맛집 도장 깨기 중이에요.', '단 게 당겨서 찾아왔어요.']],
+  ['여행객', ['여행 중에 우연히 들렀어요.', '숙소 근처라 검색해 보고 왔어요.']],
+  ['대학생', ['시험 기간이라 친구랑 당 충전하러 왔어요.', '공강 시간에 시간 때우러 왔어요.'], ['👩‍🎓', '👨‍🎓', '👱', '👱‍♀️', '👩', '👨']],
+  ['야근러', ['야근 전에 버티려고 들렀어요.', '퇴근이 늦어서 마감 직전에 겨우 왔어요.'], ['👩', '👨', '👩‍💼', '👨‍💼', '👩‍💻', '👩‍🔧']],
+  ['라떼 장인 지망생', ['홈카페 하는데 공부 삼아 와 봤어요.', '커피 좀 마셔 본 사람으로서 솔직하게 남겨요.'], ['👩', '👨', '👱', '👱‍♀️', '👩‍🔧', '👩‍💻']],
+  ['단골 할머니', ['손주 데리고 왔어요.', '늘 앉던 창가 자리에 앉았어요.'], ['👵']],
+  ['동네 할아버지', ['아침 신문 들고 와서 천천히 마셨어요.', '경로당 가는 길에 들렀어요.'], ['👴']],
+  ['프리랜서', ['작업실 대신 쓸 카페 찾는 중이에요.', '마감 끝내고 저한테 주는 선물로 왔어요.'], ['👩', '👨', '👱', '👱‍♀️', '👩‍💻', '👨‍🎨']],
+  ['강아지 산책러', ['강아지 산책하다 잠깐 들렀어요.', '산책 코스에 있어서 와 봤어요.']],
+  ['배고픈 고등학생', ['학원 가기 전에 친구들이랑 왔어요.', '용돈 털어서 와 봤어요.'], ['👧', '👦']],
+  ['순찰 중인 경찰관', ['순찰 돌다가 잠깐 쉬러 들렀어요.'], ['👮']],
+  ['작업 중인 화가', ['스케치하다가 영감 얻으러 왔어요.'], ['👨‍🎨']],
+];
+// 메뉴별 맛 표현: good(완벽) / ok(조금 아쉬움) / bad(실패)
+const TASTE = {
+  americano: { good: ['산미랑 쓴맛 밸런스가 딱 좋고 끝맛이 깔끔해요', '향이 진하게 올라오는데 쓰지 않아서 끝까지 맛있게 마셨어요'],
+               ok: ['조금 연했지만 무난하게 마실 만했어요'], bad: ['물을 너무 부었는지 밍밍했어요', '샷이 과하게 내려졌는지 탄 맛이 났어요'] },
+  latte:     { good: ['우유가 부드럽고 고소해서 커피랑 잘 어우러져요', '라떼 아트는 없어도 맛은 진짜 제대로 된 라떼예요'],
+               ok: ['우유 비율이 살짝 아쉬웠지만 고소했어요'], bad: ['우유가 너무 많아서 커피 맛이 거의 안 났어요', '미지근하고 맛이 따로 놀았어요'] },
+  cookie:    { good: ['겉은 바삭하고 속은 촉촉해요', '버터 향이 진해서 커피랑 같이 먹기 딱이에요'],
+               ok: ['평범한 쿠키지만 커피랑은 잘 어울렸어요'], bad: ['눅눅해서 아쉬웠어요'] },
+  iceame:    { good: ['얼음 가득이라 끝까지 시원하고 깔끔해요', '진하게 내려서 얼음이 녹아도 싱겁지 않아요'],
+               ok: ['조금 싱거웠지만 시원해서 좋았어요'], bad: ['얼음물에 커피 몇 방울 떨어뜨린 맛이었어요', '너무 써서 다 못 마셨어요'] },
+  tea:       { good: ['찻잎 향이 은은하게 올라와서 마음이 편해져요', '떫지 않고 향긋해서 천천히 다 마셨어요'],
+               ok: ['조금 연했지만 향은 좋았어요'], bad: ['너무 오래 우렸는지 떫었어요', '맹물에 가까웠어요'] },
+  cake:      { good: ['시트가 촉촉하고 크림이 너무 달지 않아서 좋아요', '한 조각인데 양도 넉넉하고 부드러워요'],
+               ok: ['평범했지만 커피랑 먹기 괜찮았어요'], bad: ['크림이 좀 꺼져 있었어요'] },
+  icelatte:  { good: ['시원하고 고소해서 한 번에 반을 마셨어요', '우유랑 샷 비율이 딱 좋아요'],
+               ok: ['조금 묽었지만 시원하게 잘 마셨어요'], bad: ['우유 맛만 나고 커피 맛이 안 났어요', '샷이 넘쳐서 너무 썼어요'] },
+  croissant: { good: ['결이 살아 있고 버터 향이 가게 가득 퍼져요', '갓 구워서 바삭바삭, 손에 부스러기가 남을 정도예요'],
+               ok: ['살짝 덜 바삭했지만 버터 향은 좋았어요'], bad: ['덜 익어서 속이 눅눅했어요', '바닥이 새까맣게 탔어요'] },
+  smoothie:  { good: ['딸기가 진하고 곱게 갈려서 목 넘김이 부드러워요', '인공적인 단맛 없이 딸기 맛 그대로예요'],
+               ok: ['조금 덜 갈렸지만 딸기 맛은 진했어요'], bad: ['덜 갈려서 덩어리가 씹혔어요', '우유 맛만 나고 딸기 맛이 약했어요'] },
+  choco:     { good: ['진하고 달콤해서 몸이 사르르 녹아요', '코코아가 진해서 어릴 때 먹던 핫초코 생각나요'],
+               ok: ['조금 묽었지만 따뜻하고 달달했어요'], bad: ['코코아가 덜 풀려서 묽고 텁텁했어요'] },
 };
-const WX_REVIEW = {
-  rain: m => `비 오는 날 ${m} 한 잔, 행복 그 자체 ☔`,
-  snow: m => `눈 오는 날 따뜻한 카페에서 ${m}… 최고예요 ⛄`,
-  hot:  m => `더위가 싹 가셨어요! ${m} 최고 🌞`,
+function tasteOf(k, tier) {
+  if (TASTE[k]) return pickOne(TASTE[k][tier]);
+  // 나만의 레시피: 재료 조합을 두고 이야기한다
+  const fl = [...new Set(MENU[k].parts.map(p => FLAVOR[p]).filter(Boolean))];
+  const combo = fl.length > 1 ? `${fl.join('랑 ')} 조합` : `${fl[0] || '독특한'} 맛`;
+  return tier === 'good' ? pickOne([`여기서만 파는 메뉴라 시켜 봤는데 ${combo}이 생각보다 너무 잘 어울려요`, `처음 보는 메뉴라 반신반의했는데 ${combo}, 이건 대박이에요`])
+       : tier === 'ok' ? `${combo}이 독특하긴 한데 조금 더 다듬으면 좋겠어요`
+       : `${combo}… 이건 좀 실험적이었어요`;
+}
+const VISIT_END = {
+  5: ['다음에 또 올게요!', '주변에 벌써 추천했어요 👍', '이 동네 오면 무조건 여기예요.', '사장님 번창하세요 🙏'],
+  4: ['다음엔 다른 메뉴도 먹어 볼게요.', '재방문 의사 있어요.', '전체적으로 만족해요.'],
+  3: ['나쁘진 않았어요.', '다음에 한 번 더 와 보고 판단할게요.'],
+  2: ['다음엔 나아지길 바라요…', '가격 생각하면 좀 아쉬워요.'],
+  1: ['다시 가기는 어려울 것 같아요.', '많이 실망했어요.'],
+};
+const WX_LINE = {
+  rain:  ['비 오는 날이라 창가에 앉아 빗소리 들으면서 마시니 운치 있었어요 ☔', '우산 털고 들어왔는데 가게 안이 따뜻해서 좋았어요 ☔'],
+  snow:  ['눈 오는 날이라 손이 꽁꽁 얼었는데 덕분에 녹았어요 ⛄', '창밖에 눈 내리는 거 보면서 마시니 영화 속 같았어요 ❄️'],
+  hot:   ['밖이 찜통인데 들어오자마자 살 것 같았어요 🌞', '폭염에 지쳐서 들어왔는데 더위가 싹 가셨어요 🌞'],
+  sunny: ['날씨가 좋아서 햇살 드는 자리에 앉았는데 기분까지 좋아졌어요 ☀️'],
 };
 const pickOne = arr => arr[Math.floor(Math.random() * arr.length)];
 const ratingMult = () => 1 + (S.rating - 4) * 0.08;
 const starStr = n => '★'.repeat(n) + '☆'.repeat(5 - n);
 
+// 그날 상황에서 하나를 골라 덧붙인다 (날씨, 고양이, 가게, 일행 등)
+function contextLine(c, star, k) {
+  const lines = [];
+  const good = star >= 4;
+  if (WX_LINE[S.weather] && good && wxPref(k) >= 1) lines.push(...WX_LINE[S.weather]);
+  if (S.cat && good) lines.push('가게 고양이가 발밑에서 자고 있어서 저절로 힐링됐어요 🐈');
+  if (c.order.length >= 2) lines.push(good ? `일행이랑 ${c.order.length}개 시켰는데 다들 만족했어요.` : `일행이랑 ${c.order.length}개 시켰는데 다들 반응이 별로였어요.`);
+  if (k === S.special) lines.push(good ? '오늘의 추천 메뉴라서 시켰는데 추천할 만하네요.' : '추천 메뉴라고 해서 시켰는데 조금 실망했어요.');
+  if (isWeekend()) lines.push(good ? '주말이라 사람이 많았는데도 정신없지 않게 잘 챙겨 주셨어요.' : '주말이라 그런지 정신이 없어 보였어요.');
+  if (good && S.shop === 0) lines.push('작은 노점인데 맛은 웬만한 카페보다 나아요.');
+  if (good && S.shop >= 4) lines.push(`${SHOPS[S.shop].name}답게 뷰가 끝내줘요.`);
+  if (good && S.up.decor >= 4) lines.push('인테리어가 예뻐서 사진을 엄청 찍었어요 📸');
+  if (good && R.combo >= 8) lines.push('사장님 손이 안 보일 정도로 빠르게 만들고 계셨어요.');
+  return lines.length && Math.random() < 0.75 ? pickOne(lines) : '';
+}
+
 // kind: 'served' | 'lost' | 'sorry'
-function addReview(c, star, kind, q) {
+// got: 서빙한 메뉴와 품질 [{ k, q }], speed: 남은 인내심 비율, out: 품절이었던 메뉴
+function addReview(c, star, kind, { got = [], speed = 0, out = null } = {}) {
   S.rating = S.rating * 0.98 + star * 0.02;
   S.reviewN++;
   R.stats.revSum += star;
   R.stats.revN++;
-  const k = c.order[Math.floor(Math.random() * c.order.length)];
-  const m = MENU[k] ? MENU[k].name : '메뉴';
-  let text, special = false;
-  if (kind === 'sorry') text = '품절이었지만 사장님이 친절하게 사과해 주셨어요 🙇';
-  else if (kind === 'lost') text = c.deliv ? '배달이 끝내 안 왔어요… 취소했어요 😠' : pickOne(REVIEW_TEXT[1])(m);
-  else if (star >= 4 && MENU[k].custom && Math.random() < 0.5) { text = `${m}? 여기서만 파는 메뉴래요! 신기하고 맛있어요 🧪`; special = true; }
-  else if (star >= 4 && WX_REVIEW[S.weather] && wxPref(k) > 1 && Math.random() < 0.4) { text = WX_REVIEW[S.weather](m); special = true; }
-  else if (star >= 4 && c.deliv && Math.random() < 0.5) text = `배달 빨리 왔어요 🛵 ${m} 맛있게 먹었어요`;
-  else text = pickOne(REVIEW_TEXT[star])(m);
-  R.reviews.push({ face: c.face, nick: c.vip ? 'VIP 손님' : c.deliv ? '배달 손님' : pickOne(NICKS), star, text, day: S.day, special });
+  const [nick, why] = c.vip ? ['VIP 손님', ['평소 입맛이 까다로운 편이에요.']] : c.deliv ? ['배달 손님', ['집에서 배달로 시켰어요.']]
+    : pickOne(PERSONAS.filter(p => !p[2] || p[2].includes(c.face)));
+  const say = [pickOne(why)];
+  let special = false;
+  if (kind === 'sorry') {
+    const m = MENU[out] ? MENU[out].name : '먹고 싶던 메뉴';
+    say.push(`${josa(m, '을', '를')} 먹으러 왔는데 재료가 떨어졌대요.`,
+      '그래도 사장님이 정말 미안해하시면서 정중하게 사과해 주셔서 기분 나쁘게 나오진 않았어요.',
+      `다음엔 꼭 ${josa(m, '을', '를')} 먹어 보고 싶어요.`);
+  } else if (kind === 'lost') {
+    const m = MENU[c.order[0]] ? MENU[c.order[0]].name : '메뉴';
+    const waited = Math.max(10, Math.round(c.max / 5) * 5);
+    say.push(c.deliv ? `${josa(m, '을', '를')} 주문하고 ${waited}초 넘게 기다렸는데 배달이 끝내 안 와서 취소했어요 😠`
+      : `${josa(m, '을', '를')} 주문하고 ${waited}초 넘게 기다렸는데 결국 못 받고 나왔어요 😠`,
+      pickOne(['바빠 보이시긴 했는데 주문 순서는 좀 챙겨 주셨으면 해요.', '뒤에 온 사람이 먼저 받는 것 같아서 속상했어요.', '시간이 없어서 더는 못 기다렸어요.']),
+      pickOne(VISIT_END[1]));
+  } else {
+    // 메뉴 하나를 두고 이야기한다: 5점이면 가장 잘 만든 것, 아니면 가장 아쉬운 것
+    const it = got.slice().sort((a, b) => (star >= 5 ? b.q - a.q : a.q - b.q))[0] || { k: c.order[0], q: 1 };
+    const tier = it.q >= 0.95 ? 'good' : it.q >= 0.45 ? 'ok' : 'bad';
+    say.push(`${josa(MENU[it.k].name, '은', '는')} ${tasteOf(it.k, tier)}.`);
+    if (MENU[it.k].custom && tier === 'good') special = true;
+    if (c.deliv) say.push(speed > 0.5 ? '배달도 빨랐고 포장이 꼼꼼해서 하나도 안 흘렀어요 🛵' : '배달이 좀 늦어서 식은 감이 있었어요.');
+    else say.push(speed > 0.7 ? '주문하자마자 금방 나와서 놀랐어요.' : speed > 0.4 ? '' : '근데 나오기까지 꽤 오래 걸렸어요. 바빠 보이긴 했지만…');
+    const ctx = contextLine(c, star, it.k);
+    if (ctx) { say.push(ctx); if (WX_LINE[S.weather] && WX_LINE[S.weather].includes(ctx)) special = true; }
+    if (c.vip) say.push(star >= 4 ? '이 정도면 인정합니다 😎' : '기대한 수준에는 못 미쳤어요.');
+    say.push(pickOne(VISIT_END[star]));
+  }
+  R.reviews.push({ face: c.face, nick, star, text: say.filter(Boolean).join(' '), day: S.day, special,
+    menus: (kind === 'served' ? got.map(g => g.k) : c.order).slice(0, 4) });
 }
 
 // 하루 리뷰 중 가장 좋은 것, 가장 나쁜 것, 아무거나 하나를 골라 밤에 보여준다
@@ -1028,8 +1120,9 @@ function pickReviews(list) {
   const sorted = list.slice().sort((a, b) => (b.star - a.star) || (b.special - a.special));
   const out = [sorted[0]];
   if (sorted.length > 1) out.push(sorted[sorted.length - 1]);
-  const rest = sorted.filter(r => !out.includes(r));
-  if (rest.length) out.push(pickOne(rest));
+  // 나머지는 별점이 고르게 섞이도록 무작위로 3개 더
+  const rest = sorted.filter(r => !out.includes(r)).sort(() => Math.random() - 0.5);
+  out.push(...rest.slice(0, 3));
   return out.sort((a, b) => b.star - a.star);
 }
 
@@ -1527,9 +1620,10 @@ function sendSorry() {
   const c = getCust(i);
   if (c) {
     floatAt(document.querySelector(`[data-slot="${i}"]`), '🙇 다음에 올게요', '#8a7360');
+    const out = soldOutFor(c)[0];
     clearCust(i);
     R.stats.sorry++;
-    addReview(c, 3, 'sorry');
+    addReview(c, 3, 'sorry', { out });
   }
   closeSoldPanel();
   renderDay(true);
@@ -1599,10 +1693,12 @@ function serve(i) {
   }
   // 같은 메뉴가 여러 개면 품질 좋은 것부터 낸다
   let qSum = 0;
+  const got = [];
   for (const k of c.order) {
     let best = -1;
     R.tray.forEach((t, j) => { if (t.id === k && (best < 0 || t.q > R.tray[best].q)) best = j; });
     qSum += R.tray[best].q;
+    got.push({ k, q: R.tray[best].q });
     R.tray.splice(best, 1);
   }
   const q = qSum / c.order.length;
@@ -1630,7 +1726,7 @@ function serve(i) {
     if (c.deliv) R.stats.delivery++;
   }
   c.order.forEach(k => R.stats.sold[k] = (R.stats.sold[k] || 0) + 1);
-  addReview(c, q < 0.45 ? (speed > 0.4 ? 2 : 1) : q >= 0.95 ? (speed > 0.4 ? 5 : 4) : q >= 0.6 ? (speed > 0.4 ? 4 : 3) : 3, 'served', q);
+  addReview(c, q < 0.45 ? (speed > 0.4 ? 2 : 1) : q >= 0.95 ? (speed > 0.4 ? 5 : 4) : q >= 0.6 ? (speed > 0.4 ? 4 : 3) : 3, 'served', { got, speed });
   S.money += pay + tip;
   S.totalEarned += pay + tip;
   R.stats.served++;
@@ -2111,7 +2207,9 @@ function renderNight() {
   }
   html += `<div class="card"><h2>💬 손님 리뷰 <small style="font-size:.8rem;color:#e0a526">★${S.rating.toFixed(1)}</small>
     <small style="font-size:.72rem;color:var(--muted);font-weight:400">${S.reviewN ? `리뷰 ${fmt(S.reviewN)}개 · 별점이 높을수록 손님이 많이 와요` : '영업하면 손님들이 리뷰를 남겨요'}</small></h2>
-    ${S.reviews.map(r => `<div class="rv"><span class="st">${starStr(r.star)}</span> ${r.text}<div class="who">${r.face} ${r.nick} · ${r.day}일차</div></div>`).join('')}</div>`;
+    ${S.reviews.map(r => `<div class="rv"><div class="rv-head"><span class="who">${r.face} <b>${r.nick}</b> · ${r.day}일차</span><span class="st">${starStr(r.star)}</span></div>
+      ${r.menus && r.menus.length ? `<div class="rv-menu">${r.menus.filter(k => MENU[k]).map(k => `${ic(MENU[k].icon)}${MENU[k].name}`).join(' · ')}</div>` : ''}
+      <div class="rv-text">${r.text}</div></div>`).join('')}</div>`;
   html += `<div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:8px">
     <span>${mode().rent === 0 ? '🌈 자유 모드: 월세 없음' : `내일 월세 <b>${coin(rent())}</b>`}</span>
     ${lowIngs.length ? `<span class="warn-text">재료 부족 ${lowIngs.map(i => ic(ING[i].icon)).join('')}</span>` : ''}
