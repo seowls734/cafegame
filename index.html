@@ -204,23 +204,73 @@
   #bg.night .wallp, #bg.night .wainscot, #bg.night .floor, #bg.night .shelf, #bg.night .frame, #bg.night .city, #bg.night .plant, #bg.night .awning-top { filter: brightness(.5); }
   #bg.night .win .view { filter: brightness(.6); }
   /* 가게 꾸미기: 벽지 · 조명 줄 · 테이블 */
-  #bg.wall-w1 .wallp { background: repeating-linear-gradient(90deg, #bfe9d6 0 26px, #e9f8f0 26px 52px); }
-  #bg.wall-w2 .wallp { background: radial-gradient(circle at 14px 14px, #f6c94c 4px, transparent 5px) 0 0 / 44px 44px,
-    radial-gradient(circle at 36px 34px, #f29bb0 4px, transparent 5px) 0 0 / 44px 44px, #fdf3e4; }
-  #bg.wall-w3 .wallp { background: radial-gradient(circle at 10px 12px, #fff6b0 1.6px, transparent 2.4px) 0 0 / 38px 38px,
+  /* 벽지 무늬: 가게 배경(#bg)과 미리보기·견본(.wp-*)이 같이 쓴다 */
+  #bg.wall-w1 .wallp, .wp-w1 { background: repeating-linear-gradient(90deg, #bfe9d6 0 26px, #e9f8f0 26px 52px); }
+  #bg.wall-w2 .wallp, .wp-w2 { background: radial-gradient(circle at 14px 14px, #f6c94c 4px, transparent 5px) 0 0 / 44px 44px,
+    radial-gradient(circle at 36px 34px, #f29bb0 4px, transparent 5px) 0 0 / 44px 44px,
+    radial-gradient(circle at 25px 24px, #8fc77a 2px, transparent 3px) 0 0 / 44px 44px, #fdf3e4; }
+  #bg.wall-w3 .wallp, .wp-w3 { background: radial-gradient(circle at 10px 12px, #fff6b0 1.6px, transparent 2.4px) 0 0 / 38px 38px,
     radial-gradient(circle at 28px 30px, #ffffff 1.2px, transparent 2px) 0 0 / 38px 38px, linear-gradient(#1f2a55, #3a3f78); }
-  #bg.wall-w4 .wallp { background: radial-gradient(circle, #e9c35a 3px, transparent 4px) 0 0 / 30px 30px,
+  #bg.wall-w4 .wallp, .wp-w4 { background: radial-gradient(circle, #e9c35a 3px, transparent 4px) 0 0 / 30px 30px,
+    radial-gradient(circle, rgba(233,195,90,.45) 7px, transparent 8px) 15px 15px / 30px 30px,
     repeating-linear-gradient(90deg, #5a1f2a 0 28px, #4e1a24 28px 30px); }
-  #bg .deco-light { position: absolute; top: 60px; left: 0; right: 0; text-align: center; white-space: nowrap; overflow: hidden;
-    font-size: clamp(1.1rem, 2vw, 1.8rem); letter-spacing: .4vw; z-index: 2; filter: drop-shadow(0 0 8px rgba(255,214,120,.9)); }
-  #bg.s0 .deco-light { top: 84px; }
-  #bg .deco-light i { font-style: normal; color: #6b4226; margin: 0 1.6vw; }
-  #bg .deco-table { position: absolute; bottom: 2%; font-size: clamp(2.2rem, 4.5vw, 4.2rem); letter-spacing: .6vw; }
-  #bg .deco-table.l { left: 6vw; } #bg .deco-table.r { right: 6vw; }
-  #bg.night .deco-table { filter: brightness(.5); }
+  /* 가게 배경 속 소품 */
+  #bg .deco-light { position: absolute; top: 56px; left: 0; right: 0; display: flex; justify-content: center; overflow: hidden; z-index: 2; }
+  #bg .deco-light svg { flex: 0 0 clamp(90px, 8vw, 130px); height: auto; }
+  #bg.s0 .deco-light { top: 80px; }
+  #bg .deco-chand { position: absolute; top: 56px; width: clamp(120px, 11vw, 190px); z-index: 2; }
+  #bg .deco-chand.l { left: 13vw; } #bg .deco-chand.r { right: 13vw; }
+  #bg .deco-light svg, #bg .deco-chand svg { filter: drop-shadow(0 0 5px rgba(255,214,120,.7)); }
+  #bg.night .deco-light svg, #bg.night .deco-chand svg { filter: drop-shadow(0 0 10px rgba(255,200,110,1)); }
+  #bg .deco-table { position: absolute; bottom: 1%; width: clamp(150px, 15vw, 260px); }
+  #bg .deco-table.l { left: 9vw; } #bg .deco-table.r { right: 9vw; transform: scaleX(-1); }
+  #bg .deco-plant { position: absolute; bottom: 3%; width: clamp(80px, 8vw, 140px); }
+  #bg .deco-plant.l { left: 1vw; } #bg .deco-plant.r { right: 1vw; }
+  #bg .deco-table svg, #bg .deco-plant svg, #bg .deco-chand svg { width: 100%; height: auto; display: block; }
+  #bg.night .deco-table, #bg.night .deco-plant { filter: brightness(.55); }
+  /* 소품 움직임: 촛불 일렁임, 전구·크리스털 반짝임, 꽃잎, 음표, 김 */
+  .flk { transform-box: fill-box; transform-origin: 50% 100%; animation: flk .45s ease-in-out infinite alternate; }
+  @keyframes flk { to { transform: scale(.82, 1.14); } }
+  .tw { animation: tw 1.3s ease-in-out infinite alternate; }
+  @keyframes tw { to { opacity: .6; } }
+  .petal { transform-box: fill-box; animation: petal 5s linear infinite; opacity: 0; }
+  @keyframes petal { 10% { opacity: 1; } 100% { transform: translate(-12px, 34px) rotate(200deg); opacity: 0; } }
+  .note { animation: note 3s ease-in-out infinite; opacity: 0; }
+  @keyframes note { 20% { opacity: 1; } 100% { transform: translate(4px, -16px); opacity: 0; } }
+  .steam { animation: note 2.4s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .flk, .tw, .petal, .note, .steam { animation: none; } .petal { opacity: 0; } .note { opacity: 1; } }
+  /* 꾸미기 탭 */
   .deco-sum { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: #fff3d6; border: 2px solid #e0b04a;
     border-radius: 10px; padding: 8px 10px; margin-bottom: 6px; }
   .deco-sum span { font-size: .8rem; color: var(--good); font-weight: 700; }
+  .room { position: relative; height: 190px; border: 3px solid var(--wood-dark); border-radius: 12px; overflow: hidden; margin-bottom: 6px; background: #efe0c4; }
+  .room .r-wall { position: absolute; left: 0; right: 0; top: 0; bottom: 30%; }
+  .room .r-wall:not([class*="wp-"]) { background: repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 18px, transparent 18px 36px), #efe0c4; }
+  .room .r-trim { position: absolute; left: 0; right: 0; bottom: 30%; height: 7px; background: #6b4226; }
+  .room .r-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 30%;
+    background: linear-gradient(rgba(40,20,5,.3), transparent 45%), repeating-linear-gradient(90deg, #c99d6e 0 46px, #b48659 46px 48px); }
+  .room .r-win { position: absolute; top: 22%; left: 50%; width: 76px; height: 54px; margin-left: -38px; background: linear-gradient(#9fd8ff, #e6f6ff);
+    border: 5px solid #f8f1e4; outline: 3px solid #6b4226; }
+  .room .r-win::before, .room .r-win::after { content: ''; position: absolute; background: #f8f1e4; }
+  .room .r-win::before { left: 50%; top: 0; bottom: 0; width: 4px; margin-left: -2px; }
+  .room .r-win::after { top: 50%; left: 0; right: 0; height: 4px; margin-top: -2px; }
+  .room .r-light { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: center; z-index: 2; }
+  .room .r-light svg { flex: 0 0 25%; height: auto; filter: drop-shadow(0 0 4px rgba(255,214,120,.8)); }
+  .room .r-chand { position: absolute; top: 0; left: 50%; width: 120px; margin-left: -60px; z-index: 2; filter: drop-shadow(0 0 5px rgba(255,214,120,.8)); }
+  .room .r-plant { position: absolute; bottom: 4px; width: 74px; z-index: 1; }
+  .room .r-plant.l { left: 8px; } .room .r-plant.r { right: 8px; }
+  .room .r-table { position: absolute; bottom: 4px; left: 50%; width: 170px; margin-left: -85px; z-index: 1; }
+  .room svg { display: block; width: 100%; height: auto; }
+  .room .r-empty { position: absolute; left: 0; right: 0; bottom: 34%; text-align: center; color: #8a7360; font-size: .82rem; background: rgba(255,250,240,.75); padding: 4px; }
+  .deco-sets { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+  .deco-sets span { flex: 1 1 45%; font-size: .74rem; padding: 4px 6px; border-radius: 8px; background: #f4ead8; color: #8a7360; }
+  .deco-sets span.on { background: #fde3ec; color: #b0436a; font-weight: 700; }
+  .deco-sets b { float: right; }
+  .deco-item .info > span { display: block; }
+  .deco-item .deco-pt { color: #b07a1f; font-size: .72rem; }
+  .deco-ico { width: 64px !important; height: 52px; display: flex; align-items: center; justify-content: center; background: #fbf4e8; border-radius: 10px; flex: 0 0 64px; }
+  .deco-ico svg { width: 58px; height: 48px; }
+  .swatch { width: 46px; height: 40px; border-radius: 8px; border: 2px solid #3b2614; }
   .item.deco-on { background: #f3fbe9; }
   .item.off { opacity: .6; }
   #bg .cat { position: absolute; bottom: 9%; left: 13vw; font-size: clamp(2rem, 3.5vw, 3.2rem); animation: catNap 4s ease-in-out infinite; }
@@ -699,30 +749,192 @@ const SEASON_GOAL = 15;   // 계절 한정 업적: 그 메뉴를 이만큼 팔�
 // 칸마다 하나씩 배치한다. 배치한 소품의 꾸밈 점수 합만큼 손님이 더 자주 오고 팁이 늘어난다.
 const DECO_SLOTS = {
   table: { name: '테이블', icon: '🪑' },
-  plant: { name: '화분',   icon: '🪴' },
+  plant: { name: '화분',   icon: '🌿' },
   light: { name: '조명',   icon: '💡' },
   wall:  { name: '벽지',   icon: '🎨', shop: 1 },   // 노점에는 벽이 없다
 };
-const DECOS = {
-  t1: { slot: 'table', name: '원목 의자',       icon: '🪑', cost: 150,  charm: 2 },
-  t2: { slot: 'table', name: '푹신한 소파석',   icon: '🛋️', cost: 600,  charm: 5 },
-  t3: { slot: 'table', name: '파라솔 테라스석', icon: '⛱️', cost: 1800, charm: 8 },
-  t4: { slot: 'table', name: '피아노 라운지',   icon: '🎹', cost: 5000, charm: 12 },
-  p1: { slot: 'plant', name: '몬스테라',        icon: '🪴', cost: 120,  charm: 2 },
-  p2: { slot: 'plant', name: '선인장 정원',     icon: '🌵', cost: 400,  charm: 4 },
-  p3: { slot: 'plant', name: '해바라기 화단',   icon: '🌻', cost: 1200, charm: 7 },
-  p4: { slot: 'plant', name: '벚꽃 나무',       icon: '🌸', cost: 4000, charm: 11 },
-  l1: { slot: 'light', name: '알전구 줄',       icon: '💡', cost: 150,  charm: 2 },
-  l2: { slot: 'light', name: '캔들 조명',       icon: '🕯️', cost: 500,  charm: 4 },
-  l3: { slot: 'light', name: '등불 장식',       icon: '🏮', cost: 1400, charm: 7 },
-  l4: { slot: 'light', name: '반짝이 샹들리에', icon: '✨', cost: 4500, charm: 11 },
-  w1: { slot: 'wall',  name: '민트 줄무늬',     icon: '🟩', cost: 100,  charm: 1 },
-  w2: { slot: 'wall',  name: '들꽃 벽지',       icon: '🌼', cost: 400,  charm: 3 },
-  w3: { slot: 'wall',  name: '별밤 벽지',       icon: '⭐', cost: 1200, charm: 6 },
-  w4: { slot: 'wall',  name: '황금 무늬 벽지',  icon: '👑', cost: 4000, charm: 10 },
+
+// 소품 그림 (SVG). 다른 아이콘처럼 진한 갈색 외곽선을 쓴다
+const DL = '#3b2614';
+const dsvg = (vb, body) => `<svg viewBox="${vb}" aria-hidden="true">${body}</svg>`;
+const st = (w = 2) => `stroke="${DL}" stroke-width="${w}" stroke-linejoin="round"`;
+const shadow = (cx, cy, rx) => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="4" fill="rgba(0,0,0,.18)"/>`;
+// 원목 의자 (오른쪽을 보고 있다)
+const WOOD_CHAIR = `<rect x="10" y="18" width="6" height="58" rx="2" fill="#a86b38" ${st()}/>
+  <rect x="8" y="15" width="10" height="7" rx="3" fill="#c98a4b" ${st()}/>
+  <rect x="32" y="52" width="5" height="24" rx="1.5" fill="#a86b38" ${st()}/>
+  <rect x="10" y="46" width="28" height="6" rx="2" fill="#c98a4b" ${st()}/>
+  <rect x="13" y="41" width="22" height="6" rx="3" fill="#e57560" ${st(1.6)}/>`;
+// 비스트로 철제 의자
+const BISTRO_CHAIR = `<path d="M15 48q-6 15 0 32" fill="none" stroke="#3d8b6e" stroke-width="3.4" stroke-linecap="round"/>
+  <path d="M15 52q-3 8 0 16" fill="none" stroke="#3d8b6e" stroke-width="1.6"/>
+  <rect x="12" y="64" width="24" height="5" rx="2.5" fill="#3d8b6e" ${st(1.5)}/>
+  <path d="M16 69l-3 19M32 69l3 19" stroke="#3d8b6e" stroke-width="2.6" stroke-linecap="round"/>`;
+const mirror = (w, body) => `<g transform="translate(${w} 0) scale(-1 1)">${body}</g>`;
+function sunflower(cx, cy, r) {
+  let s = '';
+  for (let i = 0; i < 10; i++) s += `<ellipse cx="${cx}" cy="${cy - r * 0.95}" rx="${r * 0.32}" ry="${r * 0.6}" fill="#f6c21c" stroke="${DL}" stroke-width="1" transform="rotate(${i * 36} ${cx} ${cy})"/>`;
+  return s + `<circle cx="${cx}" cy="${cy}" r="${r * 0.58}" fill="#7a4520" ${st(1.4)}/>
+    <circle cx="${cx - r * 0.2}" cy="${cy - r * 0.15}" r="${r * 0.1}" fill="#3b2614"/><circle cx="${cx + r * 0.2}" cy="${cy + r * 0.12}" r="${r * 0.1}" fill="#3b2614"/>`;
+}
+const MONSTERA_LEAF = (x, y, rot, sc, c) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${sc})">
+  <path d="M0 0C-14 -4 -20 -18 -12 -28C-6 -34 2 -32 4 -26C8 -32 16 -32 18 -24C22 -12 12 -2 0 0Z" fill="${c}" ${st(1.8)}/>
+  <path d="M1 -2L3 -24M-3 -8L-12 -16M-1 -14L-9 -26M5 -10L14 -16M4 -18L11 -26" stroke="#bfe3a8" stroke-width="1.4" stroke-linecap="round"/></g>`;
+const BLOSSOM = [[20, 40, 12, '#f7b6c8'], [34, 28, 15, '#f9cdd9'], [52, 33, 14, '#f7b6c8'], [62, 46, 10, '#ef9ab3'],
+  [13, 52, 9, '#ef9ab3'], [42, 46, 12, '#f9cdd9'], [27, 50, 9, '#f7b6c8']];
+const bulb = (x, y, c, d) => `<rect x="${x - 2.5}" y="${y}" width="5" height="4" fill="#666" ${st(1)}/>
+  <ellipse class="tw" style="animation-delay:${d}s" cx="${x}" cy="${y + 10}" rx="4.5" ry="6.5" fill="${c}" ${st(1.2)}/>
+  <ellipse cx="${x - 1.5}" cy="${y + 8}" rx="1.2" ry="2" fill="#fff" opacity=".7"/>`;
+const candle = (x, y, d) => `<path d="M${x} 0V${y}" stroke="#8a7360" stroke-width="1.5" stroke-dasharray="2 1.5"/>
+  <path d="M${x - 8} ${y}h16l-2.5 17h-11z" fill="rgba(215,238,255,.55)" ${st(1.5)}/>
+  <rect x="${x - 3}" y="${y + 7}" width="6" height="9" rx="1" fill="#fff4dc" ${st(1)}/>
+  <path class="flk" style="animation-delay:${d}s" d="M${x} ${y + 7}q-3.6-3 0-8.5q3.6 5.5 0 8.5z" fill="#ffb347" stroke="#e07a1f" stroke-width=".8"/>`;
+const lantern = (x, y, c) => `<path d="M${x} ${y}v4" stroke="${DL}" stroke-width="1.2"/>
+  <rect x="${x - 6}" y="${y + 4}" width="12" height="3" rx="1" fill="#e0b04a" ${st(1)}/>
+  <ellipse class="tw" cx="${x}" cy="${y + 17}" rx="10" ry="11" fill="${c}" ${st(1.6)}/>
+  <ellipse cx="${x}" cy="${y + 17}" rx="5" ry="11" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="1.2"/>
+  <rect x="${x - 6}" y="${y + 27}" width="12" height="3" rx="1" fill="#e0b04a" ${st(1)}/>
+  <path d="M${x} ${y + 30}v9" stroke="#e0b04a" stroke-width="2.2" stroke-linecap="round"/>`;
+const chandArm = (x, y) => `<rect x="${x - 5}" y="${y}" width="10" height="4" rx="1.5" fill="#d4a93c" ${st(1.2)}/>
+  <rect x="${x - 2.5}" y="${y - 9}" width="5" height="9" rx="1" fill="#fff4dc" ${st(1)}/>
+  <path class="flk" style="animation-delay:${(x % 7) / 10}s" d="M${x} ${y - 9}q-3-2.6 0-7.5q3 4.9 0 7.5z" fill="#ffb347" stroke="#e07a1f" stroke-width=".8"/>`;
+const crystal = (x, y, len) => `<path d="M${x} ${y}v${len}" stroke="#c9a24a" stroke-width=".8"/>
+  <path class="tw" style="animation-delay:${(x % 5) / 5}s" d="M${x} ${y + len}l3 5-3 5-3-5z" fill="#d8f2ff" stroke="#7fb6d6" stroke-width=".9"/>`;
+
+const DECO_ART = {
+  t1: dsvg('0 0 120 80', `${shadow(60, 76, 54)}${WOOD_CHAIR}${mirror(120, WOOD_CHAIR)}
+    <rect x="34" y="38" width="52" height="7" rx="3" fill="#c98a4b" ${st()}/>
+    <rect x="56" y="45" width="8" height="26" fill="#a86b38" ${st()}/>
+    <rect x="45" y="70" width="30" height="6" rx="3" fill="#a86b38" ${st()}/>
+    <path d="M45 27h10v8a3 3 0 0 1-3 3h-4a3 3 0 0 1-3-3z" fill="#fff" ${st(1.6)}/>
+    <path d="M55 29.5h1.5a2.5 2.5 0 0 1 0 5H55" fill="none" ${st(1.6)}/>
+    <path class="steam" d="M48 24q-2-3 0-5M52 24q-2-3 0-5" fill="none" stroke="#b9a48e" stroke-width="1.4" stroke-linecap="round"/>
+    <rect x="68" y="29" width="8" height="9" rx="2.5" fill="#7cc4b0" ${st(1.6)}/>
+    <path d="M72 29v-6" stroke="#4f9d4a" stroke-width="1.6"/>
+    <circle cx="72" cy="20" r="3.6" fill="#f29bb0" ${st(1.2)}/><circle cx="72" cy="20" r="1.3" fill="#f6c94c"/>`),
+  t2: dsvg('0 0 120 80', `<ellipse cx="60" cy="72" rx="58" ry="7" fill="#e8c99a" ${st(1.5)}/>
+    <path d="M10 70h52" stroke="#d9b98c" stroke-width="2" stroke-dasharray="4 3"/>
+    <rect x="11" y="61" width="5" height="9" fill="#6b4226"/><rect x="74" y="61" width="5" height="9" fill="#6b4226"/>
+    <rect x="8" y="22" width="74" height="30" rx="11" fill="#d9604c" ${st()}/>
+    <rect x="8" y="44" width="74" height="19" rx="7" fill="#e57560" ${st()}/>
+    <path d="M45 46v15" stroke="#c9503d" stroke-width="1.8"/>
+    <rect x="1" y="34" width="16" height="30" rx="7" fill="#c9503d" ${st()}/>
+    <rect x="73" y="34" width="16" height="30" rx="7" fill="#c9503d" ${st()}/>
+    <g transform="rotate(-8 30 36)"><rect x="20" y="28" width="20" height="17" rx="6" fill="#f6d36b" ${st(1.8)}/>
+      <circle cx="26" cy="33" r="1.5" fill="#e0a526"/><circle cx="34" cy="40" r="1.5" fill="#e0a526"/><circle cx="34" cy="33" r="1.5" fill="#e0a526"/><circle cx="26" cy="40" r="1.5" fill="#e0a526"/></g>
+    <g transform="rotate(7 60 36)"><rect x="50" y="28" width="20" height="17" rx="6" fill="#8fc7e8" ${st(1.8)}/>
+      <path d="M53 36.5h14" stroke="#fff" stroke-width="2" stroke-dasharray="2 2"/></g>
+    <rect x="92" y="50" width="26" height="5" rx="2" fill="#8a5530" ${st()}/>
+    <rect x="95" y="55" width="4" height="15" fill="#6b4226"/><rect x="111" y="55" width="4" height="15" fill="#6b4226"/>
+    <rect x="94" y="45" width="15" height="4" fill="#4f7fb8" ${st(1.2)}/><rect x="95" y="41" width="13" height="4" fill="#f6d36b" ${st(1.2)}/>
+    <path d="M110 42h6v6a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z" fill="#fff" ${st(1.2)}/>`),
+  t3: dsvg('0 0 120 96', `${shadow(60, 92, 54)}
+    <rect x="58" y="10" width="4" height="78" fill="#e9e4dc" ${st(1.5)}/>
+    ${[10, 35, 60, 85].map((x, i) => `<path d="M60 6L${x} 36Q${x + 12.5} 43 ${x + 25} 36Z" fill="${i % 2 ? '#fff6ea' : '#d24b3e'}" ${st(1.8)}/>`).join('')}
+    <circle cx="60" cy="5" r="3" fill="#d24b3e" ${st(1.5)}/>
+    ${BISTRO_CHAIR}${mirror(120, BISTRO_CHAIR)}
+    <rect x="40" y="64" width="40" height="5" rx="2.5" fill="#f4f4f4" ${st()}/>
+    <path d="M60 69v18M50 88h20" stroke="${DL}" stroke-width="3" stroke-linecap="round"/>
+    <path d="M44 50h9l-1.2 14h-6.6z" fill="#cfe9f5" ${st(1.5)}/><path d="M45.4 54h6.2l-.8 9h-4.6z" fill="#8a5530" opacity=".75"/>
+    <path d="M50 50l3-8" stroke="#4f9d4a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M67 52h9l-1.2 12h-6.6z" fill="#fff3a6" ${st(1.5)}/><circle cx="76" cy="52" r="3.2" fill="#f6d36b" ${st(1)}/>`),
+  t4: dsvg('0 0 120 90', `${shadow(64, 86, 54)}
+    <rect x="1" y="58" width="18" height="6" rx="3" fill="#7a2e3a" ${st(1.8)}/><path d="M4 64v20M16 64v20" stroke="#1d1d24" stroke-width="2.6"/>
+    <path d="M32 62v22M104 62v22" stroke="#1d1d24" stroke-width="5" stroke-linecap="round"/>
+    <path d="M24 40H86Q116 40 116 54Q116 62 104 62H24Z" fill="#1d1d24" stroke="#c9a24a" stroke-width="1.6"/>
+    <path d="M24 55H112" stroke="#c9a24a" stroke-width="1"/>
+    <path d="M28 40L82 12L88 16L36 40Z" fill="#2b2b35" stroke="#c9a24a" stroke-width="1.4"/>
+    <path d="M70 40L75 21" stroke="#c9a24a" stroke-width="1.6"/>
+    <rect x="34" y="31" width="12" height="9" fill="#f4ecd8" ${st(1)}/><path d="M36 34h8M36 37h6" stroke="#8a7360" stroke-width=".8"/>
+    <rect x="20" y="44" width="24" height="7" fill="#fff" ${st(1.2)}/>
+    ${[23, 27, 33, 37, 41].map(x => `<rect x="${x}" y="44" width="2" height="4" fill="#1d1d24"/>`).join('')}
+    <rect x="66" y="80" width="7" height="3" rx="1" fill="#c9a24a"/>
+    <text class="note" x="6" y="44" font-size="12" fill="#7a2e3a">♪</text>
+    <text class="note" style="animation-delay:1.4s" x="16" y="34" font-size="10" fill="#4f7fb8">♫</text>`),
+  p1: dsvg('0 0 70 100', `${shadow(35, 96, 22)}
+    <path d="M35 68Q30 52 18 42M35 68Q38 48 46 32M35 68Q44 60 54 54M35 68Q28 62 14 62" fill="none" stroke="#3f7a3a" stroke-width="2.4"/>
+    ${MONSTERA_LEAF(18, 44, -25, 1, '#2f8a4a')}${MONSTERA_LEAF(46, 34, 18, 1.1, '#3a9d55')}${MONSTERA_LEAF(54, 56, 70, 0.85, '#2f8a4a')}${MONSTERA_LEAF(14, 64, -75, 0.8, '#3a9d55')}
+    <rect x="15" y="66" width="40" height="8" rx="2.5" fill="#d9794c" ${st()}/><path d="M18 74h34l-4 22H22z" fill="#c7683f" ${st()}/>
+    <path d="M24 84h22" stroke="#e8a07a" stroke-width="2" stroke-linecap="round"/>`),
+  p2: dsvg('0 0 70 100', `${shadow(35, 97, 28)}
+    <rect x="28" y="30" width="14" height="50" rx="7" fill="#4f9d4a" ${st()}/>
+    <path d="M28 58H22a4 4 0 0 1-4-4V43a3 3 0 0 1 6 0v9h4" fill="#4f9d4a" ${st()}/>
+    <path d="M42 52h5a4 4 0 0 0 4-4v-9a3 3 0 0 0-6 0v7h-3" fill="#4f9d4a" ${st()}/>
+    <path d="M35 34v44" stroke="#3d7f3a" stroke-width="1.4"/>
+    <path d="M30 40l-3-1M30 50l-3-1M30 64l-3-1M40 44l3-1M40 58l3-1M40 70l3-1" stroke="#fff" stroke-width="1.1"/>
+    ${[0, 72, 144, 216, 288].map(a => `<circle cx="35" cy="25.5" r="2.8" fill="#f29bb0" ${st(.8)} transform="rotate(${a} 35 29)"/>`).join('')}<circle cx="35" cy="29" r="2" fill="#f6c94c"/>
+    <circle cx="15" cy="72" r="9" fill="#6bb35a" ${st()}/><path d="M15 63v18M10 65q-3 7 0 14M20 65q3 7 0 14" stroke="#4f9d4a" stroke-width="1.2" fill="none"/>
+    <ellipse cx="55" cy="72" rx="7" ry="9" fill="#7cbf5a" ${st()}/><ellipse cx="59" cy="59" rx="5" ry="7" transform="rotate(25 59 59)" fill="#7cbf5a" ${st()}/>
+    <circle cx="53" cy="70" r=".9" fill="#fff"/><circle cx="57" cy="75" r=".9" fill="#fff"/><circle cx="59" cy="58" r=".9" fill="#fff"/>
+    <circle cx="61" cy="52" r="2.4" fill="#d24b3e" ${st(.8)}/>
+    <rect x="5" y="78" width="60" height="7" rx="2.5" fill="#8db7e0" ${st()}/><path d="M8 85h54l-5 12H13z" fill="#6f9fcf" ${st()}/>
+    <path d="M15 91h40" stroke="#fff" stroke-dasharray="3 3" stroke-width="1.6"/>`),
+  p3: dsvg('0 0 70 100', `${shadow(35, 97, 31)}
+    <path d="M18 70Q16 56 18 46M36 70Q37 50 36 32M54 70Q56 60 54 52" fill="none" stroke="#3f7a3a" stroke-width="2.6"/>
+    <ellipse cx="11" cy="60" rx="7" ry="3.4" transform="rotate(-30 11 60)" fill="#4f9d4a" ${st(1.2)}/>
+    <ellipse cx="44" cy="54" rx="7" ry="3.4" transform="rotate(25 44 54)" fill="#4f9d4a" ${st(1.2)}/>
+    <ellipse cx="28" cy="58" rx="7" ry="3.4" transform="rotate(-20 28 58)" fill="#5aa84f" ${st(1.2)}/>
+    ${sunflower(18, 42, 8)}${sunflower(36, 26, 10)}${sunflower(54, 48, 8)}
+    <rect x="6" y="67" width="58" height="6" fill="#5a3a22"/>
+    <rect x="4" y="70" width="62" height="27" rx="2" fill="#a86b38" ${st()}/>
+    <path d="M5 79h60M5 88h60" stroke="#8a5530" stroke-width="1.6"/><path d="M20 70v27M50 70v27" stroke="#8a5530" stroke-width="1.2"/>`),
+  p4: dsvg('0 0 80 110', `${shadow(40, 107, 24)}
+    <path d="M40 86C40 70 38 62 34 52M38 66C44 58 50 52 56 44M36 58C30 52 26 48 18 46" fill="none" stroke="#6b4226" stroke-width="4.5" stroke-linecap="round"/>
+    ${BLOSSOM.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#f7b6c8" ${st(1.8)}/>`).join('')}
+    ${BLOSSOM.map(([x, y, r, c]) => `<circle cx="${x}" cy="${y}" r="${r - 0.9}" fill="${c}"/>`).join('')}
+    ${[[24, 34], [44, 26], [56, 40], [16, 50], [36, 44]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2" fill="#fff"/><circle cx="${x}" cy="${y}" r=".8" fill="#e0a526"/>`).join('')}
+    ${[[22, 66, 0], [48, 62, 1.6], [60, 70, 3.1], [32, 72, 4.2]].map(([x, y, d]) => `<ellipse class="petal" style="animation-delay:${d}s" cx="${x}" cy="${y}" rx="2.2" ry="1.4" fill="#f29bb0"/>`).join('')}
+    <rect x="20" y="84" width="40" height="7" rx="2.5" fill="#f1ece4" ${st()}/><path d="M23 91h34l-4 16H27z" fill="#ddd5c8" ${st()}/>
+    <path d="M30 98h20" stroke="#c9a24a" stroke-width="1.6"/>`),
+  l1: dsvg('0 0 100 44', `<path d="M0 4Q50 24 100 4" fill="none" stroke="${DL}" stroke-width="1.6"/>
+    ${bulb(20, 10.4, '#ffd76a', 0)}${bulb(50, 14, '#ff8f8f', 0.5)}${bulb(80, 10.4, '#9fd8ff', 1)}`),
+  l2: dsvg('0 0 100 56', `${candle(28, 16, 0)}${candle(72, 28, 0.25)}`),
+  l3: dsvg('0 0 100 60', `<path d="M0 4Q50 18 100 4" fill="none" stroke="${DL}" stroke-width="1.6"/>
+    ${lantern(25, 9.3, '#d9412f')}${lantern(75, 9.3, '#f08a2c')}`),
+  l4: dsvg('0 0 120 86', `<path d="M60 0V14" stroke="#c9a24a" stroke-width="2" stroke-dasharray="3 2"/>
+    <rect x="52" y="12" width="16" height="4" rx="2" fill="#d4a93c" ${st(1.2)}/>
+    <rect x="57" y="16" width="6" height="28" rx="3" fill="#d4a93c" ${st(1.4)}/>
+    <path d="M60 46C44 50 26 46 22 36M60 46C76 50 94 46 98 36M60 47C50 50 42 46 40 41M60 47C70 50 78 46 80 41" fill="none" stroke="#d4a93c" stroke-width="2.8"/>
+    ${chandArm(22, 32)}${chandArm(98, 32)}${chandArm(40, 37)}${chandArm(80, 37)}
+    <ellipse cx="60" cy="48" rx="14" ry="6" fill="#d4a93c" ${st(1.4)}/>
+    ${crystal(32, 44, 6)}${crystal(46, 52, 8)}${crystal(60, 54, 12)}${crystal(74, 52, 8)}${crystal(88, 44, 6)}
+    <circle cx="60" cy="52" r="3" fill="#d4a93c" ${st(1)}/>`),
 };
+
+const DECOS = {
+  t1: { slot: 'table', name: '원목 테이블 세트',   icon: '🪑', cost: 150,  charm: 2,  desc: '할머니 가게에서 쓰던 튼튼한 원목 테이블' },
+  t2: { slot: 'table', name: '패브릭 소파석',      icon: '🛋️', cost: 600,  charm: 5,  desc: '쿠션 두 개에 푹 꺼지는 소파. 한번 앉으면 못 일어나요' },
+  t3: { slot: 'table', name: '파라솔 테라스석',    icon: '⛱️', cost: 1800, charm: 8,  desc: '줄무늬 파라솔 아래 시원한 음료 한 잔' },
+  t4: { slot: 'table', name: '그랜드 피아노 라운지', icon: '🎹', cost: 5000, charm: 12, desc: '가끔 손님이 한 곡 치고 가요 ♪' },
+  p1: { slot: 'plant', name: '몬스테라 화분',      icon: '🌿', cost: 120,  charm: 2,  desc: '구멍 뚫린 큰 잎이 매력 포인트' },
+  p2: { slot: 'plant', name: '선인장 정원',        icon: '🌵', cost: 400,  charm: 4,  desc: '물을 깜빡해도 꽃까지 피워 줘요' },
+  p3: { slot: 'plant', name: '해바라기 화단',      icon: '🌻', cost: 1200, charm: 7,  desc: '해를 따라 고개를 돌리는 노란 꽃 셋' },
+  p4: { slot: 'plant', name: '벚꽃 나무',          icon: '🌸', cost: 4000, charm: 11, desc: '가게 안에서도 꽃잎이 흩날려요' },
+  l1: { slot: 'light', name: '알전구 줄',          icon: '💡', cost: 150,  charm: 2,  desc: '알록달록한 전구가 반짝반짝' },
+  l2: { slot: 'light', name: '유리 캔들 조명',     icon: '🕯️', cost: 500,  charm: 4,  desc: '유리컵 속 촛불이 살랑살랑 흔들려요' },
+  l3: { slot: 'light', name: '축제 등불',          icon: '🏮', cost: 1400, charm: 7,  desc: '빨갛고 노란 등불이 축제 분위기를 내요' },
+  l4: { slot: 'light', name: '크리스털 샹들리에',  icon: '✨', cost: 4500, charm: 11, desc: '크리스털이 반짝일 때마다 손님이 감탄해요' },
+  w1: { slot: 'wall',  name: '민트 줄무늬 벽지',   icon: '🍃', cost: 100,  charm: 1,  desc: '산뜻한 민트색 세로 줄무늬' },
+  w2: { slot: 'wall',  name: '들꽃 벽지',          icon: '🌼', cost: 400,  charm: 3,  desc: '노란 꽃과 분홍 꽃이 콕콕' },
+  w3: { slot: 'wall',  name: '별밤 벽지',          icon: '⭐', cost: 1200, charm: 6,  desc: '남색 밤하늘에 별이 총총' },
+  w4: { slot: 'wall',  name: '황금 다마스크 벽지', icon: '👑', cost: 4000, charm: 10, desc: '와인색 바탕에 금빛 무늬, 호텔 라운지 느낌' },
+};
+// 같은 단계 소품 4개를 모두 배치하면 세트 효과로 꾸밈 점수가 더 붙는다
+const DECO_SETS = [
+  { tier: 1, name: '소박한 첫 가게', bonus: 2 },
+  { tier: 2, name: '포근한 오후',    bonus: 3 },
+  { tier: 3, name: '여름밤 축제',    bonus: 4 },
+  { tier: 4, name: '그랜드 라운지',  bonus: 6 },
+];
+const decoArt = id => DECO_ART[id] || `<div class="swatch wp-${id}"></div>`;   // 벽지는 무늬 견본으로 보여 준다
 const decoOn = slot => { const id = S.deco.on[slot]; return id && DECOS[id] && S.deco.own[id] ? id : null; };
-const decoCharm = () => Object.keys(DECO_SLOTS).reduce((s, k) => s + (decoOn(k) ? DECOS[decoOn(k)].charm : 0), 0);
+const decoSet = () => {
+  const ids = Object.keys(DECO_SLOTS).map(decoOn);
+  if (ids.some(id => !id)) return null;
+  const tier = ids[0].slice(1);
+  return ids.every(id => id.slice(1) === tier) ? DECO_SETS.find(s => String(s.tier) === tier) : null;
+};
+const decoCharm = () => Object.keys(DECO_SLOTS).reduce((s, k) => s + (decoOn(k) ? DECOS[decoOn(k)].charm : 0), 0) + ((decoSet() || {}).bonus || 0);
 const decoSpawn = () => 1 + decoCharm() * 0.006;   // 꾸밈 점수 1점당 손님 +0.6%
 const decoTip = () => 1 + decoCharm() * 0.01;      // 꾸밈 점수 1점당 팁 +1%
 
@@ -907,8 +1119,11 @@ function renderBg(night) {
   const sh = S.shop, bg = $('bg');
   const dTable = decoOn('table'), dPlant = decoOn('plant'), dLight = decoOn('light'), dWall = sh > 0 && decoOn('wall');
   bg.className = `s${sh}${night ? ' night' : ''}${dWall ? ' wall-' + dWall : ''}`;
-  const decoFx = (dLight ? `<div class="deco-light">${Array(9).fill(DECOS[dLight].icon).join('<i>·</i>')}</div>` : '')
-    + (dTable ? `<div class="deco-table l">${DECOS[dTable].icon}${DECOS[dTable].icon}</div><div class="deco-table r">${DECOS[dTable].icon}${DECOS[dTable].icon}</div>` : '');
+  // 샹들리에는 양쪽에 하나씩, 나머지 조명은 천장을 따라 줄줄이 건다
+  const decoFx = (dLight === 'l4' ? `<div class="deco-chand l">${DECO_ART.l4}</div><div class="deco-chand r">${DECO_ART.l4}</div>`
+      : dLight ? `<div class="deco-light">${DECO_ART[dLight].repeat(14)}</div>` : '')
+    + (dTable ? `<div class="deco-table l">${DECO_ART[dTable]}</div><div class="deco-table r">${DECO_ART[dTable]}</div>` : '')
+    + (dPlant ? `<div class="deco-plant l">${DECO_ART[dPlant]}</div><div class="deco-plant r">${DECO_ART[dPlant]}</div>` : '');
   const win = side => `<div class="win ${side}">${night ? '<div class="stars">✦ · ✧ · ✦ · ✧ · ✦</div>' : `<span class="cloud">☁️</span>${wxFx()}`}
     <div class="view">${VIEWS[sh]}</div>${night && side === 'r' ? '<div class="closed-sign">CLOSED</div>' : ''}</div>`;
   bg.innerHTML = `<div class="wallp"></div>
@@ -921,8 +1136,8 @@ function renderBg(night) {
       <div class="frame">${FRAMES[sh]}</div>
       <div class="clock">🕰️</div>`}
     <div class="floor"></div>
-    <div class="plant l"><span>${dPlant ? DECOS[dPlant].icon : '🌿'}</span><i></i></div>
-    <div class="plant r"><span>${dPlant ? DECOS[dPlant].icon : sh === 0 ? '🌳' : '🌵'}</span><i></i></div>
+    ${dPlant ? '' : `<div class="plant l"><span>🌿</span><i></i></div>
+    <div class="plant r"><span>${sh === 0 ? '🌳' : '🌵'}</span><i></i></div>`}
     ${decoFx}
     ${S.cat ? '<div class="cat">🐈</div>' : ''}`;
   updateSky();
@@ -1314,21 +1529,41 @@ function labHtml() {
 }
 
 // 🪑 꾸미기 탭: 칸마다 소품을 사서 하나씩 배치한다
+// 지금 배치한 소품으로 꾸민 작은 가게 미리보기
+function decoRoomHtml() {
+  const t = decoOn('table'), p = decoOn('plant'), l = decoOn('light'), w = decoOn('wall');
+  const empty = !t && !p && !l && !w;
+  return `<div class="room">
+    <div class="r-wall ${w ? 'wp-' + w : ''}"></div><div class="r-trim"></div><div class="r-floor"></div>
+    <div class="r-win"></div>
+    ${l === 'l4' ? `<div class="r-chand">${DECO_ART.l4}</div>` : l ? `<div class="r-light">${DECO_ART[l].repeat(4)}</div>` : ''}
+    ${p ? `<div class="r-plant l">${DECO_ART[p]}</div><div class="r-plant r">${DECO_ART[p]}</div>` : ''}
+    ${t ? `<div class="r-table">${DECO_ART[t]}</div>` : ''}
+    ${empty ? '<div class="r-empty">아직 텅 비어 있어요. 아래에서 소품을 들여놔 보세요!</div>' : ''}
+  </div>`;
+}
+
 function decoHtml() {
-  const ch = decoCharm();
+  const ch = decoCharm(), set = decoSet();
   let html = `<div class="deco-sum"><b>✨ 꾸밈 점수 ${ch}</b><span>손님 +${Math.round((decoSpawn() - 1) * 100)}% · 팁 +${Math.round((decoTip() - 1) * 100)}%</span></div>
-    <div style="font-size:.75rem;color:var(--muted)">칸마다 소품을 하나씩 놓을 수 있어요. 산 소품은 언제든 다시 바꿔 놓을 수 있어요.</div>`;
+    ${decoRoomHtml()}
+    <div class="deco-sets">${DECO_SETS.map(s => {
+      const have = Object.keys(DECO_SLOTS).filter(k => decoOn(k) && decoOn(k).slice(1) === String(s.tier)).length;
+      return `<span class="${set === s ? 'on' : ''}" title="같은 단계 소품 4개를 모두 배치하면 꾸밈 점수 +${s.bonus}">${set === s ? '🎀' : '▫️'} ${s.name} ${have}/4 <b>+${s.bonus}</b></span>`;
+    }).join('')}</div>
+    <div style="font-size:.75rem;color:var(--muted)">칸마다 소품을 하나씩 놓을 수 있고, 산 소품은 언제든 바꿔 놓을 수 있어요. 같은 단계 소품 4개를 모두 놓으면 <b>세트 효과</b>가 붙어요.</div>`;
   for (const [slot, sl] of Object.entries(DECO_SLOTS)) {
     const cur = decoOn(slot);
-    html += `<div class="grp-label">${sl.icon} ${sl.name} — ${cur ? `${DECOS[cur].icon} ${DECOS[cur].name}` : '비어 있음'}</div>`;
+    html += `<div class="grp-label">${sl.icon} ${sl.name} — ${cur ? DECOS[cur].name : '비어 있음'}</div>`;
     html += Object.entries(DECOS).filter(([, d]) => d.slot === slot).map(([id, d]) => {
       let btn;
       if (cur === id) btn = `<button class="buy" style="background:#b9a48e" data-act="decoOff" data-id="${id}">치우기</button>`;
       else if (S.deco.own[id]) btn = `<button class="buy" data-act="decoOn" data-id="${id}">배치하기</button>`;
       else if (sl.shop && S.shop < sl.shop) btn = `<button class="buy" disabled>${SHOPS[sl.shop].name} 필요</button>`;
       else btn = `<button class="buy" data-act="decoBuy" data-id="${id}" ${S.money < d.cost ? 'disabled' : ''}>${coin(d.cost)}</button>`;
-      return `<div class="item ${cur === id ? 'deco-on' : ''}"><div class="ico">${d.icon}</div>
-        <div class="info"><b>${d.name}${cur === id ? '<span class="sale-tag" style="background:#4f9d4a">배치 중</span>' : S.deco.own[id] ? ' <small>(보유)</small>' : ''}</b><span>꾸밈 점수 +${d.charm}</span></div>${btn}</div>`;
+      return `<div class="item deco-item ${cur === id ? 'deco-on' : ''}"><div class="ico deco-ico">${decoArt(id)}</div>
+        <div class="info"><b>${d.name}${cur === id ? '<span class="sale-tag" style="background:#4f9d4a">배치 중</span>' : S.deco.own[id] ? ' <small>(보유)</small>' : ''}</b>
+        <span>${d.desc}</span><span class="deco-pt">✨ 꾸밈 점수 +${d.charm} · ${id.slice(1)}단계</span></div>${btn}</div>`;
     }).join('');
   }
   return html;
@@ -3042,10 +3277,15 @@ document.addEventListener('click', e => {
     const d = DECOS[id], sl = d && DECO_SLOTS[d.slot];
     if (d && !S.deco.own[id] && S.money >= d.cost && !(sl.shop && S.shop < sl.shop)) {
       S.money -= d.cost; S.deco.own[id] = true; S.deco.on[d.slot] = id;
-      toast(`${d.icon} ${josa(d.name, '을', '를')} 들여놨어요! 꾸밈 점수 +${d.charm}`);
+      const s = decoSet();
+      toast(`${d.icon} ${josa(d.name, '을', '를')} 들여놨어요! 꾸밈 점수 +${d.charm}${s ? `<br>🎀 세트 완성: ${s.name} (+${s.bonus})` : ''}`);
     }
   } else if (act === 'decoOn') {
-    if (DECOS[id] && S.deco.own[id]) { S.deco.on[DECOS[id].slot] = id; toast(`${DECOS[id].icon} ${josa(DECOS[id].name, '으로', '로')} 바꿨어요`); }
+    if (DECOS[id] && S.deco.own[id]) {
+      S.deco.on[DECOS[id].slot] = id;
+      const s = decoSet();
+      toast(`${DECOS[id].icon} ${josa(DECOS[id].name, '으로', '로')} 바꿨어요${s ? `<br>🎀 세트 완성: ${s.name} (+${s.bonus})` : ''}`);
+    }
   } else if (act === 'decoOff') {
     if (DECOS[id] && S.deco.on[DECOS[id].slot] === id) delete S.deco.on[DECOS[id].slot];
   } else if (act === 'expand') {
