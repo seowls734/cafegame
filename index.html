@@ -209,8 +209,7 @@
   #bg.wall-w2 .wallp, .wp-w2 { background: radial-gradient(circle at 14px 14px, #f6c94c 4px, transparent 5px) 0 0 / 44px 44px,
     radial-gradient(circle at 36px 34px, #f29bb0 4px, transparent 5px) 0 0 / 44px 44px,
     radial-gradient(circle at 25px 24px, #8fc77a 2px, transparent 3px) 0 0 / 44px 44px, #fdf3e4; }
-  #bg.wall-w3 .wallp, .wp-w3 { background: radial-gradient(circle at 10px 12px, #fff6b0 1.6px, transparent 2.4px) 0 0 / 38px 38px,
-    radial-gradient(circle at 28px 30px, #ffffff 1.2px, transparent 2px) 0 0 / 38px 38px, linear-gradient(#1f2a55, #3a3f78); }
+  #bg.wall-w3 .wallp, .wp-w3 { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg stroke='%23ff8fb0' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M30 21v-9M30 39v9M21 30h-9M39 30h9M24 24l-6-6M36 36l6 6M36 24l6-6M24 36l-6 6'/%3E%3C/g%3E%3Ccircle cx='30' cy='30' r='2.5' fill='%23fff3a6'/%3E%3Cg stroke='%23ffd76a' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M88 81v-7M88 95v7M81 88h-7M95 88h7M83 83l-5-5M93 93l5 5M93 83l5-5M83 93l-5 5'/%3E%3C/g%3E%3Ccircle cx='88' cy='88' r='2' fill='%23fff'/%3E%3Cg stroke='%238fe3c0' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M84 24v-5M84 36v5M78 30h-5M90 30h5M80 26l-3-3M88 34l3 3M88 26l3-3M80 34l-3 3'/%3E%3C/g%3E%3Ccircle cx='22' cy='92' r='1.3' fill='%23fff'/%3E%3Ccircle cx='58' cy='60' r='1' fill='%23fff'/%3E%3Ccircle cx='110' cy='56' r='1.2' fill='%23fff'/%3E%3C/svg%3E") 0 0 / 120px 120px, linear-gradient(#141a3d, #3b2d6b); }
   #bg.wall-w4 .wallp, .wp-w4 { background: radial-gradient(circle, #e9c35a 3px, transparent 4px) 0 0 / 30px 30px,
     radial-gradient(circle, rgba(233,195,90,.45) 7px, transparent 8px) 15px 15px / 30px 30px,
     repeating-linear-gradient(90deg, #5a1f2a 0 28px, #4e1a24 28px 30px); }
@@ -235,10 +234,12 @@
   @keyframes tw { to { opacity: .6; } }
   .petal { transform-box: fill-box; animation: petal 5s linear infinite; opacity: 0; }
   @keyframes petal { 10% { opacity: 1; } 100% { transform: translate(-12px, 34px) rotate(200deg); opacity: 0; } }
+  .fly { transform-box: fill-box; animation: fly 2.6s ease-in-out infinite alternate; }
+  @keyframes fly { to { transform: translate(3px, -6px); } }
   .note { animation: note 3s ease-in-out infinite; opacity: 0; }
   @keyframes note { 20% { opacity: 1; } 100% { transform: translate(4px, -16px); opacity: 0; } }
   .steam { animation: note 2.4s ease-in-out infinite; }
-  @media (prefers-reduced-motion: reduce) { .flk, .tw, .petal, .note, .steam { animation: none; } .petal { opacity: 0; } .note { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .flk, .tw, .petal, .note, .steam, .fly { animation: none; } .petal { opacity: 0; } .note { opacity: 1; } }
   /* 꾸미기 탭 */
   .deco-sum { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: #fff3d6; border: 2px solid #e0b04a;
     border-radius: 10px; padding: 8px 10px; margin-bottom: 6px; }
@@ -765,23 +766,27 @@ const WOOD_CHAIR = `<rect x="10" y="18" width="6" height="58" rx="2" fill="#a86b
   <rect x="32" y="52" width="5" height="24" rx="1.5" fill="#a86b38" ${st()}/>
   <rect x="10" y="46" width="28" height="6" rx="2" fill="#c98a4b" ${st()}/>
   <rect x="13" y="41" width="22" height="6" rx="3" fill="#e57560" ${st(1.6)}/>`;
-// 비스트로 철제 의자
-const BISTRO_CHAIR = `<path d="M15 48q-6 15 0 32" fill="none" stroke="#3d8b6e" stroke-width="3.4" stroke-linecap="round"/>
-  <path d="M15 52q-3 8 0 16" fill="none" stroke="#3d8b6e" stroke-width="1.6"/>
-  <rect x="12" y="64" width="24" height="5" rx="2.5" fill="#3d8b6e" ${st(1.5)}/>
-  <path d="M16 69l-3 19M32 69l3 19" stroke="#3d8b6e" stroke-width="2.6" stroke-linecap="round"/>`;
-const mirror = (w, body) => `<g transform="translate(${w} 0) scale(-1 1)">${body}</g>`;
-function sunflower(cx, cy, r) {
-  let s = '';
-  for (let i = 0; i < 10; i++) s += `<ellipse cx="${cx}" cy="${cy - r * 0.95}" rx="${r * 0.32}" ry="${r * 0.6}" fill="#f6c21c" stroke="${DL}" stroke-width="1" transform="rotate(${i * 36} ${cx} ${cy})"/>`;
-  return s + `<circle cx="${cx}" cy="${cy}" r="${r * 0.58}" fill="#7a4520" ${st(1.4)}/>
-    <circle cx="${cx - r * 0.2}" cy="${cy - r * 0.15}" r="${r * 0.1}" fill="#3b2614"/><circle cx="${cx + r * 0.2}" cy="${cy + r * 0.12}" r="${r * 0.1}" fill="#3b2614"/>`;
+// 라벤더 꽃대 · 대나무 줄기 · 반딧불이 · 극락조화 꽃과 잎
+const lavender = (x, y) => [0, 1, 2, 3, 4].map(i => `<ellipse cx="${x + (i % 2 ? 1.3 : -1.3)}" cy="${y + i * 4}" rx="2.3" ry="2.9" fill="${i % 2 ? '#b39ddb' : '#9b7fd1'}" ${st(.8)}/>`).join('');
+function bamboo(x, top, h) {
+  let s = `<rect x="${x - 3}" y="${top}" width="6" height="${h}" rx="2" fill="#6fb25a" ${st(1.6)}/>`;
+  for (let y = top + 11; y < top + h - 3; y += 11) s += `<path d="M${x - 3} ${y}h6" stroke="${DL}" stroke-width="1.2"/>`;
+  return s;
 }
+const leafAt = (x, y, rot, c = '#4f9d4a') => `<ellipse cx="${x}" cy="${y}" rx="8" ry="2.4" transform="rotate(${rot} ${x} ${y})" fill="${c}" ${st(1)}/>`;
+const firefly = (x, y, d) => `<g class="fly" style="animation-delay:${d}s"><circle cx="${x}" cy="${y}" r="3.4" fill="rgba(255,240,120,.35)"/>
+  <circle class="tw" style="animation-delay:${d}s" cx="${x}" cy="${y}" r="1.6" fill="#fff59a" stroke="#c9a24a" stroke-width=".5"/></g>`;
+const birdFlower = (x, y, s) => `<g transform="translate(${x} ${y}) scale(${s})">
+  <path d="M-13 4L8 0L5 4Z" fill="#3d8b6e" ${st(1)}/>
+  <path d="M-2 1L-7 -14L1 0Z" fill="#f08a2c" ${st(1)}/><path d="M0 0L2 -17L4 0Z" fill="#f6a23c" ${st(1)}/><path d="M2 0L10 -12L5 1Z" fill="#f08a2c" ${st(1)}/>
+  <path d="M1 1L13 -5L4 3Z" fill="#4f7fb8" ${st(1)}/></g>`;
+const paddleLeaf = (x, y, rot) => `<g transform="rotate(${rot} ${x} ${y})"><ellipse cx="${x}" cy="${y}" rx="6.5" ry="15" fill="#2f7a4a" ${st(1.6)}/>
+  <path d="M${x} ${y - 14}V${y + 14}" stroke="#8fd0a0" stroke-width="1.2"/>
+  <path d="M${x} ${y - 7}l-4-3M${x} ${y}l-4-3M${x} ${y + 7}l-4-3M${x} ${y - 7}l4-3M${x} ${y}l4-3M${x} ${y + 7}l4-3" stroke="#8fd0a0" stroke-width=".8"/></g>`;
+const mirror = (w, body) => `<g transform="translate(${w} 0) scale(-1 1)">${body}</g>`;
 const MONSTERA_LEAF = (x, y, rot, sc, c) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${sc})">
   <path d="M0 0C-14 -4 -20 -18 -12 -28C-6 -34 2 -32 4 -26C8 -32 16 -32 18 -24C22 -12 12 -2 0 0Z" fill="${c}" ${st(1.8)}/>
   <path d="M1 -2L3 -24M-3 -8L-12 -16M-1 -14L-9 -26M5 -10L14 -16M4 -18L11 -26" stroke="#bfe3a8" stroke-width="1.4" stroke-linecap="round"/></g>`;
-const BLOSSOM = [[20, 40, 12, '#f7b6c8'], [34, 28, 15, '#f9cdd9'], [52, 33, 14, '#f7b6c8'], [62, 46, 10, '#ef9ab3'],
-  [13, 52, 9, '#ef9ab3'], [42, 46, 12, '#f9cdd9'], [27, 50, 9, '#f7b6c8']];
 const bulb = (x, y, c, d) => `<rect x="${x - 2.5}" y="${y}" width="5" height="4" fill="#666" ${st(1)}/>
   <ellipse class="tw" style="animation-delay:${d}s" cx="${x}" cy="${y + 10}" rx="4.5" ry="6.5" fill="${c}" ${st(1.2)}/>
   <ellipse cx="${x - 1.5}" cy="${y + 8}" rx="1.2" ry="2" fill="#fff" opacity=".7"/>`;
@@ -828,16 +833,24 @@ const DECO_ART = {
     <rect x="95" y="55" width="4" height="15" fill="#6b4226"/><rect x="111" y="55" width="4" height="15" fill="#6b4226"/>
     <rect x="94" y="45" width="15" height="4" fill="#4f7fb8" ${st(1.2)}/><rect x="95" y="41" width="13" height="4" fill="#f6d36b" ${st(1.2)}/>
     <path d="M110 42h6v6a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z" fill="#fff" ${st(1.2)}/>`),
-  t3: dsvg('0 0 120 96', `${shadow(60, 92, 54)}
-    <rect x="58" y="10" width="4" height="78" fill="#e9e4dc" ${st(1.5)}/>
-    ${[10, 35, 60, 85].map((x, i) => `<path d="M60 6L${x} 36Q${x + 12.5} 43 ${x + 25} 36Z" fill="${i % 2 ? '#fff6ea' : '#d24b3e'}" ${st(1.8)}/>`).join('')}
-    <circle cx="60" cy="5" r="3" fill="#d24b3e" ${st(1.5)}/>
-    ${BISTRO_CHAIR}${mirror(120, BISTRO_CHAIR)}
-    <rect x="40" y="64" width="40" height="5" rx="2.5" fill="#f4f4f4" ${st()}/>
-    <path d="M60 69v18M50 88h20" stroke="${DL}" stroke-width="3" stroke-linecap="round"/>
-    <path d="M44 50h9l-1.2 14h-6.6z" fill="#cfe9f5" ${st(1.5)}/><path d="M45.4 54h6.2l-.8 9h-4.6z" fill="#8a5530" opacity=".75"/>
-    <path d="M50 50l3-8" stroke="#4f9d4a" stroke-width="1.8" stroke-linecap="round"/>
-    <path d="M67 52h9l-1.2 12h-6.6z" fill="#fff3a6" ${st(1.5)}/><circle cx="76" cy="52" r="3.2" fill="#f6d36b" ${st(1)}/>`),
+  t3: dsvg('0 0 120 80', `${shadow(60, 77, 56)}
+    <rect x="12" y="57" width="7" height="17" fill="#8a5530" ${st(1.6)}/><rect x="56" y="57" width="7" height="17" fill="#8a5530" ${st(1.6)}/><rect x="101" y="57" width="7" height="17" fill="#8a5530" ${st(1.6)}/>
+    <rect x="6" y="46" width="108" height="8" rx="2" fill="#c98a4b" ${st()}/>
+    <path d="M24 46v8M42 46v8M60 46v8M78 46v8M96 46v8" stroke="#a86b38" stroke-width="1.2"/>
+    <rect x="8" y="54" width="104" height="5" fill="#a86b38" ${st(1.6)}/>
+    <rect x="12" y="42" width="80" height="5" rx="1" fill="#e9d18a" ${st(1.4)}/>
+    <path d="M20 42v5M28 42v5M36 42v5M44 42v5M52 42v5M60 42v5M68 42v5M76 42v5M84 42v5" stroke="#cfb46a" stroke-width="1"/>
+    <ellipse cx="44" cy="41" rx="19" ry="3" fill="#fff" ${st(1.4)}/>
+    <path d="M28 40a8 8 0 0 1 16 0z" fill="#e5484d"/><path d="M28 40a8 8 0 0 1 16 0" fill="none" stroke="#3f8a3a" stroke-width="2.6"/>
+    <path d="M46 40L51 25Q58 31 58 40Z" fill="#e5484d" ${st(1.2)}/><path d="M51 25Q58 31 58 40" fill="none" stroke="#3f8a3a" stroke-width="2.6"/>
+    ${[[33, 37], [36, 35], [39, 37], [52, 33], [54, 37], [50, 37]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx=".7" ry="1.1" fill="${DL}"/>`).join('')}
+    <path d="M82 41l7-13" stroke="#a86b38" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="91" cy="23" r="9" fill="#fff6ea" ${st(1.6)}/>
+    <path d="M85 23q5-6 10 0q-5 6-10 0zM95 23l3-2.5v5z" fill="#e5484d"/><circle cx="88" cy="22" r=".9" fill="#fff"/>
+    <path d="M86 30q5 2 10 0" fill="none" stroke="#4f7fb8" stroke-width="1"/>
+    <ellipse cx="104" cy="44" rx="7" ry="2.2" fill="#7a8f5a" ${st(1)}/>
+    <path d="M104 44m-4.5 0a4.5 1.4 0 1 0 9 0a3 1 0 1 0 -6 0" fill="none" stroke="#4e6b35" stroke-width="1"/>
+    <path class="steam" d="M109 42q-2-4 1-7q3-3 0-7" fill="none" stroke="#c9c2b8" stroke-width="1.4" stroke-linecap="round"/>`),
   t4: dsvg('0 0 120 90', `${shadow(64, 86, 54)}
     <rect x="1" y="58" width="18" height="6" rx="3" fill="#7a2e3a" ${st(1.8)}/><path d="M4 64v20M16 64v20" stroke="#1d1d24" stroke-width="2.6"/>
     <path d="M32 62v22M104 62v22" stroke="#1d1d24" stroke-width="5" stroke-linecap="round"/>
@@ -856,36 +869,26 @@ const DECO_ART = {
     ${MONSTERA_LEAF(18, 44, -25, 1, '#2f8a4a')}${MONSTERA_LEAF(46, 34, 18, 1.1, '#3a9d55')}${MONSTERA_LEAF(54, 56, 70, 0.85, '#2f8a4a')}${MONSTERA_LEAF(14, 64, -75, 0.8, '#3a9d55')}
     <rect x="15" y="66" width="40" height="8" rx="2.5" fill="#d9794c" ${st()}/><path d="M18 74h34l-4 22H22z" fill="#c7683f" ${st()}/>
     <path d="M24 84h22" stroke="#e8a07a" stroke-width="2" stroke-linecap="round"/>`),
-  p2: dsvg('0 0 70 100', `${shadow(35, 97, 28)}
-    <rect x="28" y="30" width="14" height="50" rx="7" fill="#4f9d4a" ${st()}/>
-    <path d="M28 58H22a4 4 0 0 1-4-4V43a3 3 0 0 1 6 0v9h4" fill="#4f9d4a" ${st()}/>
-    <path d="M42 52h5a4 4 0 0 0 4-4v-9a3 3 0 0 0-6 0v7h-3" fill="#4f9d4a" ${st()}/>
-    <path d="M35 34v44" stroke="#3d7f3a" stroke-width="1.4"/>
-    <path d="M30 40l-3-1M30 50l-3-1M30 64l-3-1M40 44l3-1M40 58l3-1M40 70l3-1" stroke="#fff" stroke-width="1.1"/>
-    ${[0, 72, 144, 216, 288].map(a => `<circle cx="35" cy="25.5" r="2.8" fill="#f29bb0" ${st(.8)} transform="rotate(${a} 35 29)"/>`).join('')}<circle cx="35" cy="29" r="2" fill="#f6c94c"/>
-    <circle cx="15" cy="72" r="9" fill="#6bb35a" ${st()}/><path d="M15 63v18M10 65q-3 7 0 14M20 65q3 7 0 14" stroke="#4f9d4a" stroke-width="1.2" fill="none"/>
-    <ellipse cx="55" cy="72" rx="7" ry="9" fill="#7cbf5a" ${st()}/><ellipse cx="59" cy="59" rx="5" ry="7" transform="rotate(25 59 59)" fill="#7cbf5a" ${st()}/>
-    <circle cx="53" cy="70" r=".9" fill="#fff"/><circle cx="57" cy="75" r=".9" fill="#fff"/><circle cx="59" cy="58" r=".9" fill="#fff"/>
-    <circle cx="61" cy="52" r="2.4" fill="#d24b3e" ${st(.8)}/>
-    <rect x="5" y="78" width="60" height="7" rx="2.5" fill="#8db7e0" ${st()}/><path d="M8 85h54l-5 12H13z" fill="#6f9fcf" ${st()}/>
-    <path d="M15 91h40" stroke="#fff" stroke-dasharray="3 3" stroke-width="1.6"/>`),
-  p3: dsvg('0 0 70 100', `${shadow(35, 97, 31)}
-    <path d="M18 70Q16 56 18 46M36 70Q37 50 36 32M54 70Q56 60 54 52" fill="none" stroke="#3f7a3a" stroke-width="2.6"/>
-    <ellipse cx="11" cy="60" rx="7" ry="3.4" transform="rotate(-30 11 60)" fill="#4f9d4a" ${st(1.2)}/>
-    <ellipse cx="44" cy="54" rx="7" ry="3.4" transform="rotate(25 44 54)" fill="#4f9d4a" ${st(1.2)}/>
-    <ellipse cx="28" cy="58" rx="7" ry="3.4" transform="rotate(-20 28 58)" fill="#5aa84f" ${st(1.2)}/>
-    ${sunflower(18, 42, 8)}${sunflower(36, 26, 10)}${sunflower(54, 48, 8)}
-    <rect x="6" y="67" width="58" height="6" fill="#5a3a22"/>
-    <rect x="4" y="70" width="62" height="27" rx="2" fill="#a86b38" ${st()}/>
-    <path d="M5 79h60M5 88h60" stroke="#8a5530" stroke-width="1.6"/><path d="M20 70v27M50 70v27" stroke="#8a5530" stroke-width="1.2"/>`),
-  p4: dsvg('0 0 80 110', `${shadow(40, 107, 24)}
-    <path d="M40 86C40 70 38 62 34 52M38 66C44 58 50 52 56 44M36 58C30 52 26 48 18 46" fill="none" stroke="#6b4226" stroke-width="4.5" stroke-linecap="round"/>
-    ${BLOSSOM.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#f7b6c8" ${st(1.8)}/>`).join('')}
-    ${BLOSSOM.map(([x, y, r, c]) => `<circle cx="${x}" cy="${y}" r="${r - 0.9}" fill="${c}"/>`).join('')}
-    ${[[24, 34], [44, 26], [56, 40], [16, 50], [36, 44]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2" fill="#fff"/><circle cx="${x}" cy="${y}" r=".8" fill="#e0a526"/>`).join('')}
-    ${[[22, 66, 0], [48, 62, 1.6], [60, 70, 3.1], [32, 72, 4.2]].map(([x, y, d]) => `<ellipse class="petal" style="animation-delay:${d}s" cx="${x}" cy="${y}" rx="2.2" ry="1.4" fill="#f29bb0"/>`).join('')}
-    <rect x="20" y="84" width="40" height="7" rx="2.5" fill="#f1ece4" ${st()}/><path d="M23 91h34l-4 16H27z" fill="#ddd5c8" ${st()}/>
-    <path d="M30 98h20" stroke="#c9a24a" stroke-width="1.6"/>`),
+  p2: dsvg('0 0 70 100', `${shadow(35, 97, 24)}
+    ${[[17, 30], [25, 21], [35, 15], [45, 21], [53, 30], [30, 33], [41, 31]].map(([x, y]) => `<path d="M35 68L${x} ${y + 17}" stroke="#6a8f4f" stroke-width="1.4"/>`).join('')}
+    ${leafAt(27, 63, -35, '#7fa36a')}${leafAt(43, 63, 35, '#7fa36a')}${leafAt(35, 60, -90, '#8fb57a')}
+    ${[[17, 30], [25, 21], [35, 15], [45, 21], [53, 30], [30, 33], [41, 31]].map(([x, y]) => lavender(x, y)).join('')}
+    <rect x="12" y="66" width="46" height="6" rx="3" fill="#c9a050" ${st()}/><path d="M15 72h40l-5 24H20z" fill="#d9b26a" ${st()}/>
+    <path d="M16 78h38M17 84h36M18 90h34" stroke="#b8913f" stroke-width="1.3"/>
+    <path d="M24 72l-1 24M32 72v24M40 72v24M48 72l-1 24" stroke="#b8913f" stroke-width="1" stroke-dasharray="3 3"/>
+    <path d="M35 69l-7-3.5v7zM35 69l7-3.5v7z" fill="#b39ddb" ${st(1)}/><circle cx="35" cy="69" r="1.8" fill="#9b7fd1" ${st(.8)}/>`),
+  p3: dsvg('0 0 70 100', `${shadow(35, 97, 22)}
+    ${bamboo(25, 24, 48)}${bamboo(36, 10, 62)}${bamboo(47, 30, 42)}
+    ${leafAt(17, 32, -25)}${leafAt(15, 42, -5)}${leafAt(29, 18, -40, '#5aa84f')}${leafAt(44, 14, 30)}${leafAt(45, 24, 8, '#5aa84f')}${leafAt(56, 38, 30)}${leafAt(55, 48, 5, '#5aa84f')}
+    ${firefly(8, 22, 0)}${firefly(60, 16, 0.8)}${firefly(63, 52, 1.6)}${firefly(7, 56, 2.2)}${firefly(24, 6, 1.1)}${firefly(52, 4, 2.8)}
+    <rect x="15" y="68" width="40" height="7" rx="2.5" fill="#3d4a6e" ${st()}/><path d="M18 75h34l-3 21H21z" fill="#2f3a5a" ${st()}/>
+    <path d="M22 84h26" stroke="#e0b04a" stroke-width="1.4"/><circle cx="35" cy="90" r="2" fill="#e0b04a"/>`),
+  p4: dsvg('0 0 70 100', `${shadow(35, 97, 24)}
+    <path d="M35 70Q30 48 16 34M35 70Q36 42 40 26M35 70Q44 54 56 44M35 70Q26 62 10 58M35 70Q36 56 26 46" fill="none" stroke="#3f7a3a" stroke-width="2.2"/>
+    ${paddleLeaf(14, 28, -35)}${paddleLeaf(58, 36, 40)}${paddleLeaf(9, 52, -70)}
+    ${birdFlower(42, 25, 1.15)}${birdFlower(25, 45, 0.85)}
+    <rect x="15" y="68" width="40" height="7" rx="2.5" fill="#e5c25a" ${st()}/><path d="M18 75h34l-3 21H21z" fill="#d4a93c" ${st()}/>
+    <path d="M20 81h30" stroke="#fff3c4" stroke-width="1.2"/><path d="M31 88l4-4 4 4-4 4z" fill="#fff3c4" ${st(1)}/>`),
   l1: dsvg('0 0 100 44', `<path d="M0 4Q50 24 100 4" fill="none" stroke="${DL}" stroke-width="1.6"/>
     ${bulb(20, 10.4, '#ffd76a', 0)}${bulb(50, 14, '#ff8f8f', 0.5)}${bulb(80, 10.4, '#9fd8ff', 1)}`),
   l2: dsvg('0 0 100 56', `${candle(28, 16, 0)}${candle(72, 28, 0.25)}`),
@@ -904,19 +907,19 @@ const DECO_ART = {
 const DECOS = {
   t1: { slot: 'table', name: '원목 테이블 세트',   icon: '🪑', cost: 150,  charm: 2,  desc: '할머니 가게에서 쓰던 튼튼한 원목 테이블' },
   t2: { slot: 'table', name: '패브릭 소파석',      icon: '🛋️', cost: 600,  charm: 5,  desc: '쿠션 두 개에 푹 꺼지는 소파. 한번 앉으면 못 일어나요' },
-  t3: { slot: 'table', name: '파라솔 테라스석',    icon: '⛱️', cost: 1800, charm: 8,  desc: '줄무늬 파라솔 아래 시원한 음료 한 잔' },
+  t3: { slot: 'table', name: '수박 평상',          icon: '🍉', cost: 1800, charm: 8,  desc: '돗자리 깐 평상에 수박 한 쟁반, 부채질 살랑 · 모기향 솔솔' },
   t4: { slot: 'table', name: '그랜드 피아노 라운지', icon: '🎹', cost: 5000, charm: 12, desc: '가끔 손님이 한 곡 치고 가요 ♪' },
   p1: { slot: 'plant', name: '몬스테라 화분',      icon: '🌿', cost: 120,  charm: 2,  desc: '구멍 뚫린 큰 잎이 매력 포인트' },
-  p2: { slot: 'plant', name: '선인장 정원',        icon: '🌵', cost: 400,  charm: 4,  desc: '물을 깜빡해도 꽃까지 피워 줘요' },
-  p3: { slot: 'plant', name: '해바라기 화단',      icon: '🌻', cost: 1200, charm: 7,  desc: '해를 따라 고개를 돌리는 노란 꽃 셋' },
-  p4: { slot: 'plant', name: '벚꽃 나무',          icon: '🌸', cost: 4000, charm: 11, desc: '가게 안에서도 꽃잎이 흩날려요' },
+  p2: { slot: 'plant', name: '라벤더 바구니',      icon: '💜', cost: 400,  charm: 4,  desc: '은은한 향기가 나른한 오후를 달래 줘요' },
+  p3: { slot: 'plant', name: '반딧불 대나무',      icon: '🎋', cost: 1200, charm: 7,  desc: '대나무 잎 사이로 반딧불이가 반짝반짝' },
+  p4: { slot: 'plant', name: '극락조화',           icon: '🌺', cost: 4000, charm: 11, desc: '금빛 화분에 담긴 우아한 새 모양 꽃' },
   l1: { slot: 'light', name: '알전구 줄',          icon: '💡', cost: 150,  charm: 2,  desc: '알록달록한 전구가 반짝반짝' },
   l2: { slot: 'light', name: '유리 캔들 조명',     icon: '🕯️', cost: 500,  charm: 4,  desc: '유리컵 속 촛불이 살랑살랑 흔들려요' },
   l3: { slot: 'light', name: '축제 등불',          icon: '🏮', cost: 1400, charm: 7,  desc: '빨갛고 노란 등불이 축제 분위기를 내요' },
   l4: { slot: 'light', name: '크리스털 샹들리에',  icon: '✨', cost: 4500, charm: 11, desc: '크리스털이 반짝일 때마다 손님이 감탄해요' },
   w1: { slot: 'wall',  name: '민트 줄무늬 벽지',   icon: '🍃', cost: 100,  charm: 1,  desc: '산뜻한 민트색 세로 줄무늬' },
   w2: { slot: 'wall',  name: '들꽃 벽지',          icon: '🌼', cost: 400,  charm: 3,  desc: '노란 꽃과 분홍 꽃이 콕콕' },
-  w3: { slot: 'wall',  name: '별밤 벽지',          icon: '⭐', cost: 1200, charm: 6,  desc: '남색 밤하늘에 별이 총총' },
+  w3: { slot: 'wall',  name: '불꽃놀이 벽지',      icon: '🎆', cost: 1200, charm: 6,  desc: '여름 밤하늘에 펑펑 터지는 불꽃' },
   w4: { slot: 'wall',  name: '황금 다마스크 벽지', icon: '👑', cost: 4000, charm: 10, desc: '와인색 바탕에 금빛 무늬, 호텔 라운지 느낌' },
 };
 // 같은 단계 소품 4개를 모두 배치하면 세트 효과로 꾸밈 점수가 더 붙는다
