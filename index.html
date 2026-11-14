@@ -203,6 +203,26 @@
   #bg .closed-sign.street { top: 30%; left: auto; right: 4vw; transform: rotate(-5deg); font-size: 1.3rem; }
   #bg.night .wallp, #bg.night .wainscot, #bg.night .floor, #bg.night .shelf, #bg.night .frame, #bg.night .city, #bg.night .plant, #bg.night .awning-top { filter: brightness(.5); }
   #bg.night .win .view { filter: brightness(.6); }
+  /* 가게 꾸미기: 벽지 · 조명 줄 · 테이블 */
+  #bg.wall-w1 .wallp { background: repeating-linear-gradient(90deg, #bfe9d6 0 26px, #e9f8f0 26px 52px); }
+  #bg.wall-w2 .wallp { background: radial-gradient(circle at 14px 14px, #f6c94c 4px, transparent 5px) 0 0 / 44px 44px,
+    radial-gradient(circle at 36px 34px, #f29bb0 4px, transparent 5px) 0 0 / 44px 44px, #fdf3e4; }
+  #bg.wall-w3 .wallp { background: radial-gradient(circle at 10px 12px, #fff6b0 1.6px, transparent 2.4px) 0 0 / 38px 38px,
+    radial-gradient(circle at 28px 30px, #ffffff 1.2px, transparent 2px) 0 0 / 38px 38px, linear-gradient(#1f2a55, #3a3f78); }
+  #bg.wall-w4 .wallp { background: radial-gradient(circle, #e9c35a 3px, transparent 4px) 0 0 / 30px 30px,
+    repeating-linear-gradient(90deg, #5a1f2a 0 28px, #4e1a24 28px 30px); }
+  #bg .deco-light { position: absolute; top: 60px; left: 0; right: 0; text-align: center; white-space: nowrap; overflow: hidden;
+    font-size: clamp(1.1rem, 2vw, 1.8rem); letter-spacing: .4vw; z-index: 2; filter: drop-shadow(0 0 8px rgba(255,214,120,.9)); }
+  #bg.s0 .deco-light { top: 84px; }
+  #bg .deco-light i { font-style: normal; color: #6b4226; margin: 0 1.6vw; }
+  #bg .deco-table { position: absolute; bottom: 2%; font-size: clamp(2.2rem, 4.5vw, 4.2rem); letter-spacing: .6vw; }
+  #bg .deco-table.l { left: 6vw; } #bg .deco-table.r { right: 6vw; }
+  #bg.night .deco-table { filter: brightness(.5); }
+  .deco-sum { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: #fff3d6; border: 2px solid #e0b04a;
+    border-radius: 10px; padding: 8px 10px; margin-bottom: 6px; }
+  .deco-sum span { font-size: .8rem; color: var(--good); font-weight: 700; }
+  .item.deco-on { background: #f3fbe9; }
+  .item.off { opacity: .6; }
   #bg .cat { position: absolute; bottom: 9%; left: 13vw; font-size: clamp(2rem, 3.5vw, 3.2rem); animation: catNap 4s ease-in-out infinite; }
   @keyframes catNap { 50% { transform: scale(1.06, .94); } }
   /* 날씨: 창밖(노점은 하늘 전체)에 비나 눈이 내린다 */
@@ -328,7 +348,8 @@
   .sum .v { text-align: right; font-weight: 700; }
   .plus { color: var(--good); } .minus { color: var(--bad); }
   .tabs { display: flex; gap: 6px; margin-bottom: 10px; }
-  .tabs { gap: 4px; }
+  .tabs { gap: 4px; flex-wrap: wrap; }
+  .tabs .tab { flex: 1 1 22%; }
   .tab { flex: 1; min-width: 0; border: 2px solid var(--wood); background: var(--panel); border-radius: 10px; padding: 8px 0; font-weight: 700; font-size: .74rem; white-space: nowrap; }
   .tab.on { background: var(--wood); color: #fff; }
   .item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
@@ -612,6 +633,7 @@ const ICONS = {
   // 메뉴
   americano: '☕', latte: LATTE_SVG, choco: CHOCO_SVG, teaCup: '🍵', iceame: '🥤', icelatte: ICELATTE_SVG,
   smoothie: '🍹', cookie: '🍪', cakeSlice: '🍰', croissant: '🥐',
+  sakura: '🌸', bingsu: '🍧', mocha: '🍁', vinchaud: '🍷',
   // 도구·재료 넣기
   mug: '☕', icecup: '🥤', plate: '🍽️', shot: '🟤', water: '💧', milk: '🍼', ice: '🧊',
   leaf: '🌿', cocoa: COCOA_SVG, strawberry: '🍓', blender: '🌀', oven: '🔥',
@@ -665,7 +687,44 @@ const MENU = {
   croissant: { name: '크루아상',         icon: 'croissant', cup: 'plate',  parts: ['bake'],                          price: 8,  cost: 180, shop: 1 },
   smoothie:  { name: '딸기스무디',       icon: 'smoothie',  cup: 'icecup', parts: ['fruit', 'milk', 'ice', 'blend'], price: 13, cost: 250, shop: 1 },
   choco:     { name: '핫초코',           icon: 'choco',     cup: 'mug',    parts: ['cocoa', 'milk'],                 price: 11, cost: 400, shop: 2 },
+  // 계절 한정 메뉴: 살 필요 없이 그 계절(14일) 동안만 저절로 판매된다. season = SEASONS 순서
+  s_sakura:   { name: '벚꽃딸기라떼',   icon: 'sakura',   cup: 'mug',    parts: ['shot', 'milk', 'fruit'],  price: 12, cost: 0, shop: 1, season: 0 },
+  s_bingsu:   { name: '딸기빙수',       icon: 'bingsu',   cup: 'plate',  parts: ['ice', 'milk', 'fruit'],   price: 12, cost: 0, shop: 1, season: 1 },
+  s_mocha:    { name: '단풍모카',       icon: 'mocha',    cup: 'mug',    parts: ['cocoa', 'shot', 'milk'],  price: 13, cost: 0, shop: 1, season: 2 },
+  s_vinchaud: { name: '딸기뱅쇼',       icon: 'vinchaud', cup: 'mug',    parts: ['tea', 'fruit', 'water'],  price: 12, cost: 0, shop: 1, season: 3 },
 };
+const SEASON_GOAL = 15;   // 계절 한정 업적: 그 메뉴를 이만큼 팔기
+
+// ---------- 가게 꾸미기 ----------
+// 칸마다 하나씩 배치한다. 배치한 소품의 꾸밈 점수 합만큼 손님이 더 자주 오고 팁이 늘어난다.
+const DECO_SLOTS = {
+  table: { name: '테이블', icon: '🪑' },
+  plant: { name: '화분',   icon: '🪴' },
+  light: { name: '조명',   icon: '💡' },
+  wall:  { name: '벽지',   icon: '🎨', shop: 1 },   // 노점에는 벽이 없다
+};
+const DECOS = {
+  t1: { slot: 'table', name: '원목 의자',       icon: '🪑', cost: 150,  charm: 2 },
+  t2: { slot: 'table', name: '푹신한 소파석',   icon: '🛋️', cost: 600,  charm: 5 },
+  t3: { slot: 'table', name: '파라솔 테라스석', icon: '⛱️', cost: 1800, charm: 8 },
+  t4: { slot: 'table', name: '피아노 라운지',   icon: '🎹', cost: 5000, charm: 12 },
+  p1: { slot: 'plant', name: '몬스테라',        icon: '🪴', cost: 120,  charm: 2 },
+  p2: { slot: 'plant', name: '선인장 정원',     icon: '🌵', cost: 400,  charm: 4 },
+  p3: { slot: 'plant', name: '해바라기 화단',   icon: '🌻', cost: 1200, charm: 7 },
+  p4: { slot: 'plant', name: '벚꽃 나무',       icon: '🌸', cost: 4000, charm: 11 },
+  l1: { slot: 'light', name: '알전구 줄',       icon: '💡', cost: 150,  charm: 2 },
+  l2: { slot: 'light', name: '캔들 조명',       icon: '🕯️', cost: 500,  charm: 4 },
+  l3: { slot: 'light', name: '등불 장식',       icon: '🏮', cost: 1400, charm: 7 },
+  l4: { slot: 'light', name: '반짝이 샹들리에', icon: '✨', cost: 4500, charm: 11 },
+  w1: { slot: 'wall',  name: '민트 줄무늬',     icon: '🟩', cost: 100,  charm: 1 },
+  w2: { slot: 'wall',  name: '들꽃 벽지',       icon: '🌼', cost: 400,  charm: 3 },
+  w3: { slot: 'wall',  name: '별밤 벽지',       icon: '⭐', cost: 1200, charm: 6 },
+  w4: { slot: 'wall',  name: '황금 무늬 벽지',  icon: '👑', cost: 4000, charm: 10 },
+};
+const decoOn = slot => { const id = S.deco.on[slot]; return id && DECOS[id] && S.deco.own[id] ? id : null; };
+const decoCharm = () => Object.keys(DECO_SLOTS).reduce((s, k) => s + (decoOn(k) ? DECOS[decoOn(k)].charm : 0), 0);
+const decoSpawn = () => 1 + decoCharm() * 0.006;   // 꾸밈 점수 1점당 손님 +0.6%
+const decoTip = () => 1 + decoCharm() * 0.01;      // 꾸밈 점수 1점당 팁 +1%
 
 const SHOPS = [
   { name: '길거리 노점',     icon: '🛒', cost: 0,    priceMult: 1.0, rentMult: 1.0 },
@@ -740,7 +799,8 @@ function newGame(m = 'story') {
     mode: m,
     day: 1, money: (MODES[m] && MODES[m].money) || 80, rep: 50, shop: 0, totalEarned: 0, bestDay: 0,
     tut: 0, // 0: 첫 영업 튜토리얼 전, 1: 첫 밤 안내 전, 2: 튜토리얼 끝
-    stats: { served: 0, perfect: 0, vip: 0, delivery: 0, maxCombo: 0, bestRevenue: 0, jackpot: 0, invented: 0 },
+    stats: { served: 0, perfect: 0, vip: 0, delivery: 0, maxCombo: 0, bestRevenue: 0, jackpot: 0, invented: 0, season: {} },
+    deco: { own: {}, on: {} },   // 가게 꾸미기: 산 소품, 칸마다 배치한 소품
     story: { seen: {}, ending: false, ending2: false },
     storyDay: 0,      // 새 이야기를 마지막으로 본 날 (하룻밤에 하나만)
     cat: false,       // 가게 고양이 (스토리 5화)
@@ -785,7 +845,8 @@ function load() {
     // 예전 저장은 오늘 밤 이야기를 이미 본 것으로 친다 (다시 들어올 때마다 새 이야기가 나오던 문제)
     if (typeof d.storyDay !== 'number') d.storyDay = d.day || 0;
     return { ...base, ...d, tut, stock: { ...base.stock, ...d.stock }, up, unlocked: { ...base.unlocked, ...d.unlocked },
-             stats: { ...base.stats, ...d.stats }, ach: { ...d.ach }, eggs: { ...d.eggs }, quests: Array.isArray(d.quests) ? d.quests : [],
+             stats: { ...base.stats, ...d.stats, season: { ...(d.stats && d.stats.season) } }, ach: { ...d.ach },
+             deco: { own: { ...(d.deco && d.deco.own) }, on: { ...(d.deco && d.deco.on) } }, eggs: { ...d.eggs }, quests: Array.isArray(d.quests) ? d.quests : [],
              weather: WEATHER[d.weather] ? d.weather : base.weather,
              custom: Array.isArray(d.custom) ? d.custom : [], reviews: Array.isArray(d.reviews) ? d.reviews : [],
              story: { ...base.story, ...d.story, seen: { ...(d.story && d.story.seen) } } };
@@ -799,7 +860,13 @@ const coin = n => `${ic('coin')}${fmt(n)}`;
 const price = id => Math.round(MENU[id].price * SHOPS[S.shop].priceMult * (mode().price || 1));
 const rent = () => Math.round((8 + S.day * 2) * SHOPS[S.shop].rentMult * (mode().rent ?? 1));
 const trayCap = (l = S.up.tray) => 4 + l * 2;
-const unlockedMenu = () => Object.keys(MENU).filter(k => S.unlocked[k]);
+// 계절 한정 메뉴는 그 계절에만 판매된다 (예전에 똑같은 조합으로 만든 나만의 레시피가 있으면 그쪽을 판다)
+const seasonOn = k => {
+  const m = MENU[k];
+  if (m.season == null || S.shop < m.shop || seasonIdx() !== m.season) return false;
+  return !Object.keys(MENU).some(o => MENU[o].custom && S.unlocked[o] && MENU[o].cup === m.cup && sameParts(MENU[o].parts, m.parts));
+};
+const unlockedMenu = () => Object.keys(MENU).filter(k => (MENU[k].season != null ? seasonOn(k) : S.unlocked[k]));
 const menuIngs = id => MENU[id].parts.map(p => PARTS[p].ing).filter(Boolean);
 const usedIngs = () => Object.keys(ING).filter(i => unlockedMenu().some(m => menuIngs(m).includes(i)));
 const usedParts = () => Object.keys(PARTS).filter(p => unlockedMenu().some(m => MENU[m].cup === p || MENU[m].parts.includes(p)));
@@ -838,7 +905,10 @@ function wxFx(cls) {
 // 화면 전체 배경: 가게 단계마다 인테리어가 다르고, 밤에는 불이 꺼진다
 function renderBg(night) {
   const sh = S.shop, bg = $('bg');
-  bg.className = `s${sh}${night ? ' night' : ''}`;
+  const dTable = decoOn('table'), dPlant = decoOn('plant'), dLight = decoOn('light'), dWall = sh > 0 && decoOn('wall');
+  bg.className = `s${sh}${night ? ' night' : ''}${dWall ? ' wall-' + dWall : ''}`;
+  const decoFx = (dLight ? `<div class="deco-light">${Array(9).fill(DECOS[dLight].icon).join('<i>·</i>')}</div>` : '')
+    + (dTable ? `<div class="deco-table l">${DECOS[dTable].icon}${DECOS[dTable].icon}</div><div class="deco-table r">${DECOS[dTable].icon}${DECOS[dTable].icon}</div>` : '');
   const win = side => `<div class="win ${side}">${night ? '<div class="stars">✦ · ✧ · ✦ · ✧ · ✦</div>' : `<span class="cloud">☁️</span>${wxFx()}`}
     <div class="view">${VIEWS[sh]}</div>${night && side === 'r' ? '<div class="closed-sign">CLOSED</div>' : ''}</div>`;
   bg.innerHTML = `<div class="wallp"></div>
@@ -851,8 +921,9 @@ function renderBg(night) {
       <div class="frame">${FRAMES[sh]}</div>
       <div class="clock">🕰️</div>`}
     <div class="floor"></div>
-    <div class="plant l"><span>🌿</span><i></i></div>
-    <div class="plant r"><span>${sh === 0 ? '🌳' : '🌵'}</span><i></i></div>
+    <div class="plant l"><span>${dPlant ? DECOS[dPlant].icon : '🌿'}</span><i></i></div>
+    <div class="plant r"><span>${dPlant ? DECOS[dPlant].icon : sh === 0 ? '🌳' : '🌵'}</span><i></i></div>
+    ${decoFx}
     ${S.cat ? '<div class="cat">🐈</div>' : ''}`;
   updateSky();
 }
@@ -893,7 +964,9 @@ const SEASONS = [
   { name: '가을', icon: '🍁', wx: { sunny: 4, cloudy: 3, rain: 1 } },
   { name: '겨울', icon: '⛄', wx: { snow: 4, cloudy: 3, sunny: 1 } },
 ];
-const season = (d = S.day) => SEASONS[Math.floor((d - 1) / SEASON_LEN) % SEASONS.length];
+const seasonIdx = (d = S.day) => Math.floor((d - 1) / SEASON_LEN) % SEASONS.length;
+const season = (d = S.day) => SEASONS[seasonIdx(d)];
+const seasonLeft = (d = S.day) => SEASON_LEN - (d - 1) % SEASON_LEN;   // 이번 계절 남은 날 (오늘 포함)
 const wx = () => WEATHER[S.weather] || WEATHER.sunny;
 const wxPref = k => (wx().pref && wx().pref[MENU[k].cup]) || 1;
 function pickWeather() {
@@ -958,7 +1031,18 @@ const ACHS = [
   { id: 'rev200',    name: '대박 난 날',      desc: '하루 매출 200 달성',    goal: 200,  val: () => S.stats.bestRevenue, reward: 150 },
   { id: 'rev1000',   name: '초대박',          desc: '하루 매출 1000 달성',   goal: 1000, val: () => S.stats.bestRevenue, reward: 800 },
   { id: 'menu5',     name: '메뉴 개발자',     desc: '메뉴 5개 판매',         goal: 5,    val: () => unlockedMenu().length, reward: 150 },
-  { id: 'menuAll',   name: '없는 게 없어요',  desc: '메뉴 10개 전부 판매',   goal: 10,   val: () => unlockedMenu().filter(k => !MENU[k].custom).length, reward: 1000 },
+  { id: 'menuAll',   name: '없는 게 없어요',  desc: '메뉴 10개 전부 판매',   goal: 10,   val: () => unlockedMenu().filter(k => !MENU[k].custom && MENU[k].season == null).length, reward: 1000 },
+  // 계절 한정 메뉴: 그 계절 동안 SEASON_GOAL개 팔기
+  ...Object.keys(MENU).filter(k => MENU[k].season != null).map(k => {
+    const s = SEASONS[MENU[k].season];
+    return { id: 'season_' + k, name: `${s.icon} ${s.name} 한정판`, desc: `${MENU[k].name} ${SEASON_GOAL}개 판매 (${s.name} 한정)`,
+             goal: SEASON_GOAL, val: () => S.stats.season[k] || 0, reward: 250 };
+  }),
+  { id: 'seasonAll', name: '사계절 카페',     desc: '🌸🌻🍁⛄ 계절 한정 메뉴 4종 모두 15개씩 판매', goal: 4,
+    val: () => Object.keys(MENU).filter(k => MENU[k].season != null && (S.stats.season[k] || 0) >= SEASON_GOAL).length, reward: 1500 },
+  { id: 'deco1',     name: '첫 인테리어',     desc: '🪑 소품 하나 배치하기',  goal: 1,    val: () => decoCharm(),         reward: 50 },
+  { id: 'deco20',    name: '감성 카페',       desc: '✨ 꾸밈 점수 20 달성',   goal: 20,   val: () => decoCharm(),         reward: 500 },
+  { id: 'deco44',    name: '인생샷 명소',     desc: '✨ 꾸밈 점수 44 (최고 소품 4개 배치)', goal: 44, val: () => decoCharm(), reward: 3000 },
   { id: 'recipe1',   name: '나만의 레시피',   desc: '🧪 신메뉴 1개 개발',    goal: 1,    val: () => S.stats.invented,    reward: 100 },
   { id: 'recipe3',   name: '레시피 연구가',   desc: '🧪 신메뉴 3개 개발',    goal: 3,    val: () => S.stats.invented,    reward: 400 },
   { id: 'rating',    name: '별점 맛집',       desc: '💬 리뷰 30개 이상 받고 별점 4.8 달성', goal: 48, val: () => (S.reviewN >= 30 ? Math.floor(S.rating * 10 + 1e-9) : 0), reward: 600 },
@@ -1031,6 +1115,14 @@ const TASTE = {
                ok: ['조금 덜 갈렸지만 딸기 맛은 진했어요'], bad: ['덜 갈려서 덩어리가 씹혔어요', '우유 맛만 나고 딸기 맛이 약했어요'] },
   choco:     { good: ['진하고 달콤해서 몸이 사르르 녹아요', '코코아가 진해서 어릴 때 먹던 핫초코 생각나요'],
                ok: ['조금 묽었지만 따뜻하고 달달했어요'], bad: ['코코아가 덜 풀려서 묽고 텁텁했어요'] },
+  s_sakura:   { good: ['딸기 향이 은은하게 퍼져서 봄 냄새가 나요 🌸', '라떼에 딸기가 이렇게 잘 어울릴 줄 몰랐어요. 봄에만 파는 게 아까워요'],
+                ok: ['조금 밍밍했지만 색이 예뻐서 사진은 잘 나왔어요'], bad: ['딸기랑 커피가 따로 놀았어요', '샷이 너무 세서 벚꽃 느낌이 하나도 안 났어요'] },
+  s_bingsu:   { good: ['우유 얼음이 사르르 녹고 딸기가 듬뿍이라 더위가 싹 가셨어요 🍧', '둘이서 나눠 먹었는데 양도 많고 끝까지 시원했어요'],
+                ok: ['얼음이 조금 거칠었지만 시원하게 잘 먹었어요'], bad: ['우유가 부족해서 그냥 얼음 씹는 맛이었어요'] },
+  s_mocha:    { good: ['초코랑 커피가 딱 반반이라 쌉싸름하면서 달콤해요 🍁', '가을 날씨에 딱 맞는 따뜻한 맛이에요'],
+                ok: ['조금 달았지만 따뜻하게 잘 마셨어요'], bad: ['코코아가 덜 풀려서 텁텁했어요', '샷이 넘쳐서 초코 맛이 안 났어요'] },
+  s_vinchaud: { good: ['딸기랑 홍차 향이 따뜻하게 올라와서 몸이 사르르 녹아요 🍷', '추운 날 손 녹이면서 마시기 딱 좋아요'],
+                ok: ['조금 연했지만 향은 좋았어요'], bad: ['물을 너무 부었는지 밍밍했어요'] },
 };
 function tasteOf(k, tier) {
   if (TASTE[k]) return pickOne(TASTE[k][tier]);
@@ -1070,6 +1162,9 @@ function contextLine(c, star, k) {
   if (good && S.shop === 0) lines.push('작은 노점인데 맛은 웬만한 카페보다 나아요.');
   if (good && S.shop >= 4) lines.push(`${SHOPS[S.shop].name}답게 뷰가 끝내줘요.`);
   if (good && S.up.decor >= 4) lines.push('인테리어가 예뻐서 사진을 엄청 찍었어요 📸');
+  const decoPick = Object.keys(DECO_SLOTS).map(decoOn).filter(id => id && DECOS[id].charm >= 4);
+  if (good && decoPick.length) { const d = DECOS[pickOne(decoPick)]; lines.push(`${d.icon} ${josa(d.name, '이', '가')} 너무 예뻐서 한참 구경했어요.`); }
+  if (good && MENU[k] && MENU[k].season != null) lines.push(`${season().name}에만 파는 메뉴라길래 일부러 찾아왔어요 ${season().icon}`);
   if (good && R.combo >= 8) lines.push('사장님 손이 안 보일 정도로 빠르게 만들고 계셨어요.');
   return lines.length && Math.random() < 0.75 ? pickOne(lines) : '';
 }
@@ -1216,6 +1311,27 @@ function labHtml() {
     <div class="info"><b>${r.name} · ${coin(price(r.id))}${r.id === S.special ? '<span class="sale-tag">내일 추천</span>' : ''}</b>${recipeHtml(r.id)}</div>
     <button class="buy" style="background:#b9a48e" data-act="labDel" data-id="${r.id}">없애기</button></div>`).join('');
   return html + '</div>';
+}
+
+// 🪑 꾸미기 탭: 칸마다 소품을 사서 하나씩 배치한다
+function decoHtml() {
+  const ch = decoCharm();
+  let html = `<div class="deco-sum"><b>✨ 꾸밈 점수 ${ch}</b><span>손님 +${Math.round((decoSpawn() - 1) * 100)}% · 팁 +${Math.round((decoTip() - 1) * 100)}%</span></div>
+    <div style="font-size:.75rem;color:var(--muted)">칸마다 소품을 하나씩 놓을 수 있어요. 산 소품은 언제든 다시 바꿔 놓을 수 있어요.</div>`;
+  for (const [slot, sl] of Object.entries(DECO_SLOTS)) {
+    const cur = decoOn(slot);
+    html += `<div class="grp-label">${sl.icon} ${sl.name} — ${cur ? `${DECOS[cur].icon} ${DECOS[cur].name}` : '비어 있음'}</div>`;
+    html += Object.entries(DECOS).filter(([, d]) => d.slot === slot).map(([id, d]) => {
+      let btn;
+      if (cur === id) btn = `<button class="buy" style="background:#b9a48e" data-act="decoOff" data-id="${id}">치우기</button>`;
+      else if (S.deco.own[id]) btn = `<button class="buy" data-act="decoOn" data-id="${id}">배치하기</button>`;
+      else if (sl.shop && S.shop < sl.shop) btn = `<button class="buy" disabled>${SHOPS[sl.shop].name} 필요</button>`;
+      else btn = `<button class="buy" data-act="decoBuy" data-id="${id}" ${S.money < d.cost ? 'disabled' : ''}>${coin(d.cost)}</button>`;
+      return `<div class="item ${cur === id ? 'deco-on' : ''}"><div class="ico">${d.icon}</div>
+        <div class="info"><b>${d.name}${cur === id ? '<span class="sale-tag" style="background:#4f9d4a">배치 중</span>' : S.deco.own[id] ? ' <small>(보유)</small>' : ''}</b><span>꾸밈 점수 +${d.charm}</span></div>${btn}</div>`;
+    }).join('');
+  }
+  return html;
 }
 
 const recipeHtml = id =>`<span class="r">${[MENU[id].cup, ...MENU[id].parts].map(p => ic(PARTS[p].icon)).join('<span class="op">+</span>')}</span>`;
@@ -1479,13 +1595,13 @@ function startDay() {
 
 function nextSpawn() {
   const rate = (0.6 + S.rep / 100 + S.up.sign * 0.05 + Math.min(S.day, 30) * 0.02 + S.shop * 0.25) * (isWeekend() ? 1.4 : 1) * (mode().spawn || 1)
-    * (wx().spawn || 1) * ratingMult();
+    * (wx().spawn || 1) * ratingMult() * decoSpawn();
   return (11 / rate) * (0.6 + Math.random() * 0.8);
 }
 
 // 추천 메뉴는 3배, 날씨에 맞는 메뉴(비 오면 따뜻한 음료 등)도 더 자주 주문된다
 function randomMenu() {
-  const w = k => (k === S.special ? 3 : 1) * wxPref(k);
+  const w = k => (k === S.special ? 3 : 1) * (MENU[k].season != null ? 2 : 1) * wxPref(k);   // 계절 한정 메뉴는 2배로 인기
   const pick = list => {
     let r = Math.random() * list.reduce((s, k) => s + w(k), 0);
     return list.find(k => (r -= w(k)) < 0) || list[list.length - 1];
@@ -1719,13 +1835,16 @@ function serve(i) {
     // 콤보 1당 5%, 최대 +50% (러시 모드는 +100%)
     const comboMult = 1 + Math.min(mode().comboCap || 10, R.combo - 1) * 0.05;
     pay = Math.round(pay * comboMult);
-    if (speed > 0.4) tip = Math.ceil(pay * (0.1 + 0.03 * S.up.decor) * q * (0.5 + S.rep / 100) * (q >= 0.95 ? 1.5 : 1) * (isWeekend() ? 1.2 : 1) * (wx().tip || 1));
+    if (speed > 0.4) tip = Math.ceil(pay * (0.1 + 0.03 * S.up.decor) * q * (0.5 + S.rep / 100) * (q >= 0.95 ? 1.5 : 1) * (isWeekend() ? 1.2 : 1) * (wx().tip || 1) * decoTip());
     S.rep = Math.min(100, S.rep + (q >= 0.95 ? 2 : 1) * (speed > 0.4 ? 1 : 0.5) + (c.vip ? 1.5 : 0));
     msg = `${c.deliv ? '🛵 ' : q >= 0.95 ? '😍 ' : ''}+${pay + tip}${tip ? ' 💕' : ''}${R.combo >= 2 ? ` 🔥${R.combo}` : ''}`;
     if (c.vip) R.stats.vip++;
     if (c.deliv) R.stats.delivery++;
   }
-  c.order.forEach(k => R.stats.sold[k] = (R.stats.sold[k] || 0) + 1);
+  c.order.forEach(k => {
+    R.stats.sold[k] = (R.stats.sold[k] || 0) + 1;
+    if (MENU[k].season != null && !R.tutorial && !sandbox) S.stats.season[k] = (S.stats.season[k] || 0) + 1;
+  });
   addReview(c, q < 0.45 ? (speed > 0.4 ? 2 : 1) : q >= 0.95 ? (speed > 0.4 ? 5 : 4) : q >= 0.6 ? (speed > 0.4 ? 4 : 3) : 3, 'served', { got, speed });
   S.money += pay + tip;
   S.totalEarned += pay + tip;
@@ -2216,6 +2335,7 @@ function renderNight() {
   </div>`;
   html += `<div class="card"><h2>📰 내일 소식 (${S.day}일차)</h2><div class="info-list">
     <div>${wx().icon} 날씨 예보: <b>${wx().name}</b> <small style="color:var(--muted)">(${season().icon} ${season().name}${(S.day - 1) % SEASON_LEN === 0 && S.day > 1 ? ' 시작!' : ''})</small> — ${wx().desc}</div>
+    ${unlockedMenu().filter(k => MENU[k].season != null).map(k => `<div>${season().icon} <b>계절 한정</b>: ${ic(MENU[k].icon)} <b>${MENU[k].name}</b> 판매 중! 주문 2배 · ${seasonLeft() === 1 ? '<b>오늘이 마지막 날!</b>' : `${seasonLeft()}일 남음`}</div>`).join('')}
     ${isWeekend() ? `<div>🎉 <b>주말!</b> 손님이 1.4배 몰리고 팁도 1.2배예요</div>` : ''}
     ${S.special ? `<div>⭐ 추천 메뉴: ${ic(MENU[S.special].icon)} <b>${MENU[S.special].name}</b> — 1.5배 가격, 주문 많음</div>` : ''}
     ${S.sale ? `<div>🏷️ 시장 특가: ${ic(ING[S.sale].icon)} <b>${ING[S.sale].name}</b> 오늘 밤 반값!</div>` : ''}
@@ -2228,7 +2348,7 @@ function renderNight() {
 
   html += '</div><div class="night-col">';
   const ready = achReady().length;
-  const tabs = [['stock', '📦 재료'], ['up', '🔧 업그레이드'], ['menu', '📋 메뉴'], ['shop', '🏪 확장'], ['ach', '🏆 업적'], ['game', '🎰 뽑기']];
+  const tabs = [['stock', '📦 재료'], ['up', '🔧 업그레이드'], ['menu', '📋 메뉴'], ['deco', '🪑 꾸미기'], ['shop', '🏪 확장'], ['ach', '🏆 업적'], ['game', '🎰 뽑기']];
   html += `<div class="tabs">${tabs.map(([k, n]) => `<button class="tab ${nightTab === k ? 'on' : ''}" data-act="tab" data-id="${k}">${n}${k === 'ach' && ready ? `<span class="dot">${ready}</span>` : ''}</button>`).join('')}</div>`;
   html += `<div class="card">`;
 
@@ -2257,7 +2377,19 @@ function renderNight() {
     }).join('');
   } else if (nightTab === 'menu') {
     html += labHtml();
-    html += Object.entries(MENU).filter(([, m]) => !m.custom).map(([k, m]) => {
+    html += `<div class="grp-label">${season().icon} 계절 한정 메뉴 <small style="font-weight:400">· 살 필요 없이 그 계절(${SEASON_LEN}일) 동안만 판매돼요</small></div>`;
+    html += Object.entries(MENU).filter(([, m]) => m.season != null).map(([k, m]) => {
+      const s = SEASONS[m.season], on = seasonOn(k), sold = S.stats.season[k] || 0;
+      const btn = on ? `<button class="buy" disabled>판매 중</button>`
+        : S.shop < m.shop ? `<button class="buy" disabled>${SHOPS[m.shop].name} 필요</button>`
+        : seasonIdx() === m.season ? `<button class="buy" disabled>같은 레시피 판매 중</button>`
+        : `<button class="buy" disabled>${s.icon} ${s.name}에 판매</button>`;
+      return `<div class="item ${on ? '' : 'off'}"><div class="ico">${ic(m.icon)}</div>
+        <div class="info"><b>${m.name} · ${coin(price(k))}${on ? `<span class="sale-tag">${seasonLeft()}일 남음</span>` : ''}</b>${recipeHtml(k)}
+        <span>판매 ${fmt(Math.min(sold, SEASON_GOAL))}/${SEASON_GOAL}${sold >= SEASON_GOAL ? ' 🏅' : ''}</span></div>${btn}</div>`;
+    }).join('');
+    html += `<div class="grp-label">📋 기본 메뉴</div>`;
+    html += Object.entries(MENU).filter(([, m]) => !m.custom && m.season == null).map(([k, m]) => {
       let btn;
       if (S.unlocked[k]) btn = `<button class="buy" disabled>판매 중</button>`;
       else if (S.shop < m.shop) btn = `<button class="buy" disabled>${SHOPS[m.shop].name} 필요</button>`;
@@ -2265,6 +2397,8 @@ function renderNight() {
       return `<div class="item"><div class="ico">${ic(m.icon)}</div>
         <div class="info"><b>${m.name} · ${coin(price(k))}${k === S.special ? '<span class="sale-tag">내일 추천</span>' : ''}</b>${recipeHtml(k)}</div>${btn}</div>`;
     }).join('');
+  } else if (nightTab === 'deco') {
+    html += decoHtml();
   } else if (nightTab === 'game') {
     html += gambleHtml();
   } else if (nightTab === 'ach') {
@@ -2903,6 +3037,16 @@ document.addEventListener('click', e => {
   } else if (act === 'unlock') {
     const c = MENU[id].cost;
     if (S.money >= c) { S.money -= c; S.unlocked[id] = true; toast(`${ic(MENU[id].icon)} ${MENU[id].name} 판매 시작! 재료를 사두세요`); }
+  } else if (act === 'decoBuy') {
+    const d = DECOS[id], sl = d && DECO_SLOTS[d.slot];
+    if (d && !S.deco.own[id] && S.money >= d.cost && !(sl.shop && S.shop < sl.shop)) {
+      S.money -= d.cost; S.deco.own[id] = true; S.deco.on[d.slot] = id;
+      toast(`${d.icon} ${josa(d.name, '을', '를')} 들여놨어요! 꾸밈 점수 +${d.charm}`);
+    }
+  } else if (act === 'decoOn') {
+    if (DECOS[id] && S.deco.own[id]) { S.deco.on[DECOS[id].slot] = id; toast(`${DECOS[id].icon} ${josa(DECOS[id].name, '으로', '로')} 바꿨어요`); }
+  } else if (act === 'decoOff') {
+    if (DECOS[id] && S.deco.on[DECOS[id].slot] === id) delete S.deco.on[DECOS[id].slot];
   } else if (act === 'expand') {
     const nx = SHOPS[S.shop + 1];
     if (nx && S.money >= nx.cost) { S.money -= nx.cost; S.shop++; toast(`${nx.icon} ${josa(nx.name, '으로', '로')} 확장했어요!`); }
