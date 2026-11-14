@@ -572,7 +572,7 @@
     <div class="chalkboard">
       <div class="cb-head"><div class="cb-title">📖 레시피</div><button class="cb-close" data-act="bookClose">✕</button></div>
       <div id="bookList"></div>
-      <div class="cb-hint">🟤 샷은 <b>꾹 눌렀다가</b> 초록 구간에서 떼기<br>💧 물 · 🍼 우유는 <b>누르면 바로</b> 들어가요<br>🔥 굽기는 눌렀다가 <b>다시 눌러</b> 꺼내기<br>🌀 블렌더는 <b>연타</b>!</div>
+      <div class="cb-hint">🟤 샷 · 💧 물 · 🍼 우유 · 🔥 굽기는 <b>누르면 바로</b> 들어가요<br>🌀 블렌더는 <b>연타</b>!</div>
     </div>
   </aside>
   <main id="main">
@@ -714,8 +714,8 @@ const PARTS = {
   mug:    { name: '머그컵',     icon: 'mug', cup: true },
   icecup: { name: '아이스컵',   icon: 'icecup', cup: true },
   plate:  { name: '접시',       icon: 'plate', cup: true },
-  shot:   { name: '샷 추출',    icon: 'shot',  ing: 'bean', gauge: { mode: 'hold', speed: 0.5,  zone: [0.62, 0.78] } },
-  water:  { name: '물 붓기',    icon: 'water' },              // 물·우유는 누르면 바로 들어간다 (게이지 없음)
+  shot:   { name: '샷 추출',    icon: 'shot',  ing: 'bean' },   // 샷·물·우유·굽기는 누르면 바로 들어간다 (게이지 없음)
+  water:  { name: '물 붓기',    icon: 'water' },
   milk:   { name: '우유 붓기',  icon: 'milk',  ing: 'milk' },
   ice:    { name: '얼음',       icon: 'ice' },
   tea:    { name: '찻잎',       icon: 'leaf',  ing: 'tea' },
@@ -724,7 +724,7 @@ const PARTS = {
   blend:  { name: '블렌더',     icon: 'blender',            gauge: { mode: 'mash' } },
   cookie: { name: '쿠키',       icon: 'cookie', ing: 'cookie' },
   cake:   { name: '케이크',     icon: 'cakeSlice', ing: 'cake' },
-  bake:   { name: '생지 굽기',  icon: 'oven',  ing: 'dough', gauge: { mode: 'auto', speed: 0.32, zone: [0.70, 0.84] } },
+  bake:   { name: '생지 굽기',  icon: 'oven',  ing: 'dough' },
 };
 
 const MENU = {
@@ -1650,9 +1650,9 @@ const DAY_TUT = [
     target: '.cust', next: '좋아요!', setup: () => tutCustomer('americano') },
   { say: `① 먼저 컵을 골라요.<br>반짝이는 ${ic('mug')} <b>머그컵</b>을 눌러주세요.`,
     target: '[data-id="mug"]', only: ['mug'], done: () => R.bench.cup === 'mug' },
-  { say: `② ${ic('shot')} <b>샷 추출</b> 버튼을 <b>꾹 누르고 있으세요.</b><br>게이지가 차오르다가 <b style="color:#4f9d4a">초록 구간</b>에 들어오면 <b>손을 떼세요!</b>`,
+  { say: `② ${ic('shot')} <b>샷 추출</b> 버튼을 눌러 주세요.<br>누르기만 하면 에스프레소 샷이 바로 내려져요!`,
     target: '[data-id="shot"]', only: ['shot'], done: () => R.bench.parts.some(p => p.id === 'shot') },
-  { say: `잘했어요! 결과에 따라 ⭐완벽 / 👌괜찮음 / ❌실패가 붙어요.<br>③ ${ic('water')} <b>물 붓기</b>는 누르기만 하면 바로 들어가요.`,
+  { say: `잘했어요!<br>③ ${ic('water')} <b>물 붓기</b>는 누르기만 하면 바로 들어가요.`,
     target: '[data-id="water"]', only: ['water'], done: () => R.tray.length > 0 },
   { say: `${ic('americano')} 완성! 레시피가 맞으면 자동으로 <b>쟁반</b>에 올라가요.<br>④ 이제 반짝이는 <b>손님을 눌러서</b> 서빙하세요!`,
     target: '.cust', done: () => R.stats.served >= 1 },
