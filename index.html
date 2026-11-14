@@ -941,14 +941,15 @@ const decoCharm = () => Object.keys(DECO_SLOTS).reduce((s, k) => s + (decoOn(k) 
 const decoSpawn = () => 1 + decoCharm() * 0.006;   // 꾸밈 점수 1점당 손님 +0.6%
 const decoTip = () => 1 + decoCharm() * 0.01;      // 꾸밈 점수 1점당 팁 +1%
 
+// 확장 가격은 처음보다 40% 싸게 잡았다 (300·1000·3500·9000·22000·55000의 60%)
 const SHOPS = [
   { name: '길거리 노점',     icon: '🛒', cost: 0,    priceMult: 1.0, rentMult: 1.0 },
-  { name: '동네 카페',       icon: '🏠', cost: 300,  priceMult: 1.2, rentMult: 1.6 },
-  { name: '2층 카페',        icon: '🏢', cost: 1000, priceMult: 1.4, rentMult: 2.5 },
-  { name: '프랜차이즈 본점', icon: '🏙️', cost: 3500, priceMult: 1.7, rentMult: 4.0 },
-  { name: '루프탑 카페',     icon: '🌇', cost: 9000,  priceMult: 2.0, rentMult: 6.0 },
-  { name: '해변 리조트 카페', icon: '🏖️', cost: 22000, priceMult: 2.4, rentMult: 9.0 },
-  { name: '글로벌 체인 본사', icon: '🌍', cost: 55000, priceMult: 2.9, rentMult: 13.0 },
+  { name: '동네 카페',       icon: '🏠', cost: 180,  priceMult: 1.2, rentMult: 1.6 },
+  { name: '2층 카페',        icon: '🏢', cost: 600,  priceMult: 1.4, rentMult: 2.5 },
+  { name: '프랜차이즈 본점', icon: '🏙️', cost: 2100, priceMult: 1.7, rentMult: 4.0 },
+  { name: '루프탑 카페',     icon: '🌇', cost: 5400,  priceMult: 2.0, rentMult: 6.0 },
+  { name: '해변 리조트 카페', icon: '🏖️', cost: 13200, priceMult: 2.4, rentMult: 9.0 },
+  { name: '글로벌 체인 본사', icon: '🌍', cost: 33000, priceMult: 2.9, rentMult: 13.0 },
 ];
 const TOP_SHOP = SHOPS.length - 1;
 
@@ -2523,7 +2524,9 @@ function showNight() {
   else after();
 }
 
-function upCost(k) { return Math.round(UPS[k].cost(S.up[k])); }
+// 업그레이드 가격은 UPS에 적힌 값의 60% (40% 할인)
+const UP_PRICE = 0.6;
+function upCost(k) { return Math.round(UPS[k].cost(S.up[k]) * UP_PRICE); }
 
 function renderNight() {
   renderHud();
