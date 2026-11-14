@@ -680,7 +680,7 @@ const MENU = {
   americano: { name: '아메리카노',       icon: 'americano', cup: 'mug',    parts: ['shot', 'water'],                 price: 5,  cost: 0,   shop: 0 },
   latte:     { name: '카페라떼',         icon: 'latte',     cup: 'mug',    parts: ['shot', 'milk'],                  price: 7,  cost: 0,   shop: 0 },
   cookie:    { name: '쿠키',             icon: 'cookie',    cup: 'plate',  parts: ['cookie'],                        price: 3,  cost: 0,   shop: 0 },
-  iceame:    { name: '아이스아메리카노', icon: 'iceame',    cup: 'icecup', parts: ['ice', 'shot', 'water'],          price: 6,  cost: 40,  shop: 0 },
+  iceame:    { name: '아이스아메리카노', icon: 'iceame',    cup: 'icecup', parts: ['ice', 'shot', 'water'],          price: 6,  cost: 40,  shop: 0, manual: true },
   tea:       { name: '홍차',             icon: 'teaCup',    cup: 'mug',    parts: ['tea', 'water'],                  price: 6,  cost: 60,  shop: 0 },
   cake:      { name: '조각케이크',       icon: 'cakeSlice', cup: 'plate',  parts: ['cake'],                          price: 10, cost: 100, shop: 0 },
   icelatte:  { name: '아이스라떼',       icon: 'icelatte',  cup: 'icecup', parts: ['ice', 'shot', 'milk'],           price: 8,  cost: 120, shop: 0 },
@@ -688,7 +688,7 @@ const MENU = {
   smoothie:  { name: '딸기스무디',       icon: 'smoothie',  cup: 'icecup', parts: ['fruit', 'milk', 'ice', 'blend'], price: 13, cost: 250, shop: 1 },
   choco:     { name: '핫초코',           icon: 'choco',     cup: 'mug',    parts: ['cocoa', 'milk'],                 price: 11, cost: 400, shop: 2 },
   // 계절 한정 메뉴: 살 필요 없이 그 계절(14일) 동안만 저절로 판매된다. season = SEASONS 순서
-  s_sakura:   { name: '벚꽃딸기라떼',   icon: 'sakura',   cup: 'mug',    parts: ['shot', 'milk', 'fruit'],  price: 12, cost: 0, shop: 1, season: 0 },
+  s_sakura:   { name: '벚꽃딸기라떼',   icon: 'sakura',   cup: 'mug',    parts: ['shot', 'milk', 'fruit'],  price: 12, cost: 0, shop: 1, season: 0, manual: true },
   s_bingsu:   { name: '딸기빙수',       icon: 'bingsu',   cup: 'plate',  parts: ['ice', 'milk', 'fruit'],   price: 12, cost: 0, shop: 1, season: 1 },
   s_mocha:    { name: '단풍모카',       icon: 'mocha',    cup: 'mug',    parts: ['cocoa', 'shot', 'milk'],  price: 13, cost: 0, shop: 1, season: 2 },
   s_vinchaud: { name: '딸기뱅쇼',       icon: 'vinchaud', cup: 'mug',    parts: ['tea', 'fruit', 'water'],  price: 12, cost: 0, shop: 1, season: 3 },
@@ -1943,9 +1943,10 @@ function finishGauge(overflow) {
 }
 
 // 레시피가 완성됐고 더 키울 레시피가 없으면 자동으로 쟁반에 올린다
+// (manual 메뉴는 자동으로 올리지 않는다: ✅ 완성을 눌러야 만들어진다)
 function afterAdd() {
   const m = benchMatch();
-  if (m && !benchCanGrow()) completeBench();
+  if (m && !MENU[m].manual && !benchCanGrow()) completeBench();
   else renderBench();
 }
 
